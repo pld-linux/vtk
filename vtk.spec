@@ -6,16 +6,17 @@
 %bcond_with	java	# build with Java support (not yet done)
 #
 
-Summary:   	Toolkit for 3D computer graphics, image processing, and visualization
-Name:      	vtk
-Version:   	4.2.2
-Release:   	0.1
-License:   	BSD
-Group:     	Graphics
-Url:	   	http://public.kitware.com/VTK/
-Source0:   	%{name}42Src.tar.bz2
-Source1:   	%{name}42Data.tar.bz2
+Summary:	Toolkit for 3D computer graphics, image processing, and visualization
+Summary(pl):	Zestaw narzêdzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
+Name:		vtk
+Version:	4.2.2
+Release:	0.1
+License:	BSD
+Group:		Graphics
+Source0:	%{name}42Src.tar.bz2
+Source1:	%{name}42Data.tar.bz2
 Patch0:		%{name}-cmakefiles.patch
+URL:		http://public.kitware.com/VTK/
 BuildRequires: 	cmake 
 BuildRequires:	python-devel 
 BuildRequires:	tcl 
@@ -24,102 +25,100 @@ BuildRequires:	doxygen
 BuildRoot: 	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-The Visualization ToolKit (VTK) is an object oriented software system for 3D
-computer graphics, image processing, and visualization. VTK includes a
-textbook, a C++ class library, and several interpreted interface layers
-including Tcl/Tk, Java, and Python. VTK supports a wide variety of
-visualization algorithms including scalar, vector, tensor, texture, and
-volumetric methods. It also supports advanced modeling techniques like
-implicit modeling, polygon reduction, mesh smoothing, cutting, contouring,
-and Delaunay triangulation.  Moreover, dozens of imaging algorithms have been
-integrated into the system. This allows mixing 2D imaging / 3D graphics
-algorithms and data.
+The Visualization ToolKit (VTK) is an object oriented software system
+for 3D computer graphics, image processing, and visualization. VTK
+includes a textbook, a C++ class library, and several interpreted
+interface layers including Tcl/Tk, Java, and Python. VTK supports a
+wide variety of visualization algorithms including scalar, vector,
+tensor, texture, and volumetric methods. It also supports advanced
+modeling techniques like implicit modeling, polygon reduction, mesh
+smoothing, cutting, contouring, and Delaunay triangulation.  Moreover,
+dozens of imaging algorithms have been integrated into the system.
+This allows mixing 2D imaging / 3D graphics algorithms and data.
 
-NOTE: The java wrapper is not included by default.  You may rebuild the srpm
-      using "--with java" with JDK installed.
+NOTE: The java wrapper is not included by default.  You may rebuild
+      the srpm using "--with java" with JDK installed.
 
-NOTE: All patented routines which are part of the package have been removed in
-      this version.
+NOTE: All patented routines which are part of the package have been
+      removed in this version.
 
 %package devel
-Summary:  VTK header files for building C++ code.
-Requires: vtk
-Provides: vtk
-Group:    Development/C++
+Summary:	VTK header files for building C++ code
+Summary(pl):	Pliki nag³ówkowe VTK dla C++
+Group:		Development/C++
+Requires:	vtk
 
 %description devel 
 This provides the VTK header files required to compile C++
 programs that use VTK to do 3D visualisation.
 
 %package tcl
-Summary:  Tcl bindings for VTK.
-Group:    System/Libraries
-Requires: vtk
-Provides: vtk
+Summary:	Tcl bindings for VTK
+Summary(pl):	Dowi±zania Tcl do VTK
+Group:		System/Libraries
+Requires:	vtk
 
 %description tcl
-The Visualization ToolKit (VTK) is an object oriented software system for 3D
-computer graphics, image processing, and visualization. VTK includes a
-textbook, a C++ class library, and several interpreted interface layers
-including Tcl/Tk, Java, and Python. VTK supports a wide variety of
-visualization algorithms including scalar, vector, tensor, texture, and
-volumetric methods. It also supports advanced modeling techniques like
-implicit modeling, polygon reduction, mesh smoothing, cutting, contouring,
-and Delaunay triangulation.  Moreover, dozens of imaging algorithms have been
-integrated into the system. This allows mixing 2D imaging / 3D graphics
-algorithms and data.
+The Visualization ToolKit (VTK) is an object oriented software system
+for 3D computer graphics, image processing, and visualization. VTK
+includes a textbook, a C++ class library, and several interpreted
+interface layers including Tcl/Tk, Java, and Python. VTK supports a
+wide variety of visualization algorithms including scalar, vector,
+tensor, texture, and volumetric methods. It also supports advanced
+modeling techniques like implicit modeling, polygon reduction, mesh
+smoothing, cutting, contouring, and Delaunay triangulation.  Moreover,
+dozens of imaging algorithms have been integrated into the system.
+This allows mixing 2D imaging / 3D graphics algorithms and data.
 
 This package contains tcl bindings for VTK.
 
 %package python
-Summary: Python bindings for VTK.
-Requires: vtk
-Provides: vtk
-Group:    System/Libraries
+Summary:	Python bindings for VTK
+Summary(pl):	Dowi±zania Pythona do VTK
+Requires:	vtk
+Provides:	vtk
+Group:		System/Libraries
 
 %description python 
-The Visualization ToolKit (VTK) is an object oriented software system for 3D
-computer graphics, image processing, and visualization. VTK includes a
-textbook, a C++ class library, and several interpreted interface layers
-including Tcl/Tk, Java, and Python. VTK supports a wide variety of
-visualization algorithms including scalar, vector, tensor, texture, and
-volumetric methods. It also supports advanced modeling techniques like
-implicit modeling, polygon reduction, mesh smoothing, cutting, contouring,
-and Delaunay triangulation.  Moreover, dozens of imaging algorithms have been
-integrated into the system. This allows mixing 2D imaging / 3D graphics
-algorithms and data.
+The Visualization ToolKit (VTK) is an object oriented software system
+for 3D computer graphics, image processing, and visualization. VTK
+includes a textbook, a C++ class library, and several interpreted
+interface layers including Tcl/Tk, Java, and Python. VTK supports a
+wide variety of visualization algorithms including scalar, vector,
+tensor, texture, and volumetric methods. It also supports advanced
+modeling techniques like implicit modeling, polygon reduction, mesh
+smoothing, cutting, contouring, and Delaunay triangulation.  Moreover,
+dozens of imaging algorithms have been integrated into the system.
+This allows mixing 2D imaging / 3D graphics algorithms and data.
 
 This package contains python bindings for VTK.
 
-%if %build_java
 %package java
-Summary: Java bindings for VTK.
-Group:   Development/Java
-Requires: vtk
-Provides: vtk
+Summary:	Java bindings for VTK
+Summary(pl):	Dowi±zania Javy do VTK
+Group:		Development/Java
+Requires:	vtk
 
 %description java
-The Visualization ToolKit (VTK) is an object oriented software system for 3D
-computer graphics, image processing, and visualization. VTK includes a
-textbook, a C++ class library, and several interpreted interface layers
-including Tcl/Tk, Java, and Python. VTK supports a wide variety of
-visualization algorithms including scalar, vector, tensor, texture, and
-volumetric methods. It also supports advanced modeling techniques like
-implicit modeling, polygon reduction, mesh smoothing, cutting, contouring,
-and Delaunay triangulation.  Moreover, dozens of imaging algorithms have been
-integrated into the system. This allows mixing 2D imaging / 3D graphics
-algorithms and data.
+The Visualization ToolKit (VTK) is an object oriented software system
+for 3D computer graphics, image processing, and visualization. VTK
+includes a textbook, a C++ class library, and several interpreted
+interface layers including Tcl/Tk, Java, and Python. VTK supports a
+wide variety of visualization algorithms including scalar, vector,
+tensor, texture, and volumetric methods. It also supports advanced
+modeling techniques like implicit modeling, polygon reduction, mesh
+smoothing, cutting, contouring, and Delaunay triangulation.  Moreover,
+dozens of imaging algorithms have been integrated into the system.
+This allows mixing 2D imaging / 3D graphics algorithms and data.
 
 This package contains java bindings for VTK.
 
-%endif
-
 %package examples
-Summary:  C++, Tcl and Python example programs/scripts for VTK.
-Group:    Development/Other
-Requires: vtk-data
-Requires: vtk
-Provides: vtk
+Summary:	C++, Tcl and Python example programs/scripts for VTK
+Summary(pl):	Przyk³adowe programy/skrypty w C++, Tcl-u i Pythonie dla VTK
+Group:		Development/Other
+Requires:	vtk
+Requires:	vtk-data
 
 %description examples
 This package contains all the examples from the VTK source.
@@ -128,24 +127,25 @@ package as well. The Python and Tcl examples can be run with the
 corresponding packages (vtk-python, vtk-tcl).
 
 %package test-suite
-Summary:  Tests programs for VTK.
-Requires: vtk
-Provides: vtk
-Requires: vtk-data
-Group:    Development/Other
+Summary:	Test programs for VTK
+Summary(pl):	Programy testowe dla VTK
+Group:		Development/Other
+Requires:	vtk
+Requires:	vtk-data
 
 %description test-suite
-This package contains all testing programs from the VTK
-source. The source code of these programs can be found in the
-vtk-examples package.
+This package contains all testing programs from the VTK source. The
+source code of these programs can be found in the vtk-examples
+package.
 
 %package data
-Summary: Data files for VTK.
-Group:   Development/Libraries
+Summary:	Data files for VTK
+Summary(pl):	Pliki danych dla VTK
+Group:		Development/Libraries
 
 %description data 
-This package contains all the data from the VTKData repository.
-These data are required to run various examples from the examples package.
+This package contains all the data from the VTKData repository. These
+data are required to run various examples from the examples package.
 
 %prep
 %setup -q -a 1 -n VTK-%version
