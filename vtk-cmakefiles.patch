@@ -1,0 +1,21 @@
+Index: CMakeLists.txt
+===================================================================
+RCS file: /cvsroot/VTK/VTK/Hybrid/CMakeLists.txt,v
+retrieving revision 1.87
+retrieving revision 1.88
+diff -u -r1.87 -r1.88
+--- a/CMakeLists.txt	21 May 2003 10:07:09 -0000	1.87
++++ b/CMakeLists.txt	23 May 2003 19:46:31 -0000	1.88
+@@ -40,9 +40,9 @@
+ vtkPolyDataSourceWidget.cxx
+ vtkPolyDataToImageStencil.cxx
+ vtkProcrustesAlignmentFilter.cxx
+-vtkPushImageFilterSample
+-vtkPushImageReader
+-vtkPushPipeline
++vtkPushImageFilterSample.cxx
++vtkPushImageReader.cxx
++vtkPushPipeline.cxx
+ vtkRIBExporter.cxx
+ vtkRIBLight.cxx
+ vtkRIBProperty.cxx
