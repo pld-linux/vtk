@@ -37,7 +37,7 @@ smoothing, cutting, contouring, and Delaunay triangulation. Moreover,
 dozens of imaging algorithms have been integrated into the system.
 This allows mixing 2D imaging / 3D graphics algorithms and data.
 
-NOTE: The Java wrapper is not included by default.  You may rebuild
+NOTE: The Java wrapper is not included by default. You may rebuild
       the srpm using "--with java" with JDK installed.
 
 NOTE: All patented routines which are part of the package have been
@@ -223,8 +223,8 @@ cd Hybrid
 #%endif
 cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
-        -DLIBRARY_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%{version}/lib \
-        -DEXECUTABLE_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%{version}/bin  \
+	-DLIBRARY_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%{version}/lib \
+	-DEXECUTABLE_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%{version}/bin \
 	-DCMAKE_SKIP_RPATH:BOOL=ON \
  	-DBUILD_EXAMPLES:BOOL=ON \
 	-DBUILD_SHARED_LIBS:BOOL=ON \
@@ -233,7 +233,8 @@ cmake \
 	-DCMAKE_BACKWARDS_COMPATIBILITY=1.8 \
 	-DOPENGL_INCLUDE_PATH:PATH=%{_prefix}/X11R6/include/GL \
 	-DPYTHON_INCLUDE_PATH:PATH=%{_includedir}/python2.3 \
-	-DPYTHON_LIBRARY:FILEPATH=$(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version        [:3], 'config/libpython' + sys.version[:3] + '.a')") \
+	-DPYTHON_LIBRARY:FILEPATH=$(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version
+	[:3], 'config/libpython' + sys.version[:3] + '.a')") \
 	-DPYTHON_UTIL_LIBRARY:PATH=%{_libdir}/libutil.so \
 	-DTCL_INCLUDE_PATH:PATH=%{_includedir} \
 	-DTCL_LIBRARY:PATH=%{_libdir}/libtcl.so \
@@ -281,7 +282,7 @@ install -d $RPM_BUILD_ROOT%{_includedir}/vtk
 chmod 755 $RPM_BUILD_ROOT%{_libdir}/vtk/*.so
 for f in $RPM_BUILD_ROOT%{_libdir}/vtk/libvtk*Python*.so
 do
-  ln -s ../`basename $f` $RPM_BUILD_ROOT%{_libdir}/vtk/python/
+	ln -s ../`basename $f` $RPM_BUILD_ROOT%{_libdir}/vtk/python/
 done
 
 #install binaries
