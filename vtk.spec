@@ -14,7 +14,8 @@ Release:	0.1
 License:	BSD
 Group:		Graphics
 Source0:	%{name}42Src.tar.bz2
-Source1:	http://dl.sourceforge.net/vtk/VTKData-4.2.tar.bz2
+Source1:	http://dl.sourceforge.net/vtk/VTKData-4.2.tar.gz
+# Source1-md5:	2bbd1a62884906eac4f279441cbb9cfa
 Patch0:		%{name}-cmakefiles.patch
 URL:		http://public.kitware.com/VTK/
 BuildRequires: 	cmake 
