@@ -1,6 +1,6 @@
 #
 # ToDo:
-# - make it all work 
+# - make it all work
 #
 # Conditional build
 %bcond_with	java	# build with Java support (not yet done)
@@ -12,18 +12,19 @@ Name:		vtk
 Version:	4.2.2
 Release:	0.1
 License:	BSD
-Group:		Graphics
-Source0:	%{name}42Src.tar.bz2
+Group:		Libraries
+Source0:	http://dl.sourceforge.net/vtk/VTK-4.2-LatestRelease.tar.gz
+# Source0-md5:	41382fb3f8d15e76d7464c11045ee7a5
 Source1:	http://dl.sourceforge.net/vtk/VTKData-4.2.tar.gz
 # Source1-md5:	2bbd1a62884906eac4f279441cbb9cfa
 Patch0:		%{name}-cmakefiles.patch
 URL:		http://public.kitware.com/VTK/
-BuildRequires: 	cmake 
-BuildRequires:	python-devel 
-BuildRequires:	tcl 
-BuildRequires:	XFree86-devel 
+BuildRequires:	cmake
+BuildRequires:	python-devel
+BuildRequires:	tcl
+BuildRequires:	XFree86-devel
 BuildRequires:	doxygen
-BuildRoot: 	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 The Visualization ToolKit (VTK) is an object oriented software system
@@ -33,7 +34,7 @@ interface layers including Tcl/Tk, Java, and Python. VTK supports a
 wide variety of visualization algorithms including scalar, vector,
 tensor, texture, and volumetric methods. It also supports advanced
 modeling techniques like implicit modeling, polygon reduction, mesh
-smoothing, cutting, contouring, and Delaunay triangulation.  Moreover,
+smoothing, cutting, contouring, and Delaunay triangulation. Moreover,
 dozens of imaging algorithms have been integrated into the system.
 This allows mixing 2D imaging / 3D graphics algorithms and data.
 
@@ -46,17 +47,17 @@ NOTE: All patented routines which are part of the package have been
 %package devel
 Summary:	VTK header files for building C++ code
 Summary(pl):	Pliki nag³ówkowe VTK dla C++
-Group:		Development/C++
+Group:		Development
 Requires:	vtk
 
-%description devel 
-This provides the VTK header files required to compile C++
-programs that use VTK to do 3D visualisation.
+%description devel
+This provides the VTK header files required to compile C++ programs
+that use VTK to do 3D visualisation.
 
 %package tcl
 Summary:	Tcl bindings for VTK
 Summary(pl):	Dowi±zania Tcl do VTK
-Group:		System/Libraries
+Group:		Libraries
 Requires:	vtk
 
 %description tcl
@@ -67,7 +68,7 @@ interface layers including Tcl/Tk, Java, and Python. VTK supports a
 wide variety of visualization algorithms including scalar, vector,
 tensor, texture, and volumetric methods. It also supports advanced
 modeling techniques like implicit modeling, polygon reduction, mesh
-smoothing, cutting, contouring, and Delaunay triangulation.  Moreover,
+smoothing, cutting, contouring, and Delaunay triangulation. Moreover,
 dozens of imaging algorithms have been integrated into the system.
 This allows mixing 2D imaging / 3D graphics algorithms and data.
 
@@ -78,9 +79,9 @@ Summary:	Python bindings for VTK
 Summary(pl):	Dowi±zania Pythona do VTK
 Requires:	vtk
 Provides:	vtk
-Group:		System/Libraries
+Group:		Libraries
 
-%description python 
+%description python
 The Visualization ToolKit (VTK) is an object oriented software system
 for 3D computer graphics, image processing, and visualization. VTK
 includes a textbook, a C++ class library, and several interpreted
@@ -88,7 +89,7 @@ interface layers including Tcl/Tk, Java, and Python. VTK supports a
 wide variety of visualization algorithms including scalar, vector,
 tensor, texture, and volumetric methods. It also supports advanced
 modeling techniques like implicit modeling, polygon reduction, mesh
-smoothing, cutting, contouring, and Delaunay triangulation.  Moreover,
+smoothing, cutting, contouring, and Delaunay triangulation. Moreover,
 dozens of imaging algorithms have been integrated into the system.
 This allows mixing 2D imaging / 3D graphics algorithms and data.
 
@@ -97,7 +98,7 @@ This package contains python bindings for VTK.
 %package java
 Summary:	Java bindings for VTK
 Summary(pl):	Dowi±zania Javy do VTK
-Group:		Development/Java
+Group:		Development/Languages/Java
 Requires:	vtk
 
 %description java
@@ -108,7 +109,7 @@ interface layers including Tcl/Tk, Java, and Python. VTK supports a
 wide variety of visualization algorithms including scalar, vector,
 tensor, texture, and volumetric methods. It also supports advanced
 modeling techniques like implicit modeling, polygon reduction, mesh
-smoothing, cutting, contouring, and Delaunay triangulation.  Moreover,
+smoothing, cutting, contouring, and Delaunay triangulation. Moreover,
 dozens of imaging algorithms have been integrated into the system.
 This allows mixing 2D imaging / 3D graphics algorithms and data.
 
@@ -117,20 +118,20 @@ This package contains java bindings for VTK.
 %package examples
 Summary:	C++, Tcl and Python example programs/scripts for VTK
 Summary(pl):	Przyk³adowe programy/skrypty w C++, Tcl-u i Pythonie dla VTK
-Group:		Development/Other
+Group:		Development/Libraries
 Requires:	vtk
 Requires:	vtk-data
 
 %description examples
-This package contains all the examples from the VTK source.
-To compile the C++ examples you will need to install the vtk-devel
-package as well. The Python and Tcl examples can be run with the
-corresponding packages (vtk-python, vtk-tcl).
+This package contains all the examples from the VTK source. To compile
+the C++ examples you will need to install the vtk-devel package as
+well. The Python and Tcl examples can be run with the corresponding
+packages (vtk-python, vtk-tcl).
 
 %package test-suite
 Summary:	Test programs for VTK
 Summary(pl):	Programy testowe dla VTK
-Group:		Development/Other
+Group:		Development/Libraries
 Requires:	vtk
 Requires:	vtk-data
 
@@ -144,7 +145,7 @@ Summary:	Data files for VTK
 Summary(pl):	Pliki danych dla VTK
 Group:		Development/Libraries
 
-%description data 
+%description data
 This package contains all the data from the VTKData repository. These
 data are required to run various examples from the examples package.
 
@@ -210,18 +211,18 @@ cd Hybrid
 #%endif
 cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
-        -DLIBRARY_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%version/lib \
-        -DEXECUTABLE_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%version/bin  \
+        -DLIBRARY_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%{version}/lib \
+        -DEXECUTABLE_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%{version}/bin  \
 	-DCMAKE_SKIP_RPATH:BOOL=ON \
  	-DBUILD_EXAMPLES:BOOL=ON \
 	-DBUILD_SHARED_LIBS:BOOL=ON \
 	-DBUILD_DOCUMENTATION:BOOL=ON \
 	-DBUILD_TESTING:BOOL=ON \
 	-DCMAKE_BACKWARDS_COMPATIBILITY=1.8 \
-	-DOPENGL_INCLUDE_PATH:PATH=/usr/X11R6/include/GL \
+	-DOPENGL_INCLUDE_PATH:PATH=%{_prefix}/X11R6/include/GL \
 	-DPYTHON_INCLUDE_PATH:PATH=%{_includedir}/python2.3 \
 	-DPYTHON_LIBRARY:FILEPATH=$(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version        [:3], 'config/libpython' + sys.version[:3] + '.a')") \
-	-DPYTHON_UTIL_LIBRARY:PATH=/usr/lib/libutil.so \
+	-DPYTHON_UTIL_LIBRARY:PATH=%{_libdir}/libutil.so \
 	-DTCL_INCLUDE_PATH:PATH=%{_includedir} \
 	-DTCL_LIBRARY:PATH=%{_libdir}/libtcl.so \
 	-DTK_INCLUDE_PATH:PATH=%{_includedir} \
@@ -250,16 +251,16 @@ rm -rf $RPM_BUILD_ROOT
 export VTKPYTHONPATH=%(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version[:3],'site-packages')")
 
 #install directories
-install -d -m 755 $RPM_BUILD_ROOT%{_bindir}
-install -d -m 755 $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk
-install -d -m 755 $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/gtk
-install -d -m 755 $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/qt
-install -d -m 755 $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/testing
-install -d -m 755 $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/tk
-install -d -m 755 $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/util
-install -d -m 755 $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/wx
-install -d -m 755 $RPM_BUILD_ROOT/$VTKPYTHONPATH
-install -d -m 755 $RPM_BUILD_ROOT/usr/include/vtk
+install -d $RPM_BUILD_ROOT%{_bindir}
+install -d $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk
+install -d $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/gtk
+install -d $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/qt
+install -d $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/testing
+install -d $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/tk
+install -d $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/util
+install -d $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/wx
+install -d $RPM_BUILD_ROOT/$VTKPYTHONPATH
+install -d $RPM_BUILD_ROOT%{_includedir}/vtk
 
 #install libs and tcl
 #%makeinstall_std
@@ -273,51 +274,51 @@ do
 done
 
 #install binaries
-install  -m 755 bin/* $RPM_BUILD_ROOT%{_bindir}
+install bin/* $RPM_BUILD_ROOT%{_bindir}
 
 #install python
-install  -m 644 Wrapping/Python/*.py $RPM_BUILD_ROOT%{_libdir}/vtk/python
-install  -m 644 Wrapping/Python/vtk/*.py $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk
-install  -m 644 Wrapping/Python/vtk/gtk/*.py $RPM_BUILD_ROOT/usr/lib/vtk/python/vtk/gtk
-install  -m 644 Wrapping/Python/vtk/qt/*.py $RPM_BUILD_ROOT/usr/lib/vtk/python/vtk/qt
-install  -m 644 Wrapping/Python/vtk/tk/*.py $RPM_BUILD_ROOT/usr/lib/vtk/python/vtk/tk
-install  -m 644 Wrapping/Python/vtk/util/*.py $RPM_BUILD_ROOT/usr/lib/vtk/python/vtk/util
-install  -m 644 Wrapping/Python/vtk/wx/*.py $RPM_BUILD_ROOT/usr/lib/vtk/python/vtk/wx
+install Wrapping/Python/*.py $RPM_BUILD_ROOT%{_libdir}/vtk/python
+install Wrapping/Python/vtk/*.py $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk
+install Wrapping/Python/vtk/gtk/*.py $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/gtk
+install Wrapping/Python/vtk/qt/*.py $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/qt
+install Wrapping/Python/vtk/tk/*.py $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/tk
+install Wrapping/Python/vtk/util/*.py $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/util
+install Wrapping/Python/vtk/wx/*.py $RPM_BUILD_ROOT%{_libdir}/vtk/python/vtk/wx
 cat > $RPM_BUILD_ROOT/$VTKPYTHONPATH/vtkpython.pth <<_EOF
 %{_libdir}/vtk/python
 _EOF
 
 %if %build_java
 #install java
-install -d -m 755 $RPM_BUILD_ROOT%{_libdir}/vtk/java
-install  -m 644 lib/vtk.jar     $RPM_BUILD_ROOT/usr/lib/vtk/java
-install  -m 644 java/vtk/*.java $RPM_BUILD_ROOT%{_libdir}/vtk/java
+install -d $RPM_BUILD_ROOT%{_libdir}/vtk/java
+install lib/vtk.jar $RPM_BUILD_ROOT%{_libdir}/vtk/java
+install java/vtk/*.java $RPM_BUILD_ROOT%{_libdir}/vtk/java
 %endif
 
 #install data
-mkdir -p $RPM_BUILD_ROOT/%_datadir/%name-data
-cp -r VTKData-release-4-2/* $RPM_BUILD_ROOT/%_datadir/%name-data
-rm -fr $RPM_BUILD_ROOT/%_datadir/%name-data/CVS
+mkdir -p $RPM_BUILD_ROOT%{_datadir}/%{name}-data
+cp -r VTKData-release-4-2/* $RPM_BUILD_ROOT/%{_datadir}/%{name}-data
+rm -fr $RPM_BUILD_ROOT%{_datadir}/%{name}-data/CVS
 
 #install test-suite and examples
 for d in Common Filtering Graphics Hybrid IO Imaging Parallel Patented Rendering
 do
-	mkdir -p $RPM_BUILD_ROOT/%_datadir/vtk-examples/Testing/$d
-	cp -a $d/Testing/* $RPM_BUILD_ROOT/%_datadir/vtk-examples/Testing/$d
+	mkdir -p $RPM_BUILD_ROOT%{_datadir}/vtk-examples/Testing/$d
+	cp -a $d/Testing/* $RPM_BUILD_ROOT%{_datadir}/vtk-examples/Testing/$d
 done
-cp -a Examples $RPM_BUILD_ROOT/%_datadir/vtk-examples
+cp -a Examples $RPM_BUILD_ROOT%{_datadir}/vtk-examples
 
 # get rid of unwanted files
-find $RPM_BUILD_ROOT/%_datadir/vtk-examples -name "*.o" -exec rm {} \;
-find $RPM_BUILD_ROOT/%_datadir/vtk-examples -name CMakeCache.txt -exec rm {} \;
-find $RPM_BUILD_ROOT/%_datadir/vtk-examples -name Makefile -exec rm {} \;
-find $RPM_BUILD_ROOT/%_datadir/vtk-examples -name DartTestfile.txt -exec rm {} \;
-find $RPM_BUILD_ROOT/%_datadir/vtk-examples -name .NoDartCoverage -exec rm {} \;
-find $RPM_BUILD_ROOT/%_datadir/vtk-examples -name "CMake*" -exec rm {} \;
-find $RPM_BUILD_ROOT/%_datadir/vtk-examples -name "cmake.*" -exec rm {} \;
+find $RPM_BUILD_ROOT%{_datadir}/vtk-examples -name "*.o" -exec rm {} \;
+find $RPM_BUILD_ROOT%{_datadir}/vtk-examples -name CMakeCache.txt -exec rm {} \;
+find $RPM_BUILD_ROOT%{_datadir}/vtk-examples -name Makefile -exec rm {} \;
+find $RPM_BUILD_ROOT%{_datadir}/vtk-examples -name DartTestfile.txt -exec rm {} \;
+find $RPM_BUILD_ROOT%{_datadir}/vtk-examples -name .NoDartCoverage -exec rm {} \;
+find $RPM_BUILD_ROOT%{_datadir}/vtk-examples -name "CMake*" -exec rm {} \;
+find $RPM_BUILD_ROOT%{_datadir}/vtk-examples -name "cmake.*" -exec rm {} \;
 
 # Generate the package testing-progs lists and store them in file-lists
-echo "%defattr (-, root, root)" > testing-progs-list
+echo "%defattr (644,root,root,755)" > testing-progs-list
 %if %build_java
 find ${RPM_BUILD_ROOT}/usr/bin -type f | \
 	sed -e "s#^${RPM_BUILD_ROOT}##g" | \
@@ -330,6 +331,9 @@ find ${RPM_BUILD_ROOT}/usr/bin -type f | \
 	>> testing-progs-list
 %endif
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 %post -p /sbin/ldconfig
 %post tcl -p /sbin/ldconfig
 %post python -p /sbin/ldconfig
@@ -339,25 +343,25 @@ find ${RPM_BUILD_ROOT}/usr/bin -type f | \
 
 %postun -p /sbin/ldconfig
 %postun tcl -p /sbin/ldconfig
-%postun python -p /sbin/ldconfig 
+%postun python -p /sbin/ldconfig
 %if %build_java
 %postun java -p /sbin/ldconfig
 %endif
 
 %files
-%defattr(-,root,root)
+%defattr(644,root,root,755)
 %doc README.html vtkLogo.jpg
 %dir %{_libdir}/vtk
-%{_libdir}/vtk/libvtkCommon.so 
-%{_libdir}/vtk/libvtkFiltering.so 
+%{_libdir}/vtk/libvtkCommon.so
+%{_libdir}/vtk/libvtkFiltering.so
 %{_libdir}/vtk/libvtkGraphics.so
 %{_libdir}/vtk/libvtkHybrid.so
 %{_libdir}/vtk/libvtkImaging.so
 %{_libdir}/vtk/libvtkIO.so
 %{_libdir}/vtk/libvtkParallel.so
 %{_libdir}/vtk/libvtkRendering.so
-%{_libdir}/vtk/libvtkjpeg.so 
-%{_libdir}/vtk/libvtkpng.so 
+%{_libdir}/vtk/libvtkjpeg.so
+%{_libdir}/vtk/libvtkpng.so
 %{_libdir}/vtk/libvtkzlib.so
 %{_libdir}/vtk/libvtkexpat.so
 %{_libdir}/vtk/libvtkfreetype.so
@@ -365,58 +369,55 @@ find ${RPM_BUILD_ROOT}/usr/bin -type f | \
 %{_libdir}/vtk/libvtktiff.so
 
 %files devel
-%defattr(-,root,root)
+%defattr(644,root,root,755)
 %doc %{_libdir}/vtk/doxygen
+%doc Utilities/Upgrading/*
 %{_includedir}/vtk
 %{_libdir}/vtk/CMake
 %{_libdir}/vtk/*.cmake
-%doc Utilities/Upgrading/*
 
 %files test-suite -f testing-progs-list
 
 %files tcl
-%defattr(-,root,root)
-%{_bindir}/vtkWrapTcl
-%{_libdir}/vtk/libvtk*TCL.so 
-%{_bindir}/vtk
-%{_libdir}/vtk/tcl
+%defattr(644,root,root,755)
+%doc README.html
 %dir %{_libdir}/vtk/testing
+%attr(755,root,root) %{_bindir}/vtkWrapTcl
+%attr(755,root,root) %{_bindir}/vtk
+%{_libdir}/vtk/libvtk*TCL.so
+%{_libdir}/vtk/tcl
 %{_libdir}/vtk/testing/*.tcl
-%doc README.html 
 %doc vtkLogo.jpg
 
 %files python
-%defattr(-,root,root)
-%_bindir/vtkWrapPython
-%_bindir/vtkpython
-%_libdir/vtk/libvtk*Python*.so 
-%_libdir/vtk/python
+%defattr(644,root,root,755)
 %dir %_libdir/vtk/testing
-%_libdir/vtk/testing/*.py
+%attr(755,root,root) %{_bindir}/vtkWrapPython
+%attr(755,root,root) %{_bindir}/vtkpython
+%{_libdir}/vtk/libvtk*Python*.so
+%{_libdir}/vtk/python
+%{_libdir}/vtk/testing/*.py
 %(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version[:3],'site-packages', 'vtkpython.pth')")
 
 %if %build_java
 %files java
-%defattr(-,root,root)
-%{_bindir}/vtkParseJava
-%{_bindir}/vtkWrapJava
-%{_bindir}/VTKJavaExecutable
-%{_libdir}/vtk/libvtk*Java.so 
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_bindir}/vtkParseJava
+%attr(755,root,root) %{_bindir}/vtkWrapJava
+%attr(755,root,root) %{_bindir}/VTKJavaExecutable
+%{_libdir}/vtk/libvtk*Java.so
 %{_libdir}/vtk/java
 %endif
 
 %files examples
-%defattr(-,root,root)
-%dir %_datadir/vtk-examples
-%_datadir/vtk-examples/Examples
-%_datadir/vtk-examples/Testing
+%defattr(644,root,root,755)
+%dir %{_datadir}/vtk-examples
+%{_datadir}/vtk-examples/Examples
+%{_datadir}/vtk-examples/Testing
 
 %files data
-%defattr(-,root,root)
-%dir %_datadir/vtk-data
-%_datadir/vtk-data/Baseline
-%_datadir/vtk-data/Data
-%_datadir/vtk-data/VTKData.readme
-
-%clean 
-rm -rf $RPM_BUILD_ROOT
+%defattr(644,root,root,755)
+%dir %{_datadir}/vtk-data
+%{_datadir}/vtk-data/Baseline
+%{_datadir}/vtk-data/Data
+%{_datadir}/vtk-data/VTKData.readme
