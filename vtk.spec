@@ -386,6 +386,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/vtk/*.cmake
 
 %files test-suite -f testing-progs-list
+%defattr(644,root,root,755)
 
 %files tcl
 %defattr(644,root,root,755)
