@@ -1,8 +1,8 @@
 #
 # ToDo:
 # - make it all work 
-# Conditional build
 #
+# Conditional build
 %bcond_with	java	# build with Java support (not yet done)
 #
 
@@ -14,7 +14,7 @@ Release:	0.1
 License:	BSD
 Group:		Graphics
 Source0:	%{name}42Src.tar.bz2
-Source1:	%{name}42Data.tar.bz2
+Source1:	http://dl.sourceforge.net/vtk/VTKData-4.2.tar.bz2
 Patch0:		%{name}-cmakefiles.patch
 URL:		http://public.kitware.com/VTK/
 BuildRequires: 	cmake 
@@ -419,23 +419,3 @@ find ${RPM_BUILD_ROOT}/usr/bin -type f | \
 
 %clean 
 rm -rf $RPM_BUILD_ROOT
-
-%changelog
-* Mon Mar 01 2004 Olivier Thauvin <thauvin@aerov.jussieu.fr> 4.2.2-4mdk
-- Own dir (again)
-
-* Sun Feb 29 2004 Olivier Thauvin <thauvin@aerov.jussieu.fr> 4.2.2-3mdk
-- Own dir
-
-* Sat Aug 9 2003 Austin Acton <aacton@yorku.ca> 4.2.2-2mdk
-- python 2.3
-
-* Thu Jul 17 2003 Austin Acton <aacton@yorku.ca> 4.2.2-1mdk
-- 4.2.2
-- some DIRM
-- some removal of some lint
-- some java conditionals
-
-* Sun Feb 2 2003 Austin Acton <aacton@yorku.ca> 4.0-1mdk
-- initial package
-- stole most of specfile from http://www.creatis.insa-lyon.fr/vtk/
