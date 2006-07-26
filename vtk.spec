@@ -308,14 +308,14 @@ install java/vtk/*.java $RPM_BUILD_ROOT%{_libdir}/vtk/java
 %endif
 
 #install data
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/%{name}-data
-cp -r VTKData-release-4-2/* $RPM_BUILD_ROOT/%{_datadir}/%{name}-data
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}-data
+cp -r VTKData-release-4-2/* $RPM_BUILD_ROOT%{_datadir}/%{name}-data
 rm -fr $RPM_BUILD_ROOT%{_datadir}/%{name}-data/CVS
 
 #install test-suite and examples
 for d in Common Filtering Graphics Hybrid IO Imaging Parallel Patented Rendering
 do
-	mkdir -p $RPM_BUILD_ROOT%{_datadir}/vtk-examples/Testing/$d
+	install -d $RPM_BUILD_ROOT%{_datadir}/vtk-examples/Testing/$d
 	cp -a $d/Testing/* $RPM_BUILD_ROOT%{_datadir}/vtk-examples/Testing/$d
 done
 cp -a Examples $RPM_BUILD_ROOT%{_datadir}/vtk-examples
