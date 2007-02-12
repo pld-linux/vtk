@@ -6,7 +6,7 @@
 %bcond_with	java	# build with Java support (not yet done)
 #
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
-Summary(pl.UTF-8):   Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
+Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	4.2.2
 Release:	0.1
@@ -64,7 +64,7 @@ UWAGA: wszystkie opatentowane procedury będące częścią tego pakietu
 
 %package devel
 Summary:	VTK header files for building C++ code
-Summary(pl.UTF-8):   Pliki nagłówkowe VTK dla C++
+Summary(pl.UTF-8):	Pliki nagłówkowe VTK dla C++
 Group:		Development
 Requires:	%{name} = %{version}-%{release}
 
@@ -78,7 +78,7 @@ C++ używających VTK do wizualizacji 3D.
 
 %package tcl
 Summary:	Tcl bindings for VTK
-Summary(pl.UTF-8):   Dowiązania Tcl do VTK
+Summary(pl.UTF-8):	Dowiązania Tcl do VTK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
@@ -90,7 +90,7 @@ Ten pakiet zawiera dowiązania Tcl dla VTK.
 
 %package python
 Summary:	Python bindings for VTK
-Summary(pl.UTF-8):   Dowiązania Pythona do VTK
+Summary(pl.UTF-8):	Dowiązania Pythona do VTK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
@@ -102,7 +102,7 @@ Ten pakiet zawiera dowiązania Pythona dla VTK.
 
 %package java
 Summary:	Java bindings for VTK
-Summary(pl.UTF-8):   Dowiązania Javy do VTK
+Summary(pl.UTF-8):	Dowiązania Javy do VTK
 Group:		Development/Languages/Java
 Requires:	%{name} = %{version}-%{release}
 
@@ -114,7 +114,7 @@ Ten pakiet zawiera dowiązania Javy dla VTK.
 
 %package examples
 Summary:	C++, Tcl and Python example programs/scripts for VTK
-Summary(pl.UTF-8):   Przykładowe programy/skrypty w C++, Tcl-u i Pythonie dla VTK
+Summary(pl.UTF-8):	Przykładowe programy/skrypty w C++, Tcl-u i Pythonie dla VTK
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-data = %{version}-%{release}
@@ -133,7 +133,7 @@ Pythonie i Tcl-u można uruchamiać przy użyciu odpowiednich pakietów
 
 %package test-suite
 Summary:	Test programs for VTK
-Summary(pl.UTF-8):   Programy testowe dla VTK
+Summary(pl.UTF-8):	Programy testowe dla VTK
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-data = %{version}-%{release}
@@ -149,7 +149,7 @@ Ten pakiet zawiera wszystkie programy testowe ze źródeł VTK. Kod
 
 %package data
 Summary:	Data files for VTK
-Summary(pl.UTF-8):   Pliki danych dla VTK
+Summary(pl.UTF-8):	Pliki danych dla VTK
 Group:		Development/Libraries
 
 %description data
