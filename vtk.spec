@@ -6,7 +6,7 @@
 %bcond_with	java	# build with Java support (not yet done)
 #
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
-Summary(pl):	Zestaw narzêdzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
+Summary(pl.UTF-8):   Zestaw narzÄ™dzi do trÃ³jwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	4.2.2
 Release:	0.1
@@ -43,28 +43,28 @@ NOTE: The Java wrapper is not included by default. You may rebuild
 NOTE: All patented routines which are part of the package have been
       removed in this version.
 
-%description -l pl
+%description -l pl.UTF-8
 Visualization TookKit (VTK) to obiektowo zorientowany system
-oprogramowania do trójwymiarowej grafiki komputerowej, przetwarzania
-obrazu i wizualizacji. VTK zawiera ksi±¿kê, bibliotekê klas C++ oraz
-kilka interpretowanych warstw interfejsów, w tym dla Tcl/Tk, Javy i
-Pythona. VTK obs³uguje szeroki zakres algorytmów wizualizacji, w tym
+oprogramowania do trÃ³jwymiarowej grafiki komputerowej, przetwarzania
+obrazu i wizualizacji. VTK zawiera ksiÄ…Å¼kÄ™, bibliotekÄ™ klas C++ oraz
+kilka interpretowanych warstw interfejsÃ³w, w tym dla Tcl/Tk, Javy i
+Pythona. VTK obsÅ‚uguje szeroki zakres algorytmÃ³w wizualizacji, w tym
 metody skalarne, wektorowe, tensorowe, teksturowe i wolumetryczne.
-Obs³uguje tak¿e zaawansowane techniki modelowania, takie jak
-modelowanie implicite, redukcja wielok±tów, wyg³adzanie siatki,
-przycinanie, konturowanie i triangulacja Delaunaya. Co wiêcej, wiele
-algorytmów obrazowania zosta³o zintegrowanych z systemem. Pozwala to
-na mieszanie algorytmów obrazowania 2D i grafiki 3D.
+ObsÅ‚uguje takÅ¼e zaawansowane techniki modelowania, takie jak
+modelowanie implicite, redukcja wielokÄ…tÃ³w, wygÅ‚adzanie siatki,
+przycinanie, konturowanie i triangulacja Delaunaya. Co wiÄ™cej, wiele
+algorytmÃ³w obrazowania zostaÅ‚o zintegrowanych z systemem. Pozwala to
+na mieszanie algorytmÃ³w obrazowania 2D i grafiki 3D.
 
-UWAGA: wrapper Javy nie zosta³ w³±czony domy¶lnie. Mo¿na przebudowaæ
-       srpm-a z opcj± "--with java" przy zainstalowanym JDK.
+UWAGA: wrapper Javy nie zostaÅ‚ wÅ‚Ä…czony domyÅ›lnie. MoÅ¼na przebudowaÄ‡
+       srpm-a z opcjÄ… "--with java" przy zainstalowanym JDK.
 
-UWAGA: wszystkie opatentowane procedury bêd±ce czê¶ci± tego pakietu
-       zosta³y usuniête w tej wersji.
+UWAGA: wszystkie opatentowane procedury bÄ™dÄ…ce czÄ™Å›ciÄ… tego pakietu
+       zostaÅ‚y usuniÄ™te w tej wersji.
 
 %package devel
 Summary:	VTK header files for building C++ code
-Summary(pl):	Pliki nag³ówkowe VTK dla C++
+Summary(pl.UTF-8):   Pliki nagÅ‚Ã³wkowe VTK dla C++
 Group:		Development
 Requires:	%{name} = %{version}-%{release}
 
@@ -72,49 +72,49 @@ Requires:	%{name} = %{version}-%{release}
 This provides the VTK header files required to compile C++ programs
 that use VTK to do 3D visualisation.
 
-%description devel -l pl
-Ten pakiet dostarcza pliki nag³ówkowe VTK do kompilowania programów
-C++ u¿ywaj±cych VTK do wizualizacji 3D.
+%description devel -l pl.UTF-8
+Ten pakiet dostarcza pliki nagÅ‚Ã³wkowe VTK do kompilowania programÃ³w
+C++ uÅ¼ywajÄ…cych VTK do wizualizacji 3D.
 
 %package tcl
 Summary:	Tcl bindings for VTK
-Summary(pl):	Dowi±zania Tcl do VTK
+Summary(pl.UTF-8):   DowiÄ…zania Tcl do VTK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description tcl
 This package contains Tcl bindings for VTK.
 
-%description tcl -l pl
-Ten pakiet zawiera dowi±zania Tcl dla VTK.
+%description tcl -l pl.UTF-8
+Ten pakiet zawiera dowiÄ…zania Tcl dla VTK.
 
 %package python
 Summary:	Python bindings for VTK
-Summary(pl):	Dowi±zania Pythona do VTK
+Summary(pl.UTF-8):   DowiÄ…zania Pythona do VTK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description python
 This package contains Python bindings for VTK.
 
-%description python -l pl
-Ten pakiet zawiera dowi±zania Pythona dla VTK.
+%description python -l pl.UTF-8
+Ten pakiet zawiera dowiÄ…zania Pythona dla VTK.
 
 %package java
 Summary:	Java bindings for VTK
-Summary(pl):	Dowi±zania Javy do VTK
+Summary(pl.UTF-8):   DowiÄ…zania Javy do VTK
 Group:		Development/Languages/Java
 Requires:	%{name} = %{version}-%{release}
 
 %description java
 This package contains Java bindings for VTK.
 
-%description java -l pl
-Ten pakiet zawiera dowi±zania Javy dla VTK.
+%description java -l pl.UTF-8
+Ten pakiet zawiera dowiÄ…zania Javy dla VTK.
 
 %package examples
 Summary:	C++, Tcl and Python example programs/scripts for VTK
-Summary(pl):	Przyk³adowe programy/skrypty w C++, Tcl-u i Pythonie dla VTK
+Summary(pl.UTF-8):   PrzykÅ‚adowe programy/skrypty w C++, Tcl-u i Pythonie dla VTK
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-data = %{version}-%{release}
@@ -125,15 +125,15 @@ the C++ examples you will need to install the vtk-devel package as
 well. The Python and Tcl examples can be run with the corresponding
 packages (vtk-python, vtk-tcl).
 
-%description examples -l pl
-Ten pakiet zawiera wszystkie przyk³ady ze ¼róde³ VTK. Do skompilowania
-przyk³adów w C++ trzeba doinstalowaæ pakiet vtk-devel. Przyk³ady w
-Pythonie i Tcl-u mo¿na uruchamiaæ przy u¿yciu odpowiednich pakietów
+%description examples -l pl.UTF-8
+Ten pakiet zawiera wszystkie przykÅ‚ady ze ÅºrÃ³deÅ‚ VTK. Do skompilowania
+przykÅ‚adÃ³w w C++ trzeba doinstalowaÄ‡ pakiet vtk-devel. PrzykÅ‚ady w
+Pythonie i Tcl-u moÅ¼na uruchamiaÄ‡ przy uÅ¼yciu odpowiednich pakietÃ³w
 (vtk-python, vtk-tcl).
 
 %package test-suite
 Summary:	Test programs for VTK
-Summary(pl):	Programy testowe dla VTK
+Summary(pl.UTF-8):   Programy testowe dla VTK
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-data = %{version}-%{release}
@@ -143,13 +143,13 @@ This package contains all testing programs from the VTK source. The
 source code of these programs can be found in the vtk-examples
 package.
 
-%description test-suite -l pl
-Ten pakiet zawiera wszystkie programy testowe ze ¼róde³ VTK. Kod
-¼ród³owy tych programów mo¿na znale¼æ w pakiecie vtk-examples.
+%description test-suite -l pl.UTF-8
+Ten pakiet zawiera wszystkie programy testowe ze ÅºrÃ³deÅ‚ VTK. Kod
+ÅºrÃ³dÅ‚owy tych programÃ³w moÅ¼na znaleÅºÄ‡ w pakiecie vtk-examples.
 
 %package data
 Summary:	Data files for VTK
-Summary(pl):	Pliki danych dla VTK
+Summary(pl.UTF-8):   Pliki danych dla VTK
 Group:		Development/Libraries
 
 %description data
@@ -157,9 +157,9 @@ This package contains all the data from the VTKData repository. These
 data are required to run various examples from the vtk-examples
 package.
 
-%description data -l pl
-Ten pakiet zawiera wszystkie dane z repozytorium VTKData. Dane te s±
-potrzebne do uruchamiania ró¿nych przyk³adów z pakietu vtk-examples.
+%description data -l pl.UTF-8
+Ten pakiet zawiera wszystkie dane z repozytorium VTKData. Dane te sÄ…
+potrzebne do uruchamiania rÃ³Å¼nych przykÅ‚adÃ³w z pakietu vtk-examples.
 
 %prep
 %setup -q -n VTK-%{version} -a 1
