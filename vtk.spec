@@ -12,12 +12,12 @@ Version:	4.2.2
 Release:	0.1
 License:	BSD
 Group:		Libraries
-Source0:	http://dl.sourceforge.net/vtk/VTK-4.2-LatestRelease.tar.gz
+Source0:	http://downloads.sourceforge.net/vtk/VTK-4.2-LatestRelease.tar.gz
 # Source0-md5:	41382fb3f8d15e76d7464c11045ee7a5
-Source1:	http://dl.sourceforge.net/vtk/VTKData-4.2.tar.gz
+Source1:	http://downloads.sourceforge.net/vtk/VTKData-4.2.tar.gz
 # Source1-md5:	2bbd1a62884906eac4f279441cbb9cfa
 Patch0:		%{name}-cmakefiles.patch
-URL:		http://public.kitware.com/VTK/
+URL:		http://www.vtk.org/
 BuildRequires:	XFree86-devel
 BuildRequires:	cmake
 BuildRequires:	doxygen
@@ -167,60 +167,6 @@ cd Hybrid
 %patch0 -p1
 
 %build
-#%if %build_java
-#cmake 	-DCMAKE_INSTALL_PREFIX:PATH=/usr \
-#	-DLIBRARY_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%version/lib \
-#	-DEXECUTABLE_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%version/bin \
-#	-DCMAKE_INSTALL_PREFIX:PATH=/usr \
-#	-DCMAKE_SKIP_RPATH:BOOL=ON \
-#	-DCMAKE_CXX_FLAGS:STRING="$RPM_OPT_FLAGS" \
-#	-DCMAKE_C_FLAGS:STRING="$RPM_OPT_FLAGS"	\
-#	-DJAVA_INCLUDE_PATH:PATH=$JAVA_HOME/include
-#	-DJAVA_INCLUDE_PATH2:PATH=$JAVA_HOME/include/linux \
-#	-DJAVE_AWT_INCLUDE_PATH:PATH=$JAVA_HOME/include \
-#	-DPYTHON_INCLUDE_PATH:PATH=$(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'include', 'python' + sys.version[:3])") \
-#	-DPYTHON_LIBRARY:FILEPATH=$(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version[:3], 'config/libpython' + sys.version[:3] + '.a')") \
-#	-DVTK_DATA_ROOT:PATH=%{_docdir}/vtk-data-%{version} \
-#	-DVTK_WRAP_PYTHON:BOOL=ON \
-#	-DVTK_WRAP_JAVA:BOOL=ON \
-#	-DVTK_WRAP_TCL:BOOL=ON \
-#	-DVTK_USE_HYBRID:BOOL=ON \
-#	-DVTK_USE_PARALLEL:BOOL=ON \
-#	-DVTK_USE_RENDERING:BOOL=ON \
-#	-DVTK_USE_X:BOOL=ON \
-#	-DBUILD_DOCUMENTATION:BOOL=ON \
-#	-DBUILD_EXAMPLES:BOOL=ON \
-#	-DBUILD_SHARED_LIBS:BOOL=ON \
-#	-DBUILD_TESTING:BOOL=ON \
-#	-DOPENGL_INCLUDE_PATH:FILEPATH=/usr/X11R6/include/GL
-##	-DOPENGL_LIBRARY:FILEPATH=/usr/X11R6/lib/libGL.so.1.0
-#
-#%else
-#cmake	-DCMAKE_INSTALL_PREFIX:PATH=/usr \
-#	-DLIBRARY_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%version/lib \
-#	-DEXECUTABLE_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%version/bin \
-#	-DCMAKE_INSTALL_PREFIX:PATH=/usr \
-#	-DCMAKE_SKIP_RPATH:BOOL=ON \
-#	-DCMAKE_CXX_FLAGS:STRING="$RPM_OPT_FLAGS" \
-#	-DCMAKE_C_FLAGS:STRING="$RPM_OPT_FLAGS"	\
-#	-DPYTHON_INCLUDE_PATH:PATH=$(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'include', 'python' + sys.version[:3])") \
-#	-DPYTHON_LIBRARY:FILEPATH=$(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version[:3], 'config/libpython' + sys.version[:3] + '.a')") \
-#	-DVTK_DATA_ROOT:PATH=%{_datadir}/vtk-data-%{version} \
-#	-DVTK_WRAP_PYTHON:BOOL=ON \
-#	-DVTK_WRAP_JAVA:BOOL=off \
-#	-DVTK_WRAP_TCL:BOOL=ON \
-#	-DVTK_USE_HYBRID:BOOL=ON \
-#	-DVTK_USE_PARALLEL:BOOL=ON \
-#	-DVTK_USE_RENDERING:BOOL=ON \
-#	-DVTK_USE_X:BOOL=ON \
-#	-DBUILD_DOCUMENTATION:BOOL=ON \
-#	-DBUILD_EXAMPLES:BOOL=ON \
-#	-DBUILD_SHARED_LIBS:BOOL=ON \
-#	-DBUILD_TESTING:BOOL=ON \
-# 	-DOPENGL_INCLUDE_PATH:FILEPATH=/usr/X11R6/include/GL
-## 	-DOPENGL_LIBRARY:FILEPATH=/usr/X11R6/lib/libGL.so.1.0
-#
-#%endif
 cmake \
 	-DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
 	-DLIBRARY_OUTPUT_PATH:PATH=$RPM_BUILD_DIR/VTK-%{version}/lib \
@@ -231,8 +177,13 @@ cmake \
 	-DBUILD_DOCUMENTATION:BOOL=ON \
 	-DBUILD_TESTING:BOOL=ON \
 	-DCMAKE_BACKWARDS_COMPATIBILITY=1.8 \
-	-DOPENGL_INCLUDE_PATH:PATH=%{_prefix}/X11R6/include/GL \
-	-DPYTHON_INCLUDE_PATH:PATH=%{_includedir}/python2.3 \
+%if %{with java}
+	-DJAVA_INCLUDE_PATH:PATH=$JAVA_HOME/include \
+	-DJAVA_INCLUDE_PATH2:PATH=$JAVA_HOME/include/linux \
+	-DJAVE_AWT_INCLUDE_PATH:PATH=$JAVA_HOME/include \
+%endif
+	-DOPENGL_INCLUDE_PATH:PATH=/usr/include/GL \
+	-DPYTHON_INCLUDE_PATH:PATH=%{py_incdir} \
 	-DPYTHON_LIBRARY:FILEPATH=$(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version
 	[:3], 'config/libpython' + sys.version[:3] + '.a')") \
 	-DPYTHON_UTIL_LIBRARY:PATH=%{_libdir}/libutil.so \
@@ -245,14 +196,14 @@ cmake \
 	-DVTK_USE_PARALLEL:BOOL=ON \
 	-DVTK_USE_PATENTED:BOOL=off \
 	-DVTK_USE_RENDERING:BOOL=ON \
-	-DVTK_WRAP_JAVA:BOOL=OFF \
+	-DVTK_WRAP_JAVA:BOOL=%{?with_java:ON}%{!?with_java:OFF} \
 	-DVTK_WRAP_PYTHON:BOOL=ON \
 	-DVTK_WRAP_TCL:BOOL=ON \
 	-DBUILD_SHARED_LIBS:BOOL=ON \
 	-DCMAKE_CXX_COMPILER:PATH="%{__cxx}" \
 	-DCMAKE_C_COMPILER:PATH="%{__cc}" \
 	-DCMAKE_LINKER_FLAGS:STRING="%{rpmldflags}" \
-	-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON \
+	-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
 
 %{__make}
 
@@ -300,7 +251,7 @@ cat > $RPM_BUILD_ROOT/$VTKPYTHONPATH/vtkpython.pth <<_EOF
 %{_libdir}/vtk/python
 _EOF
 
-%if %build_java
+%if %{with java}
 #install java
 install -d $RPM_BUILD_ROOT%{_libdir}/vtk/java
 install lib/vtk.jar $RPM_BUILD_ROOT%{_libdir}/vtk/java
@@ -409,7 +360,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/vtk/testing/*.py
 %(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version[:3],'site-packages', 'vtkpython.pth')")
 
-%if %build_java
+%if %{with java}
 %files java
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/vtkParseJava
