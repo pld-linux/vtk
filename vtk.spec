@@ -16,7 +16,6 @@ Source0:	http://downloads.sourceforge.net/vtk/VTK-4.2-LatestRelease.tar.gz
 # Source0-md5:	41382fb3f8d15e76d7464c11045ee7a5
 Source1:	http://downloads.sourceforge.net/vtk/VTKData-4.2.tar.gz
 # Source1-md5:	2bbd1a62884906eac4f279441cbb9cfa
-Patch0:		%{name}-cmakefiles.patch
 URL:		http://www.vtk.org/
 BuildRequires:	XFree86-devel
 BuildRequires:	cmake
@@ -162,9 +161,8 @@ Ten pakiet zawiera wszystkie dane z repozytorium VTKData. Dane te są
 potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 
 %prep
-%setup -q -n VTK-%{version} -a 1
+%setup -q -n VTK -a 1
 cd Hybrid
-%patch0 -p1
 
 %build
 cmake \
@@ -184,8 +182,7 @@ cmake \
 %endif
 	-DOPENGL_INCLUDE_PATH:PATH=/usr/include/GL \
 	-DPYTHON_INCLUDE_PATH:PATH=%{py_incdir} \
-	-DPYTHON_LIBRARY:FILEPATH=$(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version
-	[:3], 'config/libpython' + sys.version[:3] + '.a')") \
+	-DPYTHON_LIBRARY:FILEPATH=%{_libdir}/libpython%{py_ver}.so \
 	-DPYTHON_UTIL_LIBRARY:PATH=%{_libdir}/libutil.so \
 	-DTCL_INCLUDE_PATH:PATH=%{_includedir} \
 	-DTCL_LIBRARY:PATH=%{_libdir}/libtcl.so \
@@ -211,7 +208,7 @@ cmake \
 rm -rf $RPM_BUILD_ROOT
 
 #setup python
-export VTKPYTHONPATH=%(python -c"import os,sys; print os.path.join(sys.exec_prefix, 'lib', 'python' + sys.version[:3],'site-packages')")
+export VTKPYTHONPATH=%{py_sitedir}
 
 #install directories
 install -d $RPM_BUILD_ROOT%{_bindir}
@@ -282,7 +279,7 @@ find $RPM_BUILD_ROOT%{_datadir}/vtk-examples -name "cmake.*" -exec rm {} \;
 
 # Generate the package testing-progs lists and store them in file-lists
 echo "%defattr (644,root,root,755)" > testing-progs-list
-%if %build_java
+%if %{with java}
 find ${RPM_BUILD_ROOT}/usr/bin -type f | \
 	sed -e "s#^${RPM_BUILD_ROOT}##g" | \
 	egrep -v '^/usr/bin/(vtk|pvtk|vtkWrap.*|vtkParse.*|VTKJavaExecutable|vtkpython|pvtkpython)$' \
