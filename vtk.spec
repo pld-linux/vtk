@@ -29,7 +29,7 @@ BuildRequires:	gl2ps-devel
 BuildRequires:	gnuplot
 BuildRequires:	graphviz
 BuildRequires:	hdf5-devel
-#%{?with_java:BuildRequires: java-devel}
+%{?with_java:BuildRequires: jdk}
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtheora-devel
