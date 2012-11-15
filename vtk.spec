@@ -186,6 +186,7 @@ Ten pakiet zawiera wszystkie programy testowe ze źródeł VTK. Kod
 Summary:	Data files for VTK
 Summary(pl.UTF-8):	Pliki danych dla VTK
 Group:		Development/Libraries
+BuildArch:	noarch
 
 %description data
 This package contains all the data from the VTKData repository. These
