@@ -1,3 +1,7 @@
+#
+# TODO: package lib*(Python|Tk|Java|TCL).so somewhere?
+#
+
 # Conditional build
 %bcond_without	java	# build without Java support
 %bcond_with	OSMesa	# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
@@ -6,7 +10,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	5.10.1
-Release:	0.1
+Release:	1
 License:	BSD
 Group:		Libraries
 Source0:	http://www.vtk.org/files/release/5.10/%{name}-%{version}.tar.gz
