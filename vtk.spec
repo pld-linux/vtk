@@ -29,7 +29,10 @@ BuildRequires:	gl2ps-devel
 BuildRequires:	gnuplot
 BuildRequires:	graphviz
 BuildRequires:	hdf5-devel
-%{?with_java:BuildRequires: jdk}
+%if %{with java}
+BuildRequires:	jdk
+BuildRequires:  jpackage-utils
+%endif
 BuildRequires:	libjpeg-devel
 BuildRequires:	libpng-devel
 BuildRequires:	libtheora-devel
@@ -219,7 +222,7 @@ find vtk-examples -type f | xargs chmod -R a-x
 export CFLAGS="%{optflags} -D_UNICODE"
 export CXXFLAGS="%{optflags} -D_UNICODE"
 %if %{with java}
-export JAVA_HOME=/usr/lib/jvm/java
+export JAVA_HOME=%{java_home}
 %endif
 
 mkdir build
