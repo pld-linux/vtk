@@ -112,7 +112,7 @@ C++ używających VTK do wizualizacji 3D.
 
 %package tcl
 Summary:	Tcl bindings for VTK
-Summary(pl.UTF-8):	Dowiązania Tcl do VTK
+Summary(pl.UTF-8):	Wiązania Tcl do VTK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
@@ -120,11 +120,11 @@ Requires:	%{name} = %{version}-%{release}
 This package contains Tcl bindings for VTK.
 
 %description tcl -l pl.UTF-8
-Ten pakiet zawiera dowiązania Tcl dla VTK.
+Ten pakiet zawiera wiązania Tcl do VTK.
 
 %package python
 Summary:	Python bindings for VTK
-Summary(pl.UTF-8):	Dowiązania Pythona do VTK
+Summary(pl.UTF-8):	Wiązania Pythona do VTK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
@@ -132,11 +132,11 @@ Requires:	%{name} = %{version}-%{release}
 This package contains Python bindings for VTK.
 
 %description python -l pl.UTF-8
-Ten pakiet zawiera dowiązania Pythona dla VTK.
+Ten pakiet zawiera wiązania Pythona do VTK.
 
 %package java
 Summary:	Java bindings for VTK
-Summary(pl.UTF-8):	Dowiązania Javy do VTK
+Summary(pl.UTF-8):	Wiązania Javy do VTK
 Group:		Development/Languages/Java
 Requires:	%{name} = %{version}-%{release}
 
@@ -144,15 +144,19 @@ Requires:	%{name} = %{version}-%{release}
 This package contains Java bindings for VTK.
 
 %description java -l pl.UTF-8
-Ten pakiet zawiera dowiązania Javy dla VTK.
+Ten pakiet zawiera wiązania Javy do VTK.
 
 %package qt
 Summary:	Qt bindings for VTK
+Summary(pl.UTF-8):	Wiązania Qt do VTK
 Requires:	vtk = %{version}-%{release}
 Group:		System Environment/Libraries
 
 %description qt
-Qt bindings for VTK
+This package contains Qt bindings for VTK.
+
+%description qt -l pl.UTF-8
+Ten pakiet zawiera wiązania Qt do VTK.
 
 %package examples
 Summary:	C++, Tcl and Python example programs/scripts for VTK
