@@ -117,7 +117,7 @@ C++ używających VTK do wizualizacji 3D.
 
 %package tcl
 Summary:	Tcl bindings for VTK
-Summary(pl.UTF-8):	Wiązania Tcl do VTK
+Summary(pl.UTF-8):	Wiązania języka Tcl do VTK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 
@@ -125,7 +125,7 @@ Requires:	%{name} = %{version}-%{release}
 This package contains Tcl bindings for VTK.
 
 %description tcl -l pl.UTF-8
-Ten pakiet zawiera wiązania Tcl do VTK.
+Ten pakiet zawiera wiązania języka Tcl do VTK.
 
 %package python
 Summary:	Python bindings for VTK
