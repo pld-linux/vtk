@@ -22,12 +22,14 @@ Patch1:		vtk-vtkNetCDF_cxx-soname.patch
 Patch2:		vtk-vtknetcdf-lm.patch
 URL:		http://www.vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
+BuildRequires:	OpenGL-GLX-devel
 BuildRequires:	OpenGL-devel
 BuildRequires:	QtWebKit-devel
 BuildRequires:	boost-devel
 BuildRequires:	cmake
 BuildRequires:	doxygen
 BuildRequires:	expat-devel
+BuildRequires:	fontconfig-devel
 BuildRequires:	freetype-devel
 BuildRequires:	gl2ps-devel
 BuildRequires:	gnuplot
@@ -51,8 +53,11 @@ BuildRequires:	tcl-devel
 BuildRequires:	tk-devel
 BuildRequires:	wget
 BuildRequires:	xorg-lib-libICE-devel
+BuildRequires:	xorg-lib-libSM-devel
 BuildRequires:	xorg-lib-libX11-devel
+BuildRequires:	xorg-lib-libXScrnSaver-devel
 BuildRequires:	xorg-lib-libXext-devel
+BuildRequires:	xorg-lib-libXft-devel
 BuildRequires:	xorg-lib-libXt-devel
 BuildRequires:	zlib-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -363,6 +368,8 @@ done
 # Verdict places the docs in the false folder
 %{__rm} -r $RPM_BUILD_ROOT%{_libdir}/vtk/doc
 
+%py_postclean
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -386,111 +393,111 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.html vtkLogo.jpg vtkBanner.gif Wrapping/*/README*
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ld.so.conf.d/vtk-%{_arch}.conf
 %dir %{_libdir}/vtk
-%attr(755,root,root) %ghost %{_libdir}/vtk/libCosmo.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libCosmo.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libLSDyna.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libCosmo.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libLSDyna.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libMapReduceMPI.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libLSDyna.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libMapReduceMPI.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libmpistubs.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libmpistubs.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libVPIC.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libMapReduceMPI.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libVPIC.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkalglib.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtkalglib.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCharts.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libVPIC.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libmpistubs.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libmpistubs.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkCharts.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCommon.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCharts.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommon.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkDICOMParser.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCommon.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkDICOMParser.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkexoIIc.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkFiltering.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkDICOMParser.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkFiltering.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkftgl.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtkftgl.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGenericFiltering.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkFiltering.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkGenericFiltering.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGeovis.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGenericFiltering.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkGeovis.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGraphics.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGeovis.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkGraphics.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkHybrid.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGraphics.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkHybrid.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkImaging.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtkImaging.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkInfovis.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtkInfovis.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkIO.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkHybrid.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkIO.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkmetaio.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkNetCDF_cxx.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF_cxx.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkNetCDF.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkIO.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkImaging.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkImaging.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkInfovis.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkInfovis.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkParallel.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkNetCDF.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF_cxx.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkNetCDF_cxx.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallel.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkproj4.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRendering.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkParallel.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkRendering.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtksqlite.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtksys.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtksys.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkverdict.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkViews.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRendering.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkViews.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkVolumeRendering.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkViews.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRendering.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkWidgets.so.5.10
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkVolumeRendering.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkWidgets.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkWidgets.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkalglib.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkalglib.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkexoIIc.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkftgl.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkftgl.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkmetaio.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkproj4.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtksqlite.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtksys.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtksys.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkverdict.so.5.10
 
 %files devel
 %defattr(644,root,root,755)
-%doc %{_libdir}/vtk/doxygen
 %doc Utilities/Upgrading/*
-%attr(755,root,root) %{_bindir}/vtkWrapHierarchy
 %attr(755,root,root) %{_bindir}/lproj
 %attr(755,root,root) %{_bindir}/vtkEncodeString
+%attr(755,root,root) %{_bindir}/vtkWrapHierarchy
 %{_includedir}/vtk
 %{_libdir}/vtk/CMake
 %{_libdir}/vtk/*.cmake
+%doc %{_libdir}/vtk/doxygen
 %{_libdir}/vtk/hints
 %attr(755,root,root) %{_libdir}/vtk/libCosmo.so
 %attr(755,root,root) %{_libdir}/vtk/libLSDyna.so
 %attr(755,root,root) %{_libdir}/vtk/libMapReduceMPI.so
-%attr(755,root,root) %{_libdir}/vtk/libmpistubs.so
 %attr(755,root,root) %{_libdir}/vtk/libVPIC.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkalglib.so
+%attr(755,root,root) %{_libdir}/vtk/libmpistubs.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkCharts.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommon.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkDICOMParser.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkFiltering.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkftgl.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkGenericFiltering.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkGeovis.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkGraphics.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkHybrid.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkIO.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkImaging.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkInfovis.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkIO.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF_cxx.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF_cxx.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallel.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRendering.so
-%attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so
-%attr(755,root,root) %{_libdir}/vtk/libvtksys.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkViews.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRendering.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWidgets.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkalglib.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkftgl.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so
+%attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so
+%attr(755,root,root) %{_libdir}/vtk/libvtksys.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so
 
 %files tcl
 %defattr(644,root,root,755)
@@ -500,91 +507,178 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtk
 %{_libdir}/vtk/tcl
 %{_libdir}/vtk/pkgIndex.tcl
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtk*TCL.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtk*TCL.so.*.*.*
+%attr(755,root,root) %{_libdir}/vtk/libvtkChartsTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkChartsTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkCommonTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCommonTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkFilteringTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkFilteringTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkGenericFilteringTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGenericFilteringTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkGeovisTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGeovisTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkGraphicsTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGraphicsTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkHybridTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkHybridTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkIOTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkIOTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkImagingTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkImagingTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkInfovisTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkInfovisTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkParallelTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkParallelTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRenderingTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkViewsTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRenderingTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkVolumeRenderingTCL.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkWidgetsTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkWidgetsTCL.so.5.10
 
 %files python
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/vtkWrapPython
 %attr(755,root,root) %{_bindir}/vtkWrapPythonInit
 %attr(755,root,root) %{_bindir}/vtkpython
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtk*Python*.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtk*Python*.so.*.*.*
-
+%attr(755,root,root) %{_libdir}/vtk/libvtkChartsPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkChartsPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkCommonPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCommonPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkFilteringPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkFilteringPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkGenericFilteringPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGenericFilteringPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkGeovisPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGeovisPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkGraphicsPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGraphicsPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkHybridPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkHybridPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkIOPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkIOPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkImagingPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkImagingPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkInfovisPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkInfovisPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkParallelPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkParallelPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkPythonCore.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkPythonCore.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRenderingPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRenderingPythonTkWidgets.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkViewsPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRenderingPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkVolumeRenderingPythonD.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkWidgetsPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkWidgetsPythonD.so.5.10
 %dir %{py_sitedir}/vtk
-%{py_sitedir}/vtk/*.py*
+%{py_sitedir}/vtk/*.py[co]
 %dir %{py_sitedir}/vtk/gtk
-%{py_sitedir}/vtk/gtk/*.py*
+%{py_sitedir}/vtk/gtk/*.py[co]
 %dir %{py_sitedir}/vtk/qt
 %dir %{py_sitedir}/vtk/qt4
-%{py_sitedir}/vtk/qt*/*.py*
+%{py_sitedir}/vtk/qt*/*.py[co]
 %dir %{py_sitedir}/vtk/test
-%{py_sitedir}/vtk/test/*.py*
+%{py_sitedir}/vtk/test/*.py[co]
 %dir %{py_sitedir}/vtk/tk
-%{py_sitedir}/vtk/tk/*.py*
+%{py_sitedir}/vtk/tk/*.py[co]
 %dir %{py_sitedir}/vtk/util
-%{py_sitedir}/vtk/util/*.py*
+%{py_sitedir}/vtk/util/*.py[co]
 %dir %{py_sitedir}/vtk/wx
-%{py_sitedir}/vtk/wx/*.py*
+%{py_sitedir}/vtk/wx/*.py[co]
 %attr(755,root,root) %{py_sitedir}/vtk/vtk*.so
-%{py_sitedir}/VTK-%{version}-*.egg-info
+%{py_sitedir}/VTK-%{version}-py*.egg-info
 
 %if %{with java}
 %files java
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/vtkParseJava
 %attr(755,root,root) %{_bindir}/vtkWrapJava
-%attr(755,root,root) %ghost %{_libdir}/vtk/libvtk*Java.so.5.10
-%attr(755,root,root) %{_libdir}/vtk/libvtk*Java.so.*.*.*
+%attr(755,root,root) %{_libdir}/vtk/libvtkChartsJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkChartsJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkCommonJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCommonJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkFilteringJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkFilteringJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkGenericFilteringJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGenericFilteringJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkGeovisJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGeovisJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkGraphicsJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkGraphicsJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkHybridJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkHybridJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkIOJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkIOJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkImagingJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkImagingJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkInfovisJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkInfovisJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkParallelJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkParallelJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRenderingJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkViewsJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRenderingJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkVolumeRenderingJava.so.5.10
+%attr(755,root,root) %{_libdir}/vtk/libvtkWidgetsJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkWidgetsJava.so.5.10
 %{_libdir}/vtk/java
 %endif
 
 %files qt
 %defattr(644,root,root,755)
-%attr(755,root,root) %ghost %{_libdir}/vtk/libQVTK.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libQVTK.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libQVTK.so.5.10
 %attr(755,root,root) %{_libdir}/qt4/plugins/designer/libQVTKWidgetPlugin.so
 
 %files test-suite
 %defattr(644,root,root,755)
-%{_libdir}/vtk/testing
 %attr(755,root,root) %{_bindir}/CommonCxxTests
+%attr(755,root,root) %{_bindir}/FilteringCxxTests
+%attr(755,root,root) %{_bindir}/GenericFilteringCxxTests
+%attr(755,root,root) %{_bindir}/GraphicsCxxTests
+%attr(755,root,root) %{_bindir}/IOCxxTests
+%attr(755,root,root) %{_bindir}/ImagingCxxTests
+%attr(755,root,root) %{_bindir}/RenderingCxxTests
+%attr(755,root,root) %{_bindir}/SocketClient
+%attr(755,root,root) %{_bindir}/SocketServer
 %attr(755,root,root) %{_bindir}/TestCxxFeatures
 %attr(755,root,root) %{_bindir}/TestInstantiator
-%attr(755,root,root) %{_bindir}/FilteringCxxTests
-%attr(755,root,root) %{_bindir}/GraphicsCxxTests
-%attr(755,root,root) %{_bindir}/GenericFilteringCxxTests
-%attr(755,root,root) %{_bindir}/ImagingCxxTests
-%attr(755,root,root) %{_bindir}/IOCxxTests
-%attr(755,root,root) %{_bindir}/RenderingCxxTests
 %attr(755,root,root) %{_bindir}/VTKBenchMark
 %attr(755,root,root) %{_bindir}/VolumeRenderingCxxTests
 %attr(755,root,root) %{_bindir}/WidgetsCxxTests
-%attr(755,root,root) %{_bindir}/SocketClient
-%attr(755,root,root) %{_bindir}/SocketServer
+%{_libdir}/vtk/testing
 
 %files examples
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/HierarchicalBoxPipeline
-%attr(755,root,root) %{_bindir}/MultiBlock
-%attr(755,root,root) %{_bindir}/Arrays
-%attr(755,root,root) %{_bindir}/Cube
-%attr(755,root,root) %{_bindir}/RGrid
-%attr(755,root,root) %{_bindir}/SGrid
-%attr(755,root,root) %{_bindir}/Medical1
-%attr(755,root,root) %{_bindir}/Medical2
-%attr(755,root,root) %{_bindir}/Medical3
-%attr(755,root,root) %{_bindir}/finance
 %attr(755,root,root) %{_bindir}/AmbientSpheres
-%attr(755,root,root) %{_bindir}/Cylinder
-%attr(755,root,root) %{_bindir}/DiffuseSpheres
-%attr(755,root,root) %{_bindir}/SpecularSpheres
+%attr(755,root,root) %{_bindir}/Arrays
 %attr(755,root,root) %{_bindir}/Cone
 %attr(755,root,root) %{_bindir}/Cone2
 %attr(755,root,root) %{_bindir}/Cone3
 %attr(755,root,root) %{_bindir}/Cone4
 %attr(755,root,root) %{_bindir}/Cone5
 %attr(755,root,root) %{_bindir}/Cone6
+%attr(755,root,root) %{_bindir}/Cube
+%attr(755,root,root) %{_bindir}/Cylinder
+%attr(755,root,root) %{_bindir}/DiffuseSpheres
+%attr(755,root,root) %{_bindir}/HierarchicalBoxPipeline
+%attr(755,root,root) %{_bindir}/Medical1
+%attr(755,root,root) %{_bindir}/Medical2
+%attr(755,root,root) %{_bindir}/Medical3
+%attr(755,root,root) %{_bindir}/MultiBlock
+%attr(755,root,root) %{_bindir}/RGrid
+%attr(755,root,root) %{_bindir}/SGrid
+%attr(755,root,root) %{_bindir}/SpecularSpheres
+%attr(755,root,root) %{_bindir}/finance
 %{_examplesdir}/%{name}-%{version}
 
 %files data
