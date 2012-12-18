@@ -1,9 +1,16 @@
+# TODO:
+# - handle VTK_USE_MPEG2_ENCODER (see CMakeLists.txt)
+# - handle VTK_USE_PARALLEL_BGL (Parallel Boost Graph Library)
+# - more system libraries? (check for VTK_THIRD_PARTY_SUBDIR in Utilities/CMakeLists.txt)
+# - -DVTK_USE_CHEMISTRY:BOOL=ON (BR: OpenQube, Eigen2)
+# - -DVTK_USE_TEXT_ANALYSIS:BOOL=ON (BR: QtXmlPatterns-devel if built with Qt)
 #
-# TODO: package lib*(Python|Tk|Java|TCL).so somewhere?
-#
-
 # Conditional build
-%bcond_without	java	# build without Java support
+%bcond_without	java	# Java wrappers
+%bcond_without	r	# R interface
+%bcond_without	sip	# Python wrappers available to SIP/PyQt
+%bcond_without	ffmpeg	# FFMPEG .avi saving support
+%bcond_without	odbc	# ODBC database interface
 %bcond_with	OSMesa	# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
 #
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
@@ -17,40 +24,54 @@ Source0:	http://www.vtk.org/files/release/5.10/%{name}-%{version}.tar.gz
 # Source0-md5:	264b0052e65bd6571a84727113508789
 Source1:	http://www.vtk.org/files/release/5.10/%{name}data-%{version}.tar.gz
 # Source1-md5:	b6355063264cd56bcd1396c92f6ca59a
-Patch0:		vtk-system-libs.patch
-Patch1:		vtk-vtkNetCDF_cxx-soname.patch
-Patch2:		vtk-vtknetcdf-lm.patch
+Patch0:		%{name}-system-libs.patch
+Patch1:		%{name}-vtkNetCDF_cxx-soname.patch
+Patch2:		%{name}-vtknetcdf-lm.patch
+Patch3:		%{name}-ffmpeg.patch
 URL:		http://www.vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
 BuildRequires:	OpenGL-devel
-BuildRequires:	QtWebKit-devel
-BuildRequires:	boost-devel
-BuildRequires:	cmake
+BuildRequires:	QtCore-devel >= 4.5.0
+BuildRequires:	QtGui-devel >= 4.5.0
+BuildRequires:	QtNetwork-devel >= 4.5.0
+BuildRequires:	QtSql-devel >= 4.5.0
+BuildRequires:	QtWebKit-devel >= 4.5.0
+%{?with_r:BuildRequires:	R}
+BuildRequires:	boost-devel >= 1.39
+BuildRequires:	cmake >= 2.6.3
 BuildRequires:	doxygen
 BuildRequires:	expat-devel
+%{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
 BuildRequires:	fontconfig-devel
-BuildRequires:	freetype-devel
+BuildRequires:	freetype-devel >= 2
 BuildRequires:	gl2ps-devel
 BuildRequires:	gnuplot
 BuildRequires:	graphviz
 BuildRequires:	hdf5-devel
 %if %{with java}
-BuildRequires:	jdk
+BuildRequires:	jdk >= 1.5
 BuildRequires:  jpackage-utils
 %endif
 BuildRequires:	libjpeg-devel
+BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel
+BuildRequires:	libstdc++-devel
 BuildRequires:	libtheora-devel
 BuildRequires:	libtiff-devel
-BuildRequires:	libxml2-devel
+BuildRequires:	libxml2-devel >= 2
 BuildRequires:	mysql-devel
 BuildRequires:	openmotif-devel
 BuildRequires:	postgresql-devel
+BuildRequires:	proj-devel >= 4
 BuildRequires:	python-devel
-BuildRequires:	qt4-build
+%{?with_sip:BuildRequires:	python-sip-devel}
+BuildRequires:	qt4-build >= 4.5.0
+BuildRequires:	rpmbuild(macros) >= 1.605
+%{?with_sip:BuildRequires:	sip}
 BuildRequires:	tcl-devel
 BuildRequires:	tk-devel
+%{?with_odbc:BuildRequires:	unixODBC-devel}
 BuildRequires:	wget
 BuildRequires:	xorg-lib-libICE-devel
 BuildRequires:	xorg-lib-libSM-devel
@@ -76,12 +97,6 @@ smoothing, cutting, contouring, and Delaunay triangulation. Moreover,
 dozens of imaging algorithms have been integrated into the system.
 This allows mixing 2D imaging / 3D graphics algorithms and data.
 
-NOTE: The Java wrapper is not included by default. You may rebuild
-      the srpm using "--with java" with JDK installed.
-
-NOTE: All patented routines which are part of the package have been
-      removed in this version.
-
 %description -l pl.UTF-8
 Visualization TookKit (VTK) to obiektowo zorientowany system
 oprogramowania do trójwymiarowej grafiki komputerowej, przetwarzania
@@ -95,17 +110,12 @@ przycinanie, konturowanie i triangulacja Delaunaya. Co więcej, wiele
 algorytmów obrazowania zostało zintegrowanych z systemem. Pozwala to
 na mieszanie algorytmów obrazowania 2D i grafiki 3D.
 
-UWAGA: wrapper Javy nie został włączony domyślnie. Można przebudować
-       srpm-a z opcją "--with java" przy zainstalowanym JDK.
-
-UWAGA: wszystkie opatentowane procedury będące częścią tego pakietu
-       zostały usunięte w tej wersji.
-
 %package devel
 Summary:	VTK header files for building C++ code
 Summary(pl.UTF-8):	Pliki nagłówkowe VTK dla C++
 Group:		Development
 Requires:	%{name} = %{version}-%{release}
+Requires:	libstdc++-devel
 
 %description devel
 This provides the VTK header files required to compile C++ programs
@@ -114,6 +124,33 @@ that use VTK to do 3D visualisation.
 %description devel -l pl.UTF-8
 Ten pakiet dostarcza pliki nagłówkowe VTK do kompilowania programów
 C++ używających VTK do wizualizacji 3D.
+
+%package qt
+Summary:	Qt bindings for VTK
+Summary(pl.UTF-8):	Wiązania Qt do VTK
+Group:		X11/Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description qt
+This package contains Qt bindings for VTK.
+
+%description qt -l pl.UTF-8
+Ten pakiet zawiera wiązania Qt do VTK.
+
+%package qt-devel
+Summary:	Header files for Qt VTK bindings
+Summary(pl.UTF-8):	Pliki nagłówkowe wiązania Qt do VTK
+Group:		X11/Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-qt = %{version}-%{release}
+Requires:	QtCore-devel
+Requires:	QtGui-devel
+
+%description qt-devel
+Header files for Qt VTK bindings.
+
+%description qt-devel -l pl.UTF-8
+Pliki nagłówkowe wiązania Qt do VTK.
 
 %package java
 Summary:	Java bindings for VTK
@@ -168,32 +205,30 @@ Header files for Python VTK binding.
 %description python-devel -l pl.UTF-8
 Pliki nagłówkowe wiązania Pythona do VTK.
 
-%package qt
-Summary:	Qt bindings for VTK
-Summary(pl.UTF-8):	Wiązania Qt do VTK
-Group:		X11/Libraries
-Requires:	%{name} = %{version}-%{release}
+%package python-sip
+Summary:	Python SIP bindings for VTK
+Summary(pl.UTF-8):	Wiązania Pythona SIP do VTK
+Group:		Libraries
+Requires:	%{name}-python = %{version}-%{release}
 
-%description qt
-This package contains Qt bindings for VTK.
+%description python-sip
+This package contains Python SIP bindings for VTK.
 
-%description qt -l pl.UTF-8
-Ten pakiet zawiera wiązania Qt do VTK.
+%description python-sip -l pl.UTF-8
+Ten pakiet zawiera wiązania Pythona SIP do VTK.
 
-%package qt-devel
-Summary:	Header files for Qt VTK bindings
-Summary(pl.UTF-8):	Pliki nagłówkowe wiązania Qt do VTK
-Group:		X11/Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
+%package python-qt
+Summary:	Python bindings for VTK Qt components
+Summary(pl.UTF-8):	Wiązania Pythona do elementów Qt pakietu VTK
+Group:		Libraries
+Requires:	%{name}-python = %{version}-%{release}
 Requires:	%{name}-qt = %{version}-%{release}
-Requires:	QtCore-devel
-Requires:	QtGui-devel
 
-%description qt-devel
-Header files for Qt VTK bindings.
+%description python-qt
+This package contains Python bindings for VTK Qt components.
 
-%description qt-devel -l pl.UTF-8
-Pliki nagłówkowe wiązania Qt do VTK.
+%description python-qt -l pl.UTF-8
+Ten pakiet zawiera wiązania Pythona do elementów Qt pakietu VTK.
 
 %package tcl
 Summary:	Tcl bindings for VTK
@@ -279,6 +314,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 # Replace relative path ../../../VTKData with %{_datadir}/vtkdata-%{version}
 # otherwise it will break on symlinks.
@@ -293,35 +329,23 @@ cp -a Examples vtk-examples
 find vtk-examples -type f | xargs chmod -R a-x
 
 %build
-export CFLAGS="%{optflags} -D_UNICODE"
-export CXXFLAGS="%{optflags} -D_UNICODE"
+export CFLAGS="%{rpmcflags} -D_UNICODE"
+export CXXFLAGS="%{rpmcxxflags} -D_UNICODE"
 %if %{with java}
 export JAVA_HOME=%{java_home}
 %endif
 
 mkdir build
 cd build
-%{cmake} .. \
-	-DCMAKE_INSTALL_PREFIX:PATH=%{_prefix} \
-	-DVTK_INSTALL_INCLUDE_DIR:PATH=/include/vtk \
-	-DVTK_INSTALL_LIB_DIR:PATH=/%{_lib}/vtk \
-	-DVTK_INSTALL_QT_DIR=/%{_lib}/qt4/plugins/designer \
-	-DCMAKE_SKIP_RPATH:BOOL=ON \
+%cmake .. \
+	-DBUILD_DOCUMENTATION:BOOL=ON \
  	-DBUILD_EXAMPLES:BOOL=ON \
 	-DBUILD_SHARED_LIBS:BOOL=ON \
-	-DBUILD_DOCUMENTATION:BOOL=ON \
 	-DBUILD_TESTING:BOOL=ON \
-%if %{with OSMesa}
-	-DVTK_OPENGL_HAS_OSMESA:BOOL=ON \
-%endif
-%if %{with java}
-	-DVTK_WRAP_JAVA:BOOL=ON \
-	-DJAVA_INCLUDE_PATH:PATH=$JAVA_HOME/include \
-	-DJAVA_INCLUDE_PATH2:PATH=$JAVA_HOME/include/linux \
-	-DJAVA_AWT_INCLUDE_PATH:PATH=$JAVA_HOME/include \
-%else
-	-DVTK_WRAP_JAVA:BOOL=OFF \
-%endif
+	-DCMAKE_C_COMPILER:PATH="%{__cc}" \
+	-DCMAKE_CXX_COMPILER:PATH="%{__cxx}" \
+	-DCMAKE_LINKER_FLAGS:STRING="%{rpmldflags}" \
+	-DCMAKE_SKIP_RPATH:BOOL=ON \
 	-DOPENGL_INCLUDE_PATH:PATH=%{_includedir}/GL \
 	-DPYTHON_INCLUDE_PATH:PATH=%{py_incdir} \
 	-DPYTHON_LIBRARY:FILEPATH=%{_libdir}/libpython%{py_ver}.so \
@@ -331,29 +355,37 @@ cd build
 	-DTK_INCLUDE_PATH:PATH=%{_includedir} \
 	-DTK_LIBRARY:PATH=%{_libdir}/libtk.so \
 	-DVTK_DATA_ROOT:PATH=%{_datadir}/vtk \
+	-DVTK_INSTALL_INCLUDE_DIR:PATH=/include/vtk \
+	-DVTK_INSTALL_LIB_DIR:PATH=/%{_lib}/vtk \
+	-DVTK_INSTALL_QT_DIR=/%{_lib}/qt4/plugins/designer \
+	%{?with_OSMesa:-DVTK_OPENGL_HAS_OSMESA:BOOL=ON} \
+	-DVTK_PYTHON_SETUP_ARGS="--prefix=/usr --root=$RPM_BUILD_ROOT" \
 	-DVTK_USE_SYSTEM_LIBRARIES=ON \
 	-DVTK_USE_BOOST:BOOL=ON \
+	%{?with_ffmpeg:-DVTK_USE_FFMPEG_ENCODER:BOOL=ON -DVTK_FFMPEG_HAS_OLD_HEADER:BOOL=OFF} \
 	-DVTK_USE_GL2PS:BOOL=ON \
+	%{?with_r:-DVTK_USE_GNU_R:BOOL=ON -DR_INCLUDE_DIR=/usr/include/R -DR_LIBRARY_BLAS=%{_libdir}/libblas.so -DR_LIBRARY_LAPACK=%{_libdir}/liblapack.so} \
 	-DVTK_USE_GUISUPPORT:BOOL=ON \
 	-DVTK_USE_MYSQL=ON \
+	%{?with_odbc:-DVTK_USE_ODBC=ON -DODBC_LIBRARY=%{_libdir}/libodbc.so} \
 	-DVTK_USE_OGGTHEORA_ENCODER=ON \
-	-DVTK_USE_POSTGRES=ON \
-	-DVTK_USE_SYSTEM_LIBPROJ4=OFF \
-	-DVTK_USE_QVTK=ON \
-	-DVTK_USE_QT=ON \
-	-DVTK_USE_HYBRID:BOOL=ON \
 	-DVTK_USE_PARALLEL:BOOL=ON \
-	-DVTK_USE_PATENTED:BOOL=off \
+	-DVTK_USE_POSTGRES=ON \
 	-DVTK_USE_RENDERING:BOOL=ON \
-	-DVTK_WRAP_JAVA:BOOL=%{?with_java:ON}%{!?with_java:OFF} \
-	-DVTK_PYTHON_SETUP_ARGS="--prefix=/usr --root=$RPM_BUILD_ROOT" \
+	-DVTK_USE_SYSTEM_LIBPROJ4=OFF \
+	-DVTK_USE_QT=ON \
+	-DVTK_USE_QVTK=ON \
+%if %{with java}
+	-DVTK_WRAP_JAVA:BOOL=ON \
+	-DJAVA_INCLUDE_PATH:PATH=$JAVA_HOME/include \
+	-DJAVA_INCLUDE_PATH2:PATH=$JAVA_HOME/include/linux \
+	-DJAVA_AWT_INCLUDE_PATH:PATH=$JAVA_HOME/include \
+%else
+	-DVTK_WRAP_JAVA:BOOL=OFF \
+%endif
 	-DVTK_WRAP_PYTHON:BOOL=ON \
-	-DVTK_WRAP_TCL:BOOL=ON \
-	-DBUILD_SHARED_LIBS:BOOL=ON \
-	-DCMAKE_CXX_COMPILER:PATH="%{__cxx}" \
-	-DCMAKE_C_COMPILER:PATH="%{__cc}" \
-	-DCMAKE_LINKER_FLAGS:STRING="%{rpmldflags}" \
-	-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+	%{?with_sip:-DVTK_WRAP_PYTHON_SIP:BOOL=ON} \
+	-DVTK_WRAP_TCL:BOOL=ON
 
 %{__make}
 
@@ -435,17 +467,20 @@ rm -rf $RPM_BUILD_ROOT
 %post	-p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
-%post	tcl -p /sbin/ldconfig
-%postun	tcl -p /sbin/ldconfig
-
-%post	python -p /sbin/ldconfig
-%postun	python -p /sbin/ldconfig
+%post	qt -p /sbin/ldconfig
+%postun	qt -p /sbin/ldconfig
 
 %post	java -p /sbin/ldconfig
 %postun	java -p /sbin/ldconfig
 
-%post	qt -p /sbin/ldconfig
-%postun	qt -p /sbin/ldconfig
+%post	python -p /sbin/ldconfig
+%postun	python -p /sbin/ldconfig
+
+%post	python-qt -p /sbin/ldconfig
+%postun	python-qt -p /sbin/ldconfig
+
+%post	tcl -p /sbin/ldconfig
+%postun	tcl -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
@@ -581,6 +616,21 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/vtk/CMake
 %{_libdir}/vtk/*.cmake
 
+%files qt
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/vtk/libQVTK.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libQVTK.so.5.10
+%attr(755,root,root) %{_libdir}/qt4/plugins/designer/libQVTKWidgetPlugin.so
+
+%files qt-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/vtk/libQVTK.so
+%{_includedir}/vtk/QFilterTreeProxyModel.h
+%{_includedir}/vtk/QVTK*.h
+%{_includedir}/vtk/vtkEventQtSlotConnect.h
+%{_includedir}/vtk/vtkQImageToImageSource.h
+%{_includedir}/vtk/vtkQt*.h
+
 %if %{with java}
 %files java
 %defattr(644,root,root,755)
@@ -692,7 +742,20 @@ rm -rf $RPM_BUILD_ROOT
 %{py_sitedir}/vtk/util/*.py[co]
 %dir %{py_sitedir}/vtk/wx
 %{py_sitedir}/vtk/wx/*.py[co]
-%attr(755,root,root) %{py_sitedir}/vtk/vtk*.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkChartsPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkCommonPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkFilteringPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkGenericFilteringPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkGeovisPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkGraphicsPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkHybridPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkIOPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkImagingPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkInfovisPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkParallelPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkViewsPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkVolumeRenderingPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkWidgetsPython.so
 %{py_sitedir}/VTK-%{version}-py*.egg-info
 
 %files python-devel
@@ -717,20 +780,32 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/PyVTK*.h
 %{_includedir}/vtk/vtkPython*.h
 
-%files qt
+%if %{with sip}
+%files python-sip
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/vtk/libQVTK.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/vtk/libQVTK.so.5.10
-%attr(755,root,root) %{_libdir}/qt4/plugins/designer/libQVTKWidgetPlugin.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkChartsPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkCommonPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkFilteringPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkGenericFilteringPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkGeovisPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkGraphicsPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkHybridPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkIOPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkImagingPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkInfovisPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkParallelPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkRenderingPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkRenderingPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkViewsPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkVolumeRenderingPythonSIP.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkWidgetsPythonSIP.so
 
-%files qt-devel
+%files python-qt
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/vtk/libQVTK.so
-%{_includedir}/vtk/QFilterTreeProxyModel.h
-%{_includedir}/vtk/QVTK*.h
-%{_includedir}/vtk/vtkEventQtSlotConnect.h
-%{_includedir}/vtk/vtkQImageToImageSource.h
-%{_includedir}/vtk/vtkQt*.h
+%attr(755,root,root) %{_libdir}/vtk/libvtkQtPythonD.so
+%attr(755,root,root) %{py_sitedir}/vtk/QVTKPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkQtPython.so
+%endif
 
 %files tcl
 %defattr(644,root,root,755)

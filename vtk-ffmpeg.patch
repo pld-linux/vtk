@@ -1,0 +1,87 @@
+--- VTK5.10.1/CMake/vtkTestFFMPEG.cmake.orig	2012-10-15 22:33:21.000000000 +0200
++++ VTK5.10.1/CMake/vtkTestFFMPEG.cmake	2012-12-16 15:58:22.460839307 +0100
+@@ -1,10 +1,10 @@
+ IF (FFMPEG_INCLUDE_DIR)
+   IF("VTK_FFMPEG_HAS_OLD_HEADER" MATCHES "^VTK_FFMPEG_HAS_OLD_HEADER$" OR NOT "VTK_FFMPEG_CACHED_INCLUDE" MATCHES "^${FFMPEG_INCLUDE_DIR}$")
+-    IF (EXISTS ${FFMPEG_INCLUDE_DIR}/ffmpeg)
+-      SET(VTK_FFMPEG_HAS_OLD_HEADER "TRUE" CACHE INTERNAL "Is the FFMPEG include in the old location" FORCE)
+-    ELSE (EXISTS ${FFMPEG_INCLUDE_DIR}/ffmpeg)
+-      SET(VTK_FFMPEG_HAS_OLD_HEADER "FALSE" CACHE INTERNAL "Is the FFMPEG include in the old location" FORCE)
+-    ENDIF (EXISTS ${FFMPEG_INCLUDE_DIR}/ffmpeg)
++    IF (EXISTS ${FFMPEG_INCLUDE_DIR}/libavformat)
++	SET(VTK_FFMPEG_HAS_OLD_HEADER "FALSE" CACHE INTERNAL "Is the FFMPEG include in the old location" FORCE)
++    ELSE (EXISTS ${FFMPEG_INCLUDE_DIR}/libavformat)
++	SET(VTK_FFMPEG_HAS_OLD_HEADER "TRUE" CACHE INTERNAL "Is the FFMPEG include in the old location" FORCE)
++    ENDIF (EXISTS ${FFMPEG_INCLUDE_DIR}/libavformat)
+     IF (VTK_FFMPEG_HAS_OLD_HEADER)
+       MESSAGE(STATUS "Checking if FFMPEG uses old style header files - yes")
+     ELSE (VTK_FFMPEG_HAS_OLD_HEADER)
+--- VTK5.10.1/IO/vtkFFMPEGWriter.cxx.orig	2012-10-15 22:33:21.000000000 +0200
++++ VTK5.10.1/IO/vtkFFMPEGWriter.cxx	2012-12-16 18:46:55.227295191 +0100
+@@ -123,7 +123,7 @@
+     }
+ 
+   //choose avi media file format
+-  this->avOutputFormat = guess_format("avi", NULL, NULL);
++  this->avOutputFormat = av_guess_format("avi", NULL, NULL);
+   if (!this->avOutputFormat) 
+     {
+     vtkGenericWarningMacro (<< "Could not open the avi media file format.");
+@@ -150,7 +150,7 @@
+   //Set up the codec.
+   AVCodecContext *c = this->avStream->codec;
+   c->codec_id = (CodecID)this->avOutputFormat->video_codec;
+-  c->codec_type = CODEC_TYPE_VIDEO;
++  c->codec_type = AVMEDIA_TYPE_VIDEO;
+   c->width = this->Dim[0];
+   c->height = this->Dim[1];
+   c->pix_fmt = PIX_FMT_YUVJ420P;
+@@ -192,13 +192,6 @@
+     c->bit_rate_tolerance = this->Writer->GetBitRateTolerance();
+     }
+ 
+-  //apply the chosen parameters
+-  if (av_set_parameters(this->avFormatContext, NULL) < 0)
+-    {
+-    vtkGenericWarningMacro (<< "Invalid output format parameters." );
+-    return 0;
+-    }
+-
+   //manufacture a codec with the chosen parameters
+   AVCodec *codec = avcodec_find_encoder(c->codec_id);
+   if (!codec) 
+@@ -259,14 +252,14 @@
+ 
+ 
+   //Finally, open the file and start it off.
+-  if (url_fopen(&this->avFormatContext->pb, this->avFormatContext->filename, URL_WRONLY) < 0) 
++  if (avio_open(&this->avFormatContext->pb, this->avFormatContext->filename, AVIO_FLAG_WRITE) < 0) 
+     {
+     vtkGenericWarningMacro (<< "Could not open " << this->Writer->GetFileName() << "." );
+     return 0;
+     }
+   this->openedFile = 1;
+ 
+-  av_write_header(this->avFormatContext);
++  avformat_write_header(this->avFormatContext, NULL);
+   return 1;
+ }
+ 
+@@ -343,7 +336,7 @@
+     pkt.stream_index = this->avStream->index;
+     if (cc->coded_frame->key_frame) //treat keyframes well
+       {
+-      pkt.flags |= PKT_FLAG_KEY;
++      pkt.flags |= AV_PKT_FLAG_KEY;
+       }
+     pkt.duration = 0; //presentation duration in time_base units or 0 if NA
+     pkt.pos = -1; //byte position in stream or -1 if NA
+@@ -391,7 +384,7 @@
+ #ifdef VTK_FFMPEG_OLD_URL_FCLOSE
+       url_fclose(&this->avFormatContext->pb);
+ #else
+-      url_fclose(this->avFormatContext->pb);
++      avio_close(this->avFormatContext->pb);
+ #endif
+       this->openedFile = 0;
+       }
