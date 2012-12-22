@@ -6,12 +6,14 @@
 # - -DVTK_USE_TEXT_ANALYSIS:BOOL=ON (BR: QtXmlPatterns-devel if built with Qt)
 #
 # Conditional build
-%bcond_without	java	# Java wrappers
-%bcond_without	r	# R interface
-%bcond_without	sip	# Python wrappers available to SIP/PyQt
-%bcond_without	ffmpeg	# FFMPEG .avi saving support
-%bcond_without	odbc	# ODBC database interface
-%bcond_with	OSMesa	# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
+%bcond_without	java		# Java wrappers
+%bcond_without	r		# R interface
+%bcond_without	sip		# Python wrappers available to SIP/PyQt
+%bcond_without	ffmpeg		# FFMPEG .avi saving support
+%bcond_without	odbc		# ODBC database interface
+%bcond_without	textanalysis	# TextAnalysis module (requires QtXmlPatterns)
+%bcond_with	OSMesa		# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
+%bcond_with	system_proj	# use system PROJ.4 (needs 4.3, not ready for 4.4+)
 #
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
@@ -37,6 +39,7 @@ BuildRequires:	QtGui-devel >= 4.5.0
 BuildRequires:	QtNetwork-devel >= 4.5.0
 BuildRequires:	QtSql-devel >= 4.5.0
 BuildRequires:	QtWebKit-devel >= 4.5.0
+%{?with_textanalysis:BuildRequires:	QtXmlPatterns-devel >= 4.5.0}
 %{?with_r:BuildRequires:	R}
 BuildRequires:	boost-devel >= 1.39
 BuildRequires:	cmake >= 2.6.3
@@ -63,7 +66,7 @@ BuildRequires:	libxml2-devel >= 2
 BuildRequires:	mysql-devel
 BuildRequires:	openmotif-devel
 BuildRequires:	postgresql-devel
-BuildRequires:	proj-devel >= 4
+%{?with_system_proj:BuildRequires:	proj-devel >= 4.3, proj-devel < 4.4}
 BuildRequires:	python-devel
 %{?with_sip:BuildRequires:	python-sip-devel}
 BuildRequires:	qt4-build >= 4.5.0
@@ -81,6 +84,7 @@ BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-lib-libXft-devel
 BuildRequires:	xorg-lib-libXt-devel
 BuildRequires:	zlib-devel
+%{?with_textanalysis:Requires:	QtXmlPatterns >= 4.5.0}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		skip_post_check_so	lib.*Python.*\.so.*
@@ -360,21 +364,22 @@ cd build
 	-DVTK_INSTALL_QT_DIR=/%{_lib}/qt4/plugins/designer \
 	%{?with_OSMesa:-DVTK_OPENGL_HAS_OSMESA:BOOL=ON} \
 	-DVTK_PYTHON_SETUP_ARGS="--prefix=/usr --root=$RPM_BUILD_ROOT" \
-	-DVTK_USE_SYSTEM_LIBRARIES=ON \
+	-DVTK_USE_SYSTEM_LIBRARIES:BOOL=ON \
 	-DVTK_USE_BOOST:BOOL=ON \
 	%{?with_ffmpeg:-DVTK_USE_FFMPEG_ENCODER:BOOL=ON -DVTK_FFMPEG_HAS_OLD_HEADER:BOOL=OFF} \
 	-DVTK_USE_GL2PS:BOOL=ON \
 	%{?with_r:-DVTK_USE_GNU_R:BOOL=ON -DR_INCLUDE_DIR=/usr/include/R -DR_LIBRARY_BLAS=%{_libdir}/libblas.so -DR_LIBRARY_LAPACK=%{_libdir}/liblapack.so} \
 	-DVTK_USE_GUISUPPORT:BOOL=ON \
-	-DVTK_USE_MYSQL=ON \
-	%{?with_odbc:-DVTK_USE_ODBC=ON -DODBC_LIBRARY=%{_libdir}/libodbc.so} \
-	-DVTK_USE_OGGTHEORA_ENCODER=ON \
+	-DVTK_USE_MYSQL:BOOL=ON \
+	%{?with_odbc:-DVTK_USE_ODBC:BOOL=ON -DODBC_LIBRARY=%{_libdir}/libodbc.so} \
+	-DVTK_USE_OGGTHEORA_ENCODER:BOOL=ON \
 	-DVTK_USE_PARALLEL:BOOL=ON \
-	-DVTK_USE_POSTGRES=ON \
+	-DVTK_USE_POSTGRES:BOOL=ON \
+	-DVTK_USE_QT:BOOL=ON \
+	-DVTK_USE_QVTK:BOOL=ON \
 	-DVTK_USE_RENDERING:BOOL=ON \
-	-DVTK_USE_SYSTEM_LIBPROJ4=OFF \
-	-DVTK_USE_QT=ON \
-	-DVTK_USE_QVTK=ON \
+	%{!?with_system_proj:-DVTK_USE_SYSTEM_LIBPROJ4:BOOL=OFF} \
+	%{?with_textanalysis:-DVTK_USE_TEXT_ANALYSIS:BOOL=ON} \
 %if %{with java}
 	-DVTK_WRAP_JAVA:BOOL=ON \
 	-DJAVA_INCLUDE_PATH:PATH=$JAVA_HOME/include \
@@ -527,6 +532,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkParallel.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkRendering.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRendering.so.5.10
+%if %{with textanalysis}
+%attr(755,root,root) %{_libdir}/vtk/libvtkTextAnalysis.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkTextAnalysis.so.5.10
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkViews.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkViews.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRendering.so.*.*.*
@@ -576,6 +585,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF_cxx.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallel.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRendering.so
+%if %{with textanalysis}
+%attr(755,root,root) %{_libdir}/vtk/libvtkTextAnalysis.so
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkViews.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRendering.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWidgets.so
@@ -660,6 +672,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkParallelJava.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingJava.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRenderingJava.so.5.10
+%if %{with textanalysis}
+%attr(755,root,root) %{_libdir}/vtk/libvtkTextAnalysisJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkTextAnalysisJava.so.5.10
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsJava.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkViewsJava.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRenderingJava.so.*.*.*
@@ -682,6 +698,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkInfovisJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallelJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingJava.so
+%if %{with textanalysis}
+%attr(755,root,root) %{_libdir}/vtk/libvtkTextAnalysisJava.so
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRenderingJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWidgetsJava.so
@@ -721,6 +740,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRenderingPythonD.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRenderingPythonTkWidgets.so.5.10
+%if %{with textanalysis}
+%attr(755,root,root) %{_libdir}/vtk/libvtkTextAnalysisPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkTextAnalysisPythonD.so.5.10
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsPythonD.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkViewsPythonD.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRenderingPythonD.so.*.*.*
@@ -753,6 +776,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/vtk/vtkImagingPython.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkInfovisPython.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkParallelPython.so
+%attr(755,root,root) %{py_sitedir}/vtk/vtkRenderingPython.so
+%if %{with textanalysis}
+%attr(755,root,root) %{py_sitedir}/vtk/vtkTextAnalysisPython.so
+%endif
 %attr(755,root,root) %{py_sitedir}/vtk/vtkViewsPython.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkVolumeRenderingPython.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkWidgetsPython.so
@@ -774,6 +801,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkPythonCore.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonD.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets.so
+%if %{with textanalysis}
+%attr(755,root,root) %{_libdir}/vtk/libvtkTextAnalysisPythonD.so
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsPythonD.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRenderingPythonD.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWidgetsPythonD.so
@@ -794,8 +824,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py_sitedir}/vtk/vtkImagingPythonSIP.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkInfovisPythonSIP.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkParallelPythonSIP.so
-%attr(755,root,root) %{py_sitedir}/vtk/vtkRenderingPython.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkRenderingPythonSIP.so
+%if %{with textanalysis}
+%attr(755,root,root) %{py_sitedir}/vtk/vtkTextAnalysisPythonSIP.so
+%endif
 %attr(755,root,root) %{py_sitedir}/vtk/vtkViewsPythonSIP.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkVolumeRenderingPythonSIP.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkWidgetsPythonSIP.so
@@ -839,6 +871,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkParallelTCL.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingTCL.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkRenderingTCL.so.5.10
+%if %{with textanalysis}
+%attr(755,root,root) %{_libdir}/vtk/libvtkTextAnalysisTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkTextAnalysisTCL.so.5.10
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsTCL.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkViewsTCL.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRenderingTCL.so.*.*.*
@@ -860,6 +896,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkInfovisTCL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallelTCL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingTCL.so
+%if %{with textanalysis}
+%attr(755,root,root) %{_libdir}/vtk/libvtkTextAnalysisTCL.so
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsTCL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkVolumeRenderingTCL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWidgetsTCL.so
