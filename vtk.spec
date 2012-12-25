@@ -2,8 +2,6 @@
 # - handle VTK_USE_MPEG2_ENCODER (see CMakeLists.txt)
 # - handle VTK_USE_PARALLEL_BGL (Parallel Boost Graph Library)
 # - more system libraries? (check for VTK_THIRD_PARTY_SUBDIR in Utilities/CMakeLists.txt)
-# - -DVTK_USE_CHEMISTRY:BOOL=ON (BR: OpenQube, Eigen2)
-# - -DVTK_USE_TEXT_ANALYSIS:BOOL=ON (BR: QtXmlPatterns-devel if built with Qt)
 #
 # Conditional build
 %bcond_without	java		# Java wrappers
@@ -11,9 +9,10 @@
 %bcond_without	sip		# Python wrappers available to SIP/PyQt
 %bcond_without	ffmpeg		# FFMPEG .avi saving support
 %bcond_without	odbc		# ODBC database interface
+%bcond_without	chemistry	# Chemistry module (requires OpenQube)
 %bcond_without	textanalysis	# TextAnalysis module (requires QtXmlPatterns)
 %bcond_with	OSMesa		# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
-%bcond_with	system_proj	# use system PROJ.4 (needs 4.3, not ready for 4.4+)
+%bcond_with	system_proj	# use system PROJ.4 (needs 4.3 with exposed internals, not ready for 4.4+)
 #
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
@@ -30,6 +29,7 @@ Patch0:		%{name}-system-libs.patch
 Patch1:		%{name}-vtkNetCDF_cxx-soname.patch
 Patch2:		%{name}-vtknetcdf-lm.patch
 Patch3:		%{name}-ffmpeg.patch
+Patch4:		%{name}-chemistry.patch
 URL:		http://www.vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -44,6 +44,7 @@ BuildRequires:	QtWebKit-devel >= 4.5.0
 BuildRequires:	boost-devel >= 1.39
 BuildRequires:	cmake >= 2.6.3
 BuildRequires:	doxygen
+%{?with_chemistry:BuildRequires:	eigen >= 2}
 BuildRequires:	expat-devel
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
 BuildRequires:	fontconfig-devel
@@ -65,6 +66,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libxml2-devel >= 2
 BuildRequires:	mysql-devel
 BuildRequires:	openmotif-devel
+%{?with_chemistry:BuildRequires:	openqube-devel}
 BuildRequires:	postgresql-devel
 %{?with_system_proj:BuildRequires:	proj-devel >= 4.3, proj-devel < 4.4}
 BuildRequires:	python-devel
@@ -319,6 +321,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 # Replace relative path ../../../VTKData with %{_datadir}/vtkdata-%{version}
 # otherwise it will break on symlinks.
@@ -366,6 +369,7 @@ cd build
 	-DVTK_PYTHON_SETUP_ARGS="--prefix=/usr --root=$RPM_BUILD_ROOT" \
 	-DVTK_USE_SYSTEM_LIBRARIES:BOOL=ON \
 	-DVTK_USE_BOOST:BOOL=ON \
+	%{?with_chemistry:-DVTK_USE_CHEMISTRY:BOOL=ON} \
 	%{?with_ffmpeg:-DVTK_USE_FFMPEG_ENCODER:BOOL=ON -DVTK_FFMPEG_HAS_OLD_HEADER:BOOL=OFF} \
 	-DVTK_USE_GL2PS:BOOL=ON \
 	%{?with_r:-DVTK_USE_GNU_R:BOOL=ON -DR_INCLUDE_DIR=/usr/include/R -DR_LIBRARY_BLAS=%{_libdir}/libblas.so -DR_LIBRARY_LAPACK=%{_libdir}/liblapack.so} \
@@ -504,6 +508,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/vtk/libmpistubs.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkCharts.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCharts.so.5.10
+%if %{with chemistry}
+%attr(755,root,root) %{_libdir}/vtk/libvtkChemistry.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkChemistry.so.5.10
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommon.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCommon.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkDICOMParser.so.*.*.*
@@ -558,6 +566,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtksys.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkverdict.so.5.10
+%if %{with chemistry}
+%dir %{_datadir}/vtk-5.10
+%{_datadir}/vtk-5.10/vtkChemistry
+%endif
 
 %files devel
 %defattr(644,root,root,755)
@@ -571,6 +583,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libVPIC.so
 %attr(755,root,root) %{_libdir}/vtk/libmpistubs.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkCharts.so
+%if %{with chemistry}
+%attr(755,root,root) %{_libdir}/vtk/libvtkChemistry.so
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommon.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkDICOMParser.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkFiltering.so
@@ -650,6 +665,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkWrapJava
 %attr(755,root,root) %{_libdir}/vtk/libvtkChartsJava.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkChartsJava.so.5.10
+%if %{with chemistry}
+%attr(755,root,root) %{_libdir}/vtk/libvtkChemistryJava.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkChemistryJava.so.5.10
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommonJava.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCommonJava.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkFilteringJava.so.*.*.*
@@ -687,6 +706,9 @@ rm -rf $RPM_BUILD_ROOT
 %files java-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/vtk/libvtkChartsJava.so
+%if %{with chemistry}
+%attr(755,root,root) %{_libdir}/vtk/libvtkChemistryJava.so
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommonJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkFilteringJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkGenericFilteringJava.so
@@ -714,6 +736,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkpython
 %attr(755,root,root) %{_libdir}/vtk/libvtkChartsPythonD.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkChartsPythonD.so.5.10
+%if %{with chemistry}
+%attr(755,root,root) %{_libdir}/vtk/libvtkChemistryPythonD.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkChemistryPythonD.so.5.10
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommonPythonD.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCommonPythonD.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkFilteringPythonD.so.*.*.*
@@ -766,6 +792,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py_sitedir}/vtk/wx
 %{py_sitedir}/vtk/wx/*.py[co]
 %attr(755,root,root) %{py_sitedir}/vtk/vtkChartsPython.so
+%if %{with chemistry}
+%attr(755,root,root) %{py_sitedir}/vtk/vtkChemistryPython.so
+%endif
 %attr(755,root,root) %{py_sitedir}/vtk/vtkCommonPython.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkFilteringPython.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkGenericFilteringPython.so
@@ -788,6 +817,9 @@ rm -rf $RPM_BUILD_ROOT
 %files python-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/vtk/libvtkChartsPythonD.so
+%if %{with chemistry}
+%attr(755,root,root) %{_libdir}/vtk/libvtkChemistryPythonD.so
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommonPythonD.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkFilteringPythonD.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkGenericFilteringPythonD.so
@@ -814,6 +846,9 @@ rm -rf $RPM_BUILD_ROOT
 %files python-sip
 %defattr(644,root,root,755)
 %attr(755,root,root) %{py_sitedir}/vtk/vtkChartsPythonSIP.so
+%if %{with chemistry}
+%attr(755,root,root) %{py_sitedir}/vtk/vtkChemistryPythonSIP.so
+%endif
 %attr(755,root,root) %{py_sitedir}/vtk/vtkCommonPythonSIP.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkFilteringPythonSIP.so
 %attr(755,root,root) %{py_sitedir}/vtk/vtkGenericFilteringPythonSIP.so
@@ -849,6 +884,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/vtk/pkgIndex.tcl
 %attr(755,root,root) %{_libdir}/vtk/libvtkChartsTCL.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkChartsTCL.so.5.10
+%if %{with chemistry}
+%attr(755,root,root) %{_libdir}/vtk/libvtkChemistryTCL.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/vtk/libvtkChemistryTCL.so.5.10
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommonTCL.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/vtk/libvtkCommonTCL.so.5.10
 %attr(755,root,root) %{_libdir}/vtk/libvtkFilteringTCL.so.*.*.*
@@ -885,6 +924,9 @@ rm -rf $RPM_BUILD_ROOT
 %files tcl-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/vtk/libvtkChartsTCL.so
+%if %{with chemistry}
+%attr(755,root,root) %{_libdir}/vtk/libvtkChemistryTCL.so
+%endif
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommonTCL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkFilteringTCL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkGenericFilteringTCL.so
