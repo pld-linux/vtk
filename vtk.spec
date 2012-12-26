@@ -1,6 +1,6 @@
 # TODO:
 # - handle VTK_USE_MPEG2_ENCODER (see CMakeLists.txt)
-# - handle VTK_USE_PARALLEL_BGL (Parallel Boost Graph Library)
+# - handle MPI and VTK_USE_PARALLEL_BGL (Parallel Boost Graph Library, BR: boost >= 1.40)
 # - more system libraries? (check for VTK_THIRD_PARTY_SUBDIR in Utilities/CMakeLists.txt)
 #
 # Conditional build
