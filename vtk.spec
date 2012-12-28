@@ -18,7 +18,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	5.10.1
-Release:	1
+Release:	2
 License:	BSD
 Group:		Libraries
 Source0:	http://www.vtk.org/files/release/5.10/%{name}-%{version}.tar.gz
