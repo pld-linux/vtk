@@ -70,7 +70,10 @@ BuildRequires:	openmotif-devel
 BuildRequires:	postgresql-devel
 %{?with_system_proj:BuildRequires:	proj-devel >= 4.3, proj-devel < 4.4}
 BuildRequires:	python-devel
-%{?with_sip:BuildRequires:	python-sip-devel}
+%if %{with sip}
+BuildRequires:	python-sip-devel
+BuildRequires:	python-PyQt4-devel
+%endif
 BuildRequires:	qt4-build >= 4.5.0
 BuildRequires:	rpmbuild(macros) >= 1.605
 %{?with_sip:BuildRequires:	sip}
