@@ -1,5 +1,5 @@
---- VTK5.10.1/Chemistry/vtkOpenQubeElectronicData.h.orig	2012-10-15 22:33:21.000000000 +0200
-+++ VTK5.10.1/Chemistry/vtkOpenQubeElectronicData.h	2012-12-25 07:56:14.818567966 +0100
+--- VTK5.10.1/Domains/Chemistry/vtkOpenQubeElectronicData.h.orig	2012-10-15 22:33:21.000000000 +0200
++++ VTK5.10.1/Domains/Chemistry/vtkOpenQubeElectronicData.h	2012-12-25 07:56:14.818567966 +0100
 @@ -43,7 +43,7 @@
  
    // Description:
@@ -9,8 +9,8 @@
  
    // Description:
    // Returns the vtkImageData for the requested molecular orbital. The data
---- VTK5.10.1/Chemistry/vtkOpenQubeElectronicData.cxx.orig	2012-10-15 22:33:21.000000000 +0200
-+++ VTK5.10.1/Chemistry/vtkOpenQubeElectronicData.cxx	2012-12-25 07:55:31.765235532 +0100
+--- VTK5.10.1/Domains/Chemistry/vtkOpenQubeElectronicData.cxx.orig	2012-10-15 22:33:21.000000000 +0200
++++ VTK5.10.1/Domains/Chemistry/vtkOpenQubeElectronicData.cxx	2012-12-25 07:55:31.765235532 +0100
 @@ -164,7 +164,7 @@
  }
  
