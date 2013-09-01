@@ -427,8 +427,8 @@ done
 install build/bin/VTKJavaExecutable $RPM_BUILD_ROOT%{_bindir}
 install build/bin/vtkpython $RPM_BUILD_ROOT%{_bindir}
 
-# Verdict places the docs in the false folder
-#%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-6.0
+# unwanted doxygen files and misplaced verdict docs
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-6.0/{doxygen,verdict}
 
 %py_postclean
 
@@ -483,6 +483,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/vtklibproj4
 %{_includedir}/vtk/vtkmetaio
 %{_includedir}/vtk/vtknetcdf
+%{_includedir}/vtk/vtkverdict
 %{_includedir}/vtk/vtksqlite
 %{_includedir}/vtk/vtksys
 %{_includedir}/vtk/vtk*.h
@@ -619,6 +620,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %dir %{_datadir}/vtk-data
 %{_datadir}/vtk-data/Baseline
+%{_datadir}/vtk-data/Copyright.txt
 %{_datadir}/vtk-data/Data
 %{_datadir}/vtk-data/VERSION
 %{_datadir}/vtk-data/VTKData.readme
