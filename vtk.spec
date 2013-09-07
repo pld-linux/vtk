@@ -30,6 +30,7 @@ BuildRequires:	OpenGL-devel
 BuildRequires:	QtCore-devel >= 4.5.0
 BuildRequires:	QtGui-devel >= 4.5.0
 BuildRequires:	QtNetwork-devel >= 4.5.0
+BuildRequires:	QtOpenGL-devel >= 4.5.0
 BuildRequires:	QtSql-devel >= 4.5.0
 BuildRequires:	QtWebKit-devel >= 4.5.0
 BuildRequires:	QtXmlPatterns-devel >= 4.5.0
@@ -78,7 +79,7 @@ BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-lib-libXft-devel
 BuildRequires:	xorg-lib-libXt-devel
 BuildRequires:	zlib-devel
-Requires:	QtXmlPatterns >= 4.5.0
+Requires:	gl2ps >= 1.3.8
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		skip_post_check_so	lib.*Python.*\.so.*
@@ -114,7 +115,6 @@ Summary(pl.UTF-8):	Pliki nagłówkowe VTK dla C++
 Group:		Development
 Requires:	%{name} = %{version}-%{release}
 Requires:	libstdc++-devel
-Obsoletes:	vtk-qt-devel < 6.0.0-1
 
 %description devel
 This provides the VTK header files required to compile C++ programs
@@ -125,22 +125,47 @@ Ten pakiet dostarcza pliki nagłówkowe VTK do kompilowania programów
 C++ używających VTK do wizualizacji 3D.
 
 %package qt
-Summary:	Qt designer plugin for VTK
-Summary(pl.UTF-8):	Wtyczka Qt designer-a do VTK
+Summary:	Qt bindings and Qt Designer plugin for VTK
+Summary(pl.UTF-8):	Wiązania Qt oraz wtyczka Qt Designera do VTK
 Group:		X11/Libraries
 Requires:	%{name} = %{version}-%{release}
+Requires:	QtCore >= 4.5.0
+Requires:	QtGui >= 4.5.0
+Requires:	QtNetwork >= 4.5.0
+Requires:	QtOpenGL >= 4.5.0
+Requires:	QtSql >= 4.5.0
+Requires:	QtWebKit >= 4.5.0
 
 %description qt
-Qt designer plugin for VTK.
+Qt bindings and Qt Designer plugin for VTK.
 
 %description qt -l pl.UTF-8
-Wtyczka Qt designer-a do VTK.
+Wiązania Qt oraz wtyczka Qt Designera do VTK.
+
+%package qt-devel
+Summary:	Header files for VTK Qt bindings
+Summary(pl.UTF-8):	Pliki nagłówkowe wiązań Qt do VTK
+Group:		X11/Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-qt = %{version}-%{release}
+Requires:	QtCore-devel >= 4.5.0
+Requires:	QtGui-devel >= 4.5.0
+Requires:	QtOpenGL-devel >= 4.5.0
+Requires:	QtSql-devel >= 4.5.0
+
+%description qt-devel
+Header files for VTK Qt bindings.
+
+%description qt-devel -l pl.UTF-8
+Pliki nagłówkowe wiązań Qt do VTK.
 
 %package java
 Summary:	Java bindings for VTK
 Summary(pl.UTF-8):	Wiązania Javy do VTK
 Group:		Development/Languages/Java
 Requires:	%{name} = %{version}-%{release}
+# or separate qt parts?
+Requires:	%{name}-qt = %{version}-%{release}
 
 %description java
 This package contains Java bindings for VTK.
@@ -168,6 +193,8 @@ Summary:	Python bindings for VTK
 Summary(pl.UTF-8):	Wiązania Pythona do VTK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+# or separate qt parts again?
+Requires:	%{name}-qt = %{version}-%{release}
 Obsoletes:	vtk-python-qt < 6.0.0-1
 Obsoletes:	vtk-python-sip < 6.0.0-1
 
@@ -196,6 +223,8 @@ Summary:	Tcl bindings for VTK
 Summary(pl.UTF-8):	Wiązania języka Tcl do VTK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
+# or separate qt parts?
+Requires:	%{name}-qt = %{version}-%{release}
 
 %description tcl
 This package contains Tcl bindings for VTK.
@@ -430,6 +459,8 @@ install build/bin/vtkpython $RPM_BUILD_ROOT%{_bindir}
 # unwanted doxygen files and misplaced verdict docs
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-6.0/{doxygen,verdict}
 
+# only *.pyc are built by default, add *.pyo
+%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}/vtk
 %py_postclean
 
 %clean
@@ -437,6 +468,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %post	-p /sbin/ldconfig
 %postun -p /sbin/ldconfig
+
+%post	qt -p /sbin/ldconfig
+%postun qt -p /sbin/ldconfig
 
 %post	java -p /sbin/ldconfig
 %postun	java -p /sbin/ldconfig
@@ -452,10 +486,51 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.html vtkLogo.jpg vtkBanner.gif Wrapping/Tools/README*
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ld.so.conf.d/vtk-%{_arch}.conf
 %dir %{_libdir}/vtk
-%attr(755,root,root) %{_libdir}/vtk/libvtk*.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkChartsCore.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkCommon*.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkDICOMParser.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkDomainsChemistry.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkFilters*.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkGeovisCore.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkIO*.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkImaging*.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkInfovis*.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkInteraction*.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkLocalExample.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF_cxx.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkParallelCore.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingAnnotation.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingContext2D.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingCore.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeType.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeOpenGL.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingGL2PS.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingHybridOpenGL.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingImage.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLOD.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLabel.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingOpenGL.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolume.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeAMR.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeOpenGL.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkTesting*.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsContext2D.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsCore.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsGeovis.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsInfovis.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkalglib.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkftgl.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkjsoncpp.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtksys.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so.1
 %exclude %{_libdir}/vtk/libvtk*Java.so.1
-%exclude %{_libdir}/vtk/libvtk*Python27D.so.1
-%exclude %{_libdir}/vtk/libvtkWrappingPython27Core.so.1
+%exclude %{_libdir}/vtk/libvtk*Python2?D.so.1
+%exclude %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
 %exclude %{_libdir}/vtk/libvtk*TCL.so.1
 
 %files devel
@@ -467,18 +542,58 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkParseOGLExt
 %attr(755,root,root) %{_bindir}/vtkProcessShader
 %attr(755,root,root) %{_bindir}/vtkWrapHierarchy
-%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingTools.a
-%attr(755,root,root) %{_libdir}/vtk/libvtk*.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkChartsCore.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkCommon*.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkDICOMParser.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkDomainsChemistry.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkFilters*.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkGeovisCore.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkIO*.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkImaging*.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkInfovis*.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkInteraction*.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkLocalExample.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF_cxx.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkParallelCore.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingAnnotation.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingContext2D.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingCore.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeType.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeOpenGL.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingGL2PS.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingHybridOpenGL.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingImage.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLOD.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLabel.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingOpenGL.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolume.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeAMR.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeOpenGL.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkTesting*.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsContext2D.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsCore.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsGeovis.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsInfovis.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkalglib.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkftgl.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkjsoncpp.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so
+%attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so
+%attr(755,root,root) %{_libdir}/vtk/libvtksys.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so
 %exclude %{_libdir}/vtk/libvtk*Java.so
-%exclude %{_libdir}/vtk/libvtk*Python27D.so
-%exclude %{_libdir}/vtk/libvtkWrappingPython27Core.so
+%exclude %{_libdir}/vtk/libvtk*Python2?D.so
+%exclude %{_libdir}/vtk/libvtkWrappingPython2?Core.so
 %exclude %{_libdir}/vtk/libvtk*TCL.so
+%{_libdir}/vtk/libvtkWrappingTools.a
 %dir %{_includedir}/vtk
 %{_includedir}/vtk/DICOM*.h
 %{_includedir}/vtk/DatabaseSchemaWith2Tables.h
 %{_includedir}/vtk/JSONCPP
 %{_includedir}/vtk/LSDyna*.h
-%{_includedir}/vtk/Q*.h
 %{_includedir}/vtk/alglib
 %{_includedir}/vtk/vtklibproj4
 %{_includedir}/vtk/vtkmetaio
@@ -488,16 +603,45 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/vtksys
 %{_includedir}/vtk/vtk*.h
 %{_includedir}/vtk/vtk*.txx
+%exclude %{_includedir}/vtk/vtkEventQtSlotConnect.h
+%exclude %{_includedir}/vtk/vtkGUISupportQt*.h
 %exclude %{_includedir}/vtk/vtkJavaUtil.h
 %exclude %{_includedir}/vtk/vtkWrappingJavaModule.h
 %exclude %{_includedir}/vtk/vtkPython*.h
+%exclude %{_includedir}/vtk/vtkQImageToImageSource.h
+%exclude %{_includedir}/vtk/vtkQt*.h
+%exclude %{_includedir}/vtk/vtkRenderingQtModule.h
 %exclude %{_includedir}/vtk/vtkTcl*.h
 %exclude %{_includedir}/vtk/vtkTk*.h
+%exclude %{_includedir}/vtk/vtkViewsQtModule.h
 %{_libdir}/cmake/vtk
 
 %files qt
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/vtk/libvtkGUISupportQt.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkGUISupportQtOpenGL.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkGUISupportQtSQL.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkGUISupportQtWebkit.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingQt.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsQt.so.1
 %attr(755,root,root) %{_libdir}/qt4/plugins/designer/libQVTKWidgetPlugin.so
+
+%files qt-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/vtk/libvtkGUISupportQt.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkGUISupportQtOpenGL.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkGUISupportQtSQL.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkGUISupportQtWebkit.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingQt.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkViewsQt.so
+%{_includedir}/vtk/QFilterTreeProxyModel.h
+%{_includedir}/vtk/QVTK*.h
+%{_includedir}/vtk/vtkEventQtSlotConnect.h
+%{_includedir}/vtk/vtkGUISupportQt*.h
+%{_includedir}/vtk/vtkQImageToImageSource.h
+%{_includedir}/vtk/vtkQt*.h
+%{_includedir}/vtk/vtkRenderingQtModule.h
+%{_includedir}/vtk/vtkViewsQtModule.h
 
 %if %{with java}
 %files java
@@ -505,14 +649,30 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/VTKJavaExecutable
 %attr(755,root,root) %{_bindir}/vtkParseJava
 %attr(755,root,root) %{_bindir}/vtkWrapJava
-%attr(755,root,root) %{_libdir}/vtk/libvtk*Java.so.1
+# common library
+%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingJava.so.1
+# java modules
+%attr(755,root,root) %{_libdir}/vtk/libvtkChartsCoreJava.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkCommon*Java.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkDomainsChemistryJava.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkFilters*Java.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkGeovisCoreJava.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkIO*Java.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkImaging*Java.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkInfovis*Java.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkInteraction*Java.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkLocalExampleJava.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkParallelCoreJava.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRendering*Java.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkTestingRenderingJava.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkViews*Java.so
 %{_libdir}/vtk/vtk.jar
 
 %files java-devel
 %defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingJava.so
 %{_includedir}/vtk/vtkJavaUtil.h
 %{_includedir}/vtk/vtkWrappingJavaModule.h
-%attr(755,root,root) %{_libdir}/vtk/libvtk*Java.so
 %endif
 
 %files python
@@ -521,8 +681,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkWrapPython
 %attr(755,root,root) %{_bindir}/vtkWrapPythonInit
 %attr(755,root,root) %{_bindir}/vtkpython
-%attr(755,root,root) %{_libdir}/vtk/libvtk*Python27D.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython27Core.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtk*Python2?D.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-6.0.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
 %dir %{py_sitedir}/vtk
 %{py_sitedir}/vtk/*.py[co]
 %dir %{py_sitedir}/vtk/gtk
@@ -542,8 +703,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files python-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/vtk/libvtk*Python27D.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython27Core.so
+%attr(755,root,root) %{_libdir}/vtk/libvtk*Python2?D.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython2?Core.so
 %{_includedir}/vtk/PyVTK*.h
 %{_includedir}/vtk/vtkPython*.h
 
