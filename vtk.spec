@@ -2,6 +2,11 @@
 # - handle VTK_USE_MPEG2_ENCODER (see CMakeLists.txt)
 # - handle MPI and VTK_USE_PARALLEL_BGL (Parallel Boost Graph Library, BR: boost >= 1.40)
 # - more system libraries? (check for VTK_THIRD_PARTY_SUBDIR in Utilities/CMakeLists.txt)
+# - CUDA for Accelerators/Piston (on bcond)
+# - NVCtrlLib for Rendering/OpenGL (on bcond)
+# - IO/GDAL? (seems not handled by main build system)
+# - IO/ODBC? (VTK_USE_ODBC=ON)
+# - Xdmf2?
 #
 # Conditional build
 %bcond_without	java		# Java wrappers
@@ -34,8 +39,9 @@ BuildRequires:	QtOpenGL-devel >= 4.5.0
 BuildRequires:	QtSql-devel >= 4.5.0
 BuildRequires:	QtWebKit-devel >= 4.5.0
 BuildRequires:	QtXmlPatterns-devel >= 4.5.0
+BuildRequires:	R-devel
 BuildRequires:	boost-devel >= 1.39
-BuildRequires:	cmake >= 2.6.3
+BuildRequires:	cmake >= 2.8.5
 BuildRequires:	doxygen
 BuildRequires:	eigen >= 2
 BuildRequires:	expat-devel
@@ -57,8 +63,8 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	libtheora-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libxml2-devel >= 2
+BuildRequires:	motif-devel
 BuildRequires:	mysql-devel
-BuildRequires:	openmotif-devel
 BuildRequires:	openqube-devel
 BuildRequires:	postgresql-devel
 %{?with_system_proj:BuildRequires:	proj-devel >= 4.3, proj-devel < 4.4}
