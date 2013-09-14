@@ -39,7 +39,7 @@ BuildRequires:	QtOpenGL-devel >= 4.5.0
 BuildRequires:	QtSql-devel >= 4.5.0
 BuildRequires:	QtWebKit-devel >= 4.5.0
 BuildRequires:	QtXmlPatterns-devel >= 4.5.0
-BuildRequires:	R-devel
+BuildRequires:	R
 BuildRequires:	boost-devel >= 1.39
 BuildRequires:	cmake >= 2.8.5
 BuildRequires:	doxygen
