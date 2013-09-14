@@ -6,7 +6,7 @@
 # - NVCtrlLib for Rendering/OpenGL (on bcond)
 # - IO/GDAL? (seems not handled by main build system)
 # - IO/ODBC? (VTK_USE_ODBC=ON)
-# - Xdmf2?
+# - Xdmf2? (not build by default?)
 #
 # Conditional build
 %bcond_without	java		# Java wrappers
