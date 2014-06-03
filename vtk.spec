@@ -18,7 +18,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	6.0.0
-Release:	4
+Release:	5
 License:	BSD
 Group:		Libraries
 Source0:	http://www.vtk.org/files/release/6.0/%{name}-%{version}.tar.gz
@@ -720,7 +720,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkWrapTcl
 %attr(755,root,root) %{_bindir}/vtkWrapTclInit
 %attr(755,root,root) %{_bindir}/vtk
-%{_datadir}/tcl8.5/vtk
+%{_datadir}/tcl%{tcl_version}/vtk
 %attr(755,root,root) %{_libdir}/vtk/libvtk*TCL.so.1
 
 %files tcl-devel
