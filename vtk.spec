@@ -1,4 +1,5 @@
 # TODO:
+# - check dependencies after upgrade to 6.1.0
 # - handle VTK_USE_MPEG2_ENCODER (see CMakeLists.txt)
 # - handle MPI and VTK_USE_PARALLEL_BGL (Parallel Boost Graph Library, BR: boost >= 1.40)
 # - more system libraries? (check for VTK_THIRD_PARTY_SUBDIR in Utilities/CMakeLists.txt)
@@ -17,14 +18,14 @@
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
-Version:	6.0.0
-Release:	5
+Version:	6.1.0
+Release:	0.1
 License:	BSD
 Group:		Libraries
-Source0:	http://www.vtk.org/files/release/6.0/%{name}-%{version}.tar.gz
-# Source0-md5:	72ede4812c90bdc55172702f0cad02bb
-Source1:	http://www.vtk.org/files/release/6.0/%{name}data-%{version}.tar.gz
-# Source1-md5:	f40bcfe92439575ae56aa3f2fcd30149
+Source0:	http://www.vtk.org/files/release/6.1/VTK-%{version}.tar.gz
+# Source0-md5:	25e4dfb3bad778722dcaec80cd5dab7d
+Source1:	http://www.vtk.org/files/release/6.1/VTKData-%{version}.tar.gz
+# Source1-md5:	f82c8fe151279c0422ab8a6cfe991c94
 Patch0:		%{name}-system-libs.patch
 Patch1:		%{name}-install.patch
 Patch2:		%{name}-chemistry.patch
@@ -41,7 +42,7 @@ BuildRequires:	QtWebKit-devel >= 4.5.0
 BuildRequires:	QtXmlPatterns-devel >= 4.5.0
 BuildRequires:	R
 BuildRequires:	boost-devel >= 1.39
-BuildRequires:	cmake >= 2.8.5
+BuildRequires:	cmake >= 2.8.8
 BuildRequires:	doxygen
 BuildRequires:	eigen >= 2
 BuildRequires:	expat-devel
@@ -56,6 +57,7 @@ BuildRequires:	hdf5-devel
 BuildRequires:	jdk >= 1.5
 BuildRequires:  jpackage-utils
 %endif
+BuildRequires:	jsoncpp-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel
@@ -65,6 +67,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libxml2-devel >= 2
 BuildRequires:	motif-devel
 BuildRequires:	mysql-devel
+BuildRequires:	netcdf-devel >= 4
 BuildRequires:	openqube-devel
 BuildRequires:	postgresql-devel
 %{?with_system_proj:BuildRequires:	proj-devel >= 4.3, proj-devel < 4.4}
@@ -306,15 +309,14 @@ Ten pakiet zawiera wszystkie dane z repozytorium VTKData. Dane te są
 potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 
 %prep
-%setup -q -n VTK%{version} -a 1
+%setup -q -n VTK-%{version} -b 1
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
 
-# Replace relative path ../../../VTKData with %{_datadir}/vtkdata-%{version}
-# otherwise it will break on symlinks.
-grep -rl '\.\./\.\./\.\./\.\./VTKData' . | xargs \
-  perl -pi -e's,\.\./\.\./\.\./\.\./VTKData,%{_datadir}/vtkdata-%{version},g'
+# Replace relative path ../../../VTKData with destination filesystem path
+grep -Erl '(\.\./)+VTKData' Examples | xargs \
+  perl -pi -e 's,(\.\./)+VTKData,%{_datadir}/vtk-6.1,g'
 
 # Save an unbuilt copy of the Example's sources for %doc
 mkdir vtk-examples
@@ -348,13 +350,14 @@ cd build
 	-DTCL_LIBRARY:PATH=%{_libdir}/libtcl.so \
 	-DTK_INCLUDE_PATH:PATH=%{_includedir} \
 	-DTK_LIBRARY:PATH=%{_libdir}/libtk.so \
-	-DVTK_DATA_ROOT:PATH=%{_datadir}/vtk \
+	-DVTK_DATA_ROOT:PATH=%{_datadir}/vtk-6.1 \
 	-DVTK_CUSTOM_LIBRARY_SUFFIX="" \
 	-DVTK_INSTALL_ARCHIVE_DIR:PATH=%{_lib}/vtk \
 	-DVTK_INSTALL_INCLUDE_DIR:PATH=include/vtk \
 	-DVTK_INSTALL_LIBRARY_DIR:PATH=%{_lib}/vtk \
 	-DVTK_INSTALL_PACKAGE_DIR:PATH=%{_lib}/cmake/vtk \
 	-DVTK_INSTALL_TCL_DIR:PATH=share/tcl%{tcl_version}/vtk \
+	-DVTK_INSTALL_PYTHON_MODULE_DIR:PATH=%{py_sitedir} \
 	-DVTK_INSTALL_QT_DIR=/%{_lib}/qt4/plugins/designer \
 	%{?with_OSMesa:-DVTK_OPENGL_HAS_OSMESA:BOOL=ON} \
 	-DVTK_WRAP_PYTHON:BOOL=ON \
@@ -387,8 +390,7 @@ cd build
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ld.so.conf.d,%{_examplesdir}/%{name}-%{version},%{_datadir}/vtk-data} \
-	$RPM_BUILD_ROOT%{py_sitedir}
+install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ld.so.conf.d,%{_examplesdir}/%{name}-%{version}}
 
 %{__make} -C build install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -396,11 +398,9 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ld.so.conf.d,%{_examplesdir}/%{name}-%
 # ld config
 echo %{_libdir}/vtk > $RPM_BUILD_ROOT%{_sysconfdir}/ld.so.conf.d/vtk-%{_arch}.conf
 
-# fix python install path
-mv $RPM_BUILD_ROOT%{py_sitescriptdir}/* $RPM_BUILD_ROOT%{py_sitedir}
-
-cp -a VTKDATA%{version}/* $RPM_BUILD_ROOT%{_datadir}/vtk-data
-cp -a vtk-examples/Examples/* $RPM_BUILD_ROOT%{_examplesdir}/%{name}-%{version}
+for f in $(cd build/ExternalData/Testing ; find Data -type l); do
+	install -Dp build/ExternalData/Testing/$f $RPM_BUILD_ROOT%{_datadir}/vtk-6.1/$f
+done
 
 # Install utilities
 install build/bin/lproj $RPM_BUILD_ROOT%{_bindir}
@@ -434,14 +434,15 @@ HierarchicalBoxPipeline \
 ImageDataLIC2DDemo \
 ImageSlicing \
 LabeledMesh \
-MaterialObjects \
 Medical1 \
 Medical2 \
 Medical3 \
+Medical4 \
 MultiBlock \
 ParticleReader \
 RGrid \
 SGrid \
+SimpleView \
 Slider \
 Slider2D \
 SpecularSpheres \
@@ -463,7 +464,7 @@ install build/bin/VTKJavaExecutable $RPM_BUILD_ROOT%{_bindir}
 install build/bin/vtkpython $RPM_BUILD_ROOT%{_bindir}
 
 # unwanted doxygen files and misplaced verdict docs
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-6.0/{doxygen,verdict}
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-6.1/{doxygen,verdict}
 
 # only *.pyc are built by default, add *.pyo
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}/vtk
@@ -503,8 +504,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkInfovis*.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkInteraction*.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkLocalExample.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF_cxx.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallelCore.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingAnnotation.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingContext2D.so.1
@@ -512,8 +511,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeType.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeOpenGL.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingGL2PS.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingHybridOpenGL.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingImage.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLIC.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLOD.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLabel.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingOpenGL.so.1
@@ -528,7 +527,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkalglib.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkftgl.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkjsoncpp.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so.1
@@ -546,7 +544,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkEncodeString
 %attr(755,root,root) %{_bindir}/vtkHashSource
 %attr(755,root,root) %{_bindir}/vtkParseOGLExt
-%attr(755,root,root) %{_bindir}/vtkProcessShader
 %attr(755,root,root) %{_bindir}/vtkWrapHierarchy
 %attr(755,root,root) %{_libdir}/vtk/libvtkChartsCore.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommon*.so
@@ -559,8 +556,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkInfovis*.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkInteraction*.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkLocalExample.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkNetCDF_cxx.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallelCore.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingAnnotation.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingContext2D.so
@@ -568,8 +563,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeType.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeOpenGL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingGL2PS.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingHybridOpenGL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingImage.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLIC.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLOD.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLabel.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingOpenGL.so
@@ -584,7 +579,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkalglib.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkftgl.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkjsoncpp.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so
 %attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so
@@ -598,12 +592,10 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_includedir}/vtk
 %{_includedir}/vtk/DICOM*.h
 %{_includedir}/vtk/DatabaseSchemaWith2Tables.h
-%{_includedir}/vtk/JSONCPP
 %{_includedir}/vtk/LSDyna*.h
 %{_includedir}/vtk/alglib
 %{_includedir}/vtk/vtklibproj4
 %{_includedir}/vtk/vtkmetaio
-%{_includedir}/vtk/vtknetcdf
 %{_includedir}/vtk/vtkverdict
 %{_includedir}/vtk/vtksqlite
 %{_includedir}/vtk/vtksys
@@ -688,7 +680,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkWrapPythonInit
 %attr(755,root,root) %{_bindir}/vtkpython
 %attr(755,root,root) %{_libdir}/vtk/libvtk*Python2?D.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-6.0.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-6.1.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
 %dir %{py_sitedir}/vtk
 %{py_sitedir}/vtk/*.py[co]
@@ -705,7 +697,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py_sitedir}/vtk/wx
 %{py_sitedir}/vtk/wx/*.py[co]
 %attr(755,root,root) %{py_sitedir}/vtk/vtk*Python.so
-%{py_sitedir}/VTK-*-py*.egg-info
 
 %files python-devel
 %defattr(644,root,root,755)
@@ -752,9 +743,11 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/Medical1
 %attr(755,root,root) %{_bindir}/Medical2
 %attr(755,root,root) %{_bindir}/Medical3
+%attr(755,root,root) %{_bindir}/Medical4
 %attr(755,root,root) %{_bindir}/MultiBlock
 %attr(755,root,root) %{_bindir}/RGrid
 %attr(755,root,root) %{_bindir}/SGrid
+%attr(755,root,root) %{_bindir}/SimpleView
 %attr(755,root,root) %{_bindir}/SpecularSpheres
 %attr(755,root,root) %{_bindir}/finance
 %attr(755,root,root) %{_bindir}/BalloonWidget
@@ -772,7 +765,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/ImageDataLIC2DDemo
 %attr(755,root,root) %{_bindir}/ImageSlicing
 %attr(755,root,root) %{_bindir}/LabeledMesh
-%attr(755,root,root) %{_bindir}/MaterialObjects
 %attr(755,root,root) %{_bindir}/ParticleReader
 %attr(755,root,root) %{_bindir}/Slider
 %attr(755,root,root) %{_bindir}/Slider2D
@@ -785,9 +777,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files data
 %defattr(644,root,root,755)
-%dir %{_datadir}/vtk-data
-%{_datadir}/vtk-data/Baseline
-%{_datadir}/vtk-data/Copyright.txt
-%{_datadir}/vtk-data/Data
-%{_datadir}/vtk-data/VERSION
-%{_datadir}/vtk-data/VTKData.readme
+%dir %{_datadir}/vtk-6.1
+%{_datadir}/vtk-6.1/Data
+%{_datadir}/vtk-6.1/vtkDomainsChemistry
