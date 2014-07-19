@@ -1,13 +1,11 @@
 # TODO:
-# - check dependencies after upgrade to 6.1.0
 # - handle VTK_USE_MPEG2_ENCODER (see CMakeLists.txt)
 # - handle MPI and VTK_USE_PARALLEL_BGL (Parallel Boost Graph Library, BR: boost >= 1.40)
 # - more system libraries? (check for VTK_THIRD_PARTY_SUBDIR in Utilities/CMakeLists.txt)
 # - CUDA for Accelerators/Piston (on bcond)
 # - NVCtrlLib for Rendering/OpenGL (on bcond)
-# - IO/GDAL? (seems not handled by main build system)
-# - IO/ODBC? (VTK_USE_ODBC=ON)
 # - Xdmf2? (not build by default?)
+# - VTK_USE_SYSTEM_XDMF2 ?
 #
 # Conditional build
 %bcond_without	java		# Java wrappers
@@ -44,11 +42,11 @@ BuildRequires:	R
 BuildRequires:	boost-devel >= 1.39
 BuildRequires:	cmake >= 2.8.8
 BuildRequires:	doxygen
-BuildRequires:	eigen >= 2
 BuildRequires:	expat-devel
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
 BuildRequires:	fontconfig-devel
 BuildRequires:	freetype-devel >= 2
+BuildRequires:	gdal-devel
 BuildRequires:	gl2ps-devel >= 1.3.8
 BuildRequires:	gnuplot
 BuildRequires:	graphviz
@@ -68,17 +66,21 @@ BuildRequires:	libxml2-devel >= 2
 BuildRequires:	motif-devel
 BuildRequires:	mysql-devel
 BuildRequires:	netcdf-devel >= 4
-BuildRequires:	openqube-devel
+# some code using it exists (Domains/Chemistry), but is not included in cmakefiles
+#BuildRequires:	openqube-devel
+BuildRequires:	perl-base
 BuildRequires:	postgresql-devel
 %{?with_system_proj:BuildRequires:	proj-devel >= 4.3, proj-devel < 4.4}
-BuildRequires:	python-devel
+BuildRequires:	python-devel >= 2
 BuildRequires:	python-sip-devel
 BuildRequires:	python-PyQt4-devel
 BuildRequires:	qt4-build >= 4.5.0
+BuildRequires:	qt4-qmake >= 4.5.0
 BuildRequires:	rpmbuild(macros) >= 1.605
 BuildRequires:	sip
 BuildRequires:	tcl-devel
 BuildRequires:	tk-devel
+BuildRequires:	unixODBC-devel
 BuildRequires:	wget
 BuildRequires:	xorg-lib-libICE-devel
 BuildRequires:	xorg-lib-libSM-devel
@@ -359,6 +361,7 @@ cd build
 	-DVTK_INSTALL_TCL_DIR:PATH=share/tcl%{tcl_version}/vtk \
 	-DVTK_INSTALL_PYTHON_MODULE_DIR:PATH=%{py_sitedir} \
 	-DVTK_INSTALL_QT_DIR=/%{_lib}/qt4/plugins/designer \
+	-DVTK_FFMPEG_HAS_OLD_HEADER:BOOL=OFF \
 	%{?with_OSMesa:-DVTK_OPENGL_HAS_OSMESA:BOOL=ON} \
 	-DVTK_WRAP_PYTHON:BOOL=ON \
 	-DVTK_PYTHON_SETUP_ARGS="--prefix=/usr --root=$RPM_BUILD_ROOT" \
@@ -384,7 +387,29 @@ cd build
 	-DVTK_Group_StandAlone:BOOL=ON \
 	-DVTK_Group_Tk:BOOL=ON \
 	-DVTK_Group_Views:BOOL=ON \
-	-DModule_vtkFiltersStatisticsGnuR:BOOL=ON
+	-DModule_vtkFiltersReebGraph:BOOL=ON \
+	-DModule_vtkFiltersStatisticsGnuR:BOOL=ON \
+	%{?with_ffmpeg:-DModule_vtkIOFFMPEG:BOOL=ON} \
+	-DModule_vtkIOGDAL:BOOL=ON \
+	-DModule_vtkIOGeoJSON:BOOL=ON \
+	-DModule_vtkIOMySQL:BOOL=ON \
+	-DModule_vtkIOODBC:BOOL=ON \
+	-DModule_vtkIOParallelExodus:BOOL=ON \
+	-DModule_vtkIOParallelLSDyna:BOOL=ON \
+	-DModule_vtkIOPostgreSQL:BOOL=ON \
+	-DModule_vtkIOVPIC:BOOL=ON \
+	-DModule_vtkInfovisBoost:BOOL=ON \
+	-DModule_vtkInfovisBoostGraphAlgorithms:BOOL=ON \
+	-DModule_vtkRenderingFreeTypeFontConfig:BOOL=ON \
+	-DModule_vtkRenderingMatplotlib:BOOL=ON \
+	-DModule_vtkRenderingParallel:BOOL=ON
+# TODO: -DModule_vtkAcceleratorsDax:BOOL=ON (BR: FindDax.cmake, maybe http://www.daxtoolkit.org/ ?)
+# TODO:	-DModule_vtkAcceleratorsPiston:BOOL=ON (on bcond, BR: CUDA)
+# TODO:	-DModule_vtkFiltersParallelFlowPaths:BOOL=ON (BR: MPI)
+# TODO:	-DModule_vtkFiltersParallelStatistics:BOOL=ON (BR: MPI)
+#	-DModule_vtkIOXdmf2:BOOL=ON broken with included Xdmf2?
+# TODO:	-DModule_vtkInfovisParallel:BOOL=ON (BR: MPI)
+# TODO:	-DModule_vtkRenderingParallelLIC:BOOL=ON (BR: MPI)
 
 %{__make}
 
@@ -509,6 +534,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingContext2D.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingCore.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeType.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeFontConfig.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeOpenGL.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingGL2PS.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingImage.so.1
@@ -516,10 +542,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLOD.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLabel.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingOpenGL.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingParallel.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolume.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeAMR.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeOpenGL.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkTesting*.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkVPIC.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsContext2D.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsCore.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsGeovis.so.1
@@ -561,6 +589,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingContext2D.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingCore.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeType.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeFontConfig.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeOpenGL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingGL2PS.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingImage.so
@@ -568,10 +597,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLOD.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLabel.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingOpenGL.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingParallel.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolume.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeAMR.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeOpenGL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkTesting*.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkVPIC.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsContext2D.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsCore.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsGeovis.so
@@ -590,6 +621,7 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_libdir}/vtk/libvtk*TCL.so
 %{_libdir}/vtk/libvtkWrappingTools.a
 %dir %{_includedir}/vtk
+%{_includedir}/vtk/VPIC
 %{_includedir}/vtk/DICOM*.h
 %{_includedir}/vtk/DatabaseSchemaWith2Tables.h
 %{_includedir}/vtk/LSDyna*.h
@@ -661,6 +693,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkInteraction*Java.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkLocalExampleJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallelCoreJava.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkPythonInterpreterJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRendering*Java.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkTestingRenderingJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkViews*Java.so
@@ -680,6 +713,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkWrapPythonInit
 %attr(755,root,root) %{_bindir}/vtkpython
 %attr(755,root,root) %{_libdir}/vtk/libvtk*Python2?D.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkPythonInterpreter.so.1
+# RenderingMatplotlib requires PythonInterpreter
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingMatplotlib.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-6.1.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
 %dir %{py_sitedir}/vtk
@@ -701,6 +737,8 @@ rm -rf $RPM_BUILD_ROOT
 %files python-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/vtk/libvtk*Python2?D.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkPythonInterpreter.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingMatplotlib.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython2?Core.so
 %{_includedir}/vtk/PyVTK*.h
 %{_includedir}/vtk/vtkPython*.h
