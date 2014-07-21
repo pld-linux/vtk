@@ -4,8 +4,7 @@
 # - more system libraries? (check for VTK_THIRD_PARTY_SUBDIR in Utilities/CMakeLists.txt)
 # - CUDA for Accelerators/Piston (on bcond)
 # - NVCtrlLib for Rendering/OpenGL (on bcond)
-# - Xdmf2? (not build by default?)
-# - VTK_USE_SYSTEM_XDMF2 ?
+# - VTK_USE_SYSTEM_XDMF2=ON ? (but our xdmf-devel seems not compatible)
 #
 # Conditional build
 %bcond_without	java		# Java wrappers
@@ -17,7 +16,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	6.1.0
-Release:	0.1
+Release:	1
 License:	BSD
 Group:		Libraries
 Source0:	http://www.vtk.org/files/release/6.1/VTK-%{version}.tar.gz
@@ -369,6 +368,7 @@ cd build
 	-DVTK_USE_OGGTHEORA_ENCODER:BOOL=ON \
 	-DVTK_USE_RENDERING:BOOL=ON \
 	-DVTK_USE_SYSTEM_HDF5:BOOL=ON \
+	-DVTK_USE_SYSTEM_XDMF2:BOOL=OFF \
 	%{!?with_system_proj:-DVTK_USE_SYSTEM_LIBPROJ4:BOOL=OFF} \
 %if %{with java}
 	-DVTK_WRAP_JAVA:BOOL=ON \
@@ -398,6 +398,7 @@ cd build
 	-DModule_vtkIOParallelLSDyna:BOOL=ON \
 	-DModule_vtkIOPostgreSQL:BOOL=ON \
 	-DModule_vtkIOVPIC:BOOL=ON \
+	-DModule_vtkIOXdmf2:BOOL=ON \
 	-DModule_vtkInfovisBoost:BOOL=ON \
 	-DModule_vtkInfovisBoostGraphAlgorithms:BOOL=ON \
 	-DModule_vtkRenderingFreeTypeFontConfig:BOOL=ON \
@@ -407,7 +408,6 @@ cd build
 # TODO:	-DModule_vtkAcceleratorsPiston:BOOL=ON (on bcond, BR: CUDA)
 # TODO:	-DModule_vtkFiltersParallelFlowPaths:BOOL=ON (BR: MPI)
 # TODO:	-DModule_vtkFiltersParallelStatistics:BOOL=ON (BR: MPI)
-#	-DModule_vtkIOXdmf2:BOOL=ON broken with included Xdmf2?
 # TODO:	-DModule_vtkInfovisParallel:BOOL=ON (BR: MPI)
 # TODO:	-DModule_vtkRenderingParallelLIC:BOOL=ON (BR: MPI)
 
@@ -560,6 +560,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtksys.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkxdmf2.so.1
 %exclude %{_libdir}/vtk/libvtk*Java.so.1
 %exclude %{_libdir}/vtk/libvtk*Python2?D.so.1
 %exclude %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
@@ -615,6 +616,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so
 %attr(755,root,root) %{_libdir}/vtk/libvtksys.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkxdmf2.so
 %exclude %{_libdir}/vtk/libvtk*Java.so
 %exclude %{_libdir}/vtk/libvtk*Python2?D.so
 %exclude %{_libdir}/vtk/libvtkWrappingPython2?Core.so
@@ -631,6 +633,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/vtkverdict
 %{_includedir}/vtk/vtksqlite
 %{_includedir}/vtk/vtksys
+%{_includedir}/vtk/vtkxdmf2
 %{_includedir}/vtk/vtk*.h
 %{_includedir}/vtk/vtk*.txx
 %exclude %{_includedir}/vtk/vtkEventQtSlotConnect.h
