@@ -72,11 +72,11 @@ BuildRequires:	postgresql-devel
 %{?with_system_proj:BuildRequires:	proj-devel >= 4.3, proj-devel < 4.4}
 BuildRequires:	python-devel >= 2
 BuildRequires:	python-sip-devel
-BuildRequires:	python-PyQt4-devel
 BuildRequires:	qt4-build >= 4.5.0
 BuildRequires:	qt4-qmake >= 4.5.0
 BuildRequires:	rpmbuild(macros) >= 1.605
 BuildRequires:	sip
+BuildRequires:	sip-PyQt4
 BuildRequires:	tcl-devel
 BuildRequires:	tk-devel
 BuildRequires:	unixODBC-devel
