@@ -16,7 +16,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	6.1.0
-Release:	6
+Release:	7
 License:	BSD
 Group:		Libraries
 Source0:	http://www.vtk.org/files/release/6.1/VTK-%{version}.tar.gz
@@ -26,6 +26,7 @@ Source1:	http://www.vtk.org/files/release/6.1/VTKData-%{version}.tar.gz
 Patch0:		%{name}-system-libs.patch
 Patch1:		%{name}-install.patch
 Patch2:		%{name}-chemistry.patch
+Patch3:		conflicting-types.patch
 URL:		http://www.vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -64,7 +65,7 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libxml2-devel >= 2
 BuildRequires:	motif-devel
 BuildRequires:	mysql-devel
-BuildRequires:	netcdf-devel >= 4
+BuildRequires:	netcdf-cxx-devel >= 4
 # some code using it exists (Domains/Chemistry), but is not included in cmakefiles
 #BuildRequires:	openqube-devel
 BuildRequires:	perl-base
@@ -314,6 +315,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
@@ -333,7 +335,7 @@ export CXXFLAGS="%{rpmcxxflags} -D_UNICODE"
 export JAVA_HOME=%{java_home}
 %endif
 
-mkdir build
+mkdir -p build
 cd build
 %cmake .. \
 	-DBUILD_DOCUMENTATION:BOOL=ON \
