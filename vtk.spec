@@ -16,7 +16,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	6.1.0
-Release:	11
+Release:	12
 License:	BSD
 Group:		Libraries
 Source0:	http://www.vtk.org/files/release/6.1/VTK-%{version}.tar.gz
@@ -27,7 +27,6 @@ Patch0:		%{name}-system-libs.patch
 Patch1:		%{name}-install.patch
 Patch2:		%{name}-chemistry.patch
 Patch3:		conflicting-types.patch
-Patch4:		jsoncpp16.patch
 URL:		http://www.vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -318,7 +317,6 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
@@ -341,6 +339,7 @@ export JAVA_HOME=%{java_home}
 mkdir -p build
 cd build
 %cmake .. \
+	-Wno-dev \
 	-DBUILD_DOCUMENTATION:BOOL=ON \
 	-DBUILD_EXAMPLES:BOOL=ON \
 	-DBUILD_SHARED_LIBS:BOOL=ON \
