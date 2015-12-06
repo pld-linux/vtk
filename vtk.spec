@@ -515,7 +515,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.html vtkLogo.jpg vtkBanner.gif Wrapping/Tools/README*
+%doc README.md vtkLogo.jpg vtkBanner.gif Wrapping/Tools/README*
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ld.so.conf.d/vtk-%{_arch}.conf
 %dir %{_libdir}/vtk
 %attr(755,root,root) %{_libdir}/vtk/libvtkChartsCore.so.1
@@ -532,10 +532,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallelCore.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingAnnotation.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingContext2D.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingContextOpenGL.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingCore.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeType.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeFontConfig.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeOpenGL.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingGL2PS.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingImage.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLIC.so.1
@@ -544,7 +544,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingOpenGL.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingParallel.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolume.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeAMR.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeOpenGL.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkTesting*.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkVPIC.so.1
@@ -588,10 +587,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallelCore.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingAnnotation.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingContext2D.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingContextOpenGL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingCore.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeType.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeFontConfig.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingFreeTypeOpenGL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingGL2PS.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingImage.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingLIC.so
@@ -600,7 +599,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingOpenGL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingParallel.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolume.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeAMR.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingVolumeOpenGL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkTesting*.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkVPIC.so
@@ -626,7 +624,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/VPIC
 %{_includedir}/vtk/DICOM*.h
 %{_includedir}/vtk/DatabaseSchemaWith2Tables.h
-%{_includedir}/vtk/LSDyna*.h
 %{_includedir}/vtk/alglib
 %{_includedir}/vtk/vtklibproj4
 %{_includedir}/vtk/vtkmetaio
