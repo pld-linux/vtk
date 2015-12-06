@@ -24,6 +24,7 @@ Source0:	http://www.vtk.org/files/release/6.3/VTK-%{version}.tar.gz
 Source1:	http://www.vtk.org/files/release/6.3/VTKData-%{version}.tar.gz
 # Source1-md5:	b164200226805aeb741703a8168afdda
 Patch0:		%{name}-chemistry.patch
+Patch1:		gdal2.patch
 URL:		http://www.vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -311,6 +312,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %prep
 %setup -q -n VTK-%{version} -b 1
 %patch0 -p1
+%patch1 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
