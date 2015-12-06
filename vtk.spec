@@ -15,18 +15,15 @@
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
-Version:	6.1.0
-Release:	15
+Version:	6.3.0
+Release:	1
 License:	BSD
 Group:		Libraries
-Source0:	http://www.vtk.org/files/release/6.1/VTK-%{version}.tar.gz
-# Source0-md5:	25e4dfb3bad778722dcaec80cd5dab7d
-Source1:	http://www.vtk.org/files/release/6.1/VTKData-%{version}.tar.gz
-# Source1-md5:	f82c8fe151279c0422ab8a6cfe991c94
-Patch0:		%{name}-system-libs.patch
-Patch1:		%{name}-install.patch
-Patch2:		%{name}-chemistry.patch
-Patch3:		conflicting-types.patch
+Source0:	http://www.vtk.org/files/release/6.3/VTK-%{version}.tar.gz
+# Source0-md5:	0231ca4840408e9dd60af48b314c5b6d
+Source1:	http://www.vtk.org/files/release/6.3/VTKData-%{version}.tar.gz
+# Source1-md5:	b164200226805aeb741703a8168afdda
+Patch0:		%{name}-chemistry.patch
 URL:		http://www.vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -314,13 +311,10 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %prep
 %setup -q -n VTK-%{version} -b 1
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
-  perl -pi -e 's,(\.\./)+VTKData,%{_datadir}/vtk-6.1,g'
+  perl -pi -e 's,(\.\./)+VTKData,%{_datadir}/vtk-6.3,g'
 
 # Save an unbuilt copy of the Example's sources for %doc
 mkdir vtk-examples
@@ -355,7 +349,7 @@ cd build
 	-DTCL_LIBRARY:PATH=%{_libdir}/libtcl.so \
 	-DTK_INCLUDE_PATH:PATH=%{_includedir} \
 	-DTK_LIBRARY:PATH=%{_libdir}/libtk.so \
-	-DVTK_DATA_ROOT:PATH=%{_datadir}/vtk-6.1 \
+	-DVTK_DATA_ROOT:PATH=%{_datadir}/vtk-6.3 \
 	-DVTK_CUSTOM_LIBRARY_SUFFIX="" \
 	-DVTK_INSTALL_ARCHIVE_DIR:PATH=%{_lib}/vtk \
 	-DVTK_INSTALL_INCLUDE_DIR:PATH=include/vtk \
@@ -428,7 +422,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ld.so.conf.d,%{_examplesdir}/%{name}-%
 echo %{_libdir}/vtk > $RPM_BUILD_ROOT%{_sysconfdir}/ld.so.conf.d/vtk-%{_arch}.conf
 
 for f in $(cd build/ExternalData/Testing ; find Data -type l); do
-	install -Dp build/ExternalData/Testing/$f $RPM_BUILD_ROOT%{_datadir}/vtk-6.1/$f
+	install -Dp build/ExternalData/Testing/$f $RPM_BUILD_ROOT%{_datadir}/vtk-6.3/$f
 done
 
 # Install utilities
@@ -493,7 +487,7 @@ install build/bin/VTKJavaExecutable $RPM_BUILD_ROOT%{_bindir}
 install build/bin/vtkpython $RPM_BUILD_ROOT%{_bindir}
 
 # unwanted doxygen files and misplaced verdict docs
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-6.1/{doxygen,verdict}
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-6.3/{doxygen,verdict}
 
 # only *.pyc are built by default, add *.pyo
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}/vtk
@@ -723,7 +717,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkPythonInterpreter.so.1
 # RenderingMatplotlib requires PythonInterpreter
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingMatplotlib.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-6.1.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-6.3.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
 %dir %{py_sitedir}/vtk
 %{py_sitedir}/vtk/*.py[co]
@@ -822,6 +816,6 @@ rm -rf $RPM_BUILD_ROOT
 
 %files data
 %defattr(644,root,root,755)
-%dir %{_datadir}/vtk-6.1
-%{_datadir}/vtk-6.1/Data
-%{_datadir}/vtk-6.1/vtkDomainsChemistry
+%dir %{_datadir}/vtk-6.3
+%{_datadir}/vtk-6.3/Data
+%{_datadir}/vtk-6.3/vtkDomainsChemistry
