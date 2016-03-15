@@ -14,7 +14,14 @@
      }
  
    //to do playback at actual recorded rate, this will need more work see also below
-@@ -280,7 +280,7 @@
+@@ -274,13 +274,13 @@
+ #endif
+ 
+   //for the output of the writer's input...
+-  this->rgbInput = avcodec_alloc_frame();
++  this->rgbInput = av_frame_alloc();
+   if (!this->rgbInput)
+     {
      vtkGenericWarningMacro (<< "Could not make rgbInput avframe." );
      return 0;
      }
@@ -23,7 +30,7 @@
    unsigned char *rgb = (unsigned char *)av_malloc(sizeof(unsigned char) * RGBsize);
    if (!rgb)
      {
-@@ -288,7 +288,7 @@
+@@ -288,10 +288,10 @@
      return 0;
      }
    //The rgb buffer should get deleted when this->rgbInput is.
@@ -31,7 +38,11 @@
 +  avpicture_fill((AVPicture *)this->rgbInput, rgb, AV_PIX_FMT_RGB24, c->width, c->height);
  
    //and for the output to the codec's input.
-   this->yuvOutput = avcodec_alloc_frame();
+-  this->yuvOutput = avcodec_alloc_frame();
++  this->yuvOutput = av_frame_alloc();
+   if (!this->yuvOutput)
+     {
+     vtkGenericWarningMacro (<< "Could not make yuvOutput avframe." );
 @@ -349,12 +349,12 @@
    //convert that to YUV for input to the codec
  #ifdef VTK_FFMPEG_HAS_IMG_CONVERT
@@ -47,3 +58,5 @@
      cc->width, cc->height, cc->pix_fmt,
      SWS_BICUBIC, NULL, NULL, NULL);
  
+--- /home/users/baggins/devel/PLD/rpm/BUILD/VTK-6.3.0/IO/FFMPEG/vtkFFMPEGWriter.cxx.orig	2016-03-15 21:17:23.644519836 +0100
++++ /home/users/baggins/devel/PLD/rpm/BUILD/VTK-6.3.0/IO/FFMPEG/vtkFFMPEGWriter.cxx	2016-03-15 21:17:32.411309228 +0100
