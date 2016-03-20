@@ -724,6 +724,8 @@ rm -rf $RPM_BUILD_ROOT
 %{py_sitedir}/vtk/*.py[co]
 %dir %{py_sitedir}/vtk/gtk
 %{py_sitedir}/vtk/gtk/*.py[co]
+%dir %{py_sitedir}/vtk/numpy_interface
+%{py_sitedir}/vtk/numpy_interface/*.py[co]
 %dir %{py_sitedir}/vtk/qt4
 %{py_sitedir}/vtk/qt4/*.py[co]
 %dir %{py_sitedir}/vtk/test
