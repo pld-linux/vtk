@@ -5,6 +5,7 @@
 # - CUDA for Accelerators/Piston (on bcond)
 # - NVCtrlLib for Rendering/OpenGL (on bcond)
 # - VTK_USE_SYSTEM_XDMF2=ON ? (but our xdmf-devel seems not compatible)
+# - python bcond?
 #
 # Conditional build
 %bcond_without	java		# Java wrappers
@@ -483,12 +484,14 @@ finance ; do
 done
 
 # Install test binaries
-for f in build/bin/*Tests build/bin/Test* build/bin/VTKBenchMark ; do
+for f in build/bin/*Tests build/bin/Test* build/bin/VTKBenchMark; do
 	install $f $RPM_BUILD_ROOT%{_bindir}
 done
 
-install build/bin/VTKJavaExecutable $RPM_BUILD_ROOT%{_bindir}
-install build/bin/vtkpython $RPM_BUILD_ROOT%{_bindir}
+%if %{with java}
+install -p build/bin/VTKJavaExecutable $RPM_BUILD_ROOT%{_bindir}
+%endif
+install -p build/bin/vtkpython $RPM_BUILD_ROOT%{_bindir}
 
 # unwanted doxygen files and misplaced verdict docs
 %{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-6.3/{doxygen,verdict}
