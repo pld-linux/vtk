@@ -12,7 +12,7 @@
 %bcond_without	ffmpeg		# FFMPEG .avi saving support
 %bcond_with	OSMesa		# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
 %bcond_with	system_proj	# use system PROJ.4 (needs 4.3 with exposed internals, not ready for 4.4+)
-#
+
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
@@ -32,6 +32,7 @@ URL:		http://www.vtk.org/
 BuildRequires:	OpenGL-GLX-devel
 BuildRequires:	OpenGL-devel
 BuildRequires:	QtCore-devel >= 4.5.0
+BuildRequires:	QtDesigner-devel >= 4.5.0
 BuildRequires:	QtGui-devel >= 4.5.0
 BuildRequires:	QtNetwork-devel >= 4.5.0
 BuildRequires:	QtOpenGL-devel >= 4.5.0
@@ -53,7 +54,7 @@ BuildRequires:	graphviz
 BuildRequires:	hdf5-devel
 %if %{with java}
 BuildRequires:	jdk >= 1.5
-BuildRequires:  jpackage-utils
+BuildRequires:	jpackage-utils
 %endif
 BuildRequires:	jsoncpp-devel
 BuildRequires:	libjpeg-devel
