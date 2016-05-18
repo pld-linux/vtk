@@ -335,16 +335,34 @@ export CXXFLAGS="%{rpmcxxflags} -D_UNICODE"
 export JAVA_HOME=%{java_home}
 %endif
 
+# handle cmake & ccache
+# http://stackoverflow.com/questions/1815688/how-to-use-ccache-with-cmake
+# ASM fix: http://lists.busybox.net/pipermail/buildroot/2013-March/069436.html
+if [[ "%{__cc}" = *ccache* ]]; then
+	cc="%{__cc}"
+	cxx="%{__cxx}"
+	ccache="
+	-DCMAKE_C_COMPILER="ccache" -DCMAKE_C_COMPILER_ARG1="${cc#ccache }" \
+	-DCMAKE_CXX_COMPILER="ccache" -DCMAKE_CXX_COMPILER_ARG1="${cxx#ccache }" \
+	-DCMAKE_ASM_COMPILER="${cc#ccache }" \
+	"
+else
+	ccache="
+	-DCMAKE_C_COMPILER="%{__cc}" \
+	-DCMAKE_CXX_COMPILER="%{__cxx}" \
+	-DCMAKE_ASM_COMPILER="%{__cc}" \
+	"
+fi
+
 mkdir -p build
 cd build
 %cmake .. \
+	$ccache \
 	-Wno-dev \
 	-DBUILD_DOCUMENTATION:BOOL=ON \
 	-DBUILD_EXAMPLES:BOOL=ON \
 	-DBUILD_SHARED_LIBS:BOOL=ON \
 	-DBUILD_TESTING:BOOL=ON \
-	-DCMAKE_C_COMPILER:PATH="%{__cc}" \
-	-DCMAKE_CXX_COMPILER:PATH="%{__cxx}" \
 	-DCMAKE_SKIP_RPATH:BOOL=ON \
 	-DOPENGL_INCLUDE_PATH:PATH=%{_includedir}/GL \
 	-DPYTHON_INCLUDE_PATH:PATH=%{py_incdir} \
