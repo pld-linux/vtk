@@ -327,8 +327,8 @@ cp -a Examples vtk-examples
 find vtk-examples -type f | xargs chmod -R a-x
 
 %build
-export CFLAGS="%{rpmcflags} -D_UNICODE"
-export CXXFLAGS="%{rpmcxxflags} -D_UNICODE"
+export CFLAGS="%{rpmcflags} -D_UNICODE -DHAVE_UINTPTR_T"
+export CXXFLAGS="%{rpmcxxflags} -D_UNICODE -DHAVE_UINTPTR_T"
 %if %{with java}
 export JAVA_HOME=%{java_home}
 %endif
