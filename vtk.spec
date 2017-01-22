@@ -643,7 +643,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/DICOM*.h
 %{_includedir}/vtk/DatabaseSchemaWith2Tables.h
 %{_includedir}/vtk/alglib
-%{_includedir}/vtk/raycaster*.h
 %{_includedir}/vtk/vtkmetaio
 %{_includedir}/vtk/vtkverdict
 %{_includedir}/vtk/vtksqlite
