@@ -14,10 +14,6 @@
 %bcond_with	system_proj	# use system PROJ.4 (needs 4.3 with exposed internals, not ready for 4.4+)
 %bcond_with	system_gl2ps	# use system gl2ps (VTK currently is carrying local modifications to gl2ps)
 
-%ifarch x32
-%undefine	with_java
-%endif
-
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
@@ -335,6 +331,10 @@ export CFLAGS="%{rpmcflags} -D_UNICODE -DHAVE_UINTPTR_T"
 export CXXFLAGS="%{rpmcxxflags} -D_UNICODE -DHAVE_UINTPTR_T"
 %if %{with java}
 export JAVA_HOME=%{java_home}
+%ifarch x32
+# getting "java.lang.OutOfMemoryError: Java heap space" during the build
+export JAVA_TOOL_OPTIONS=-Xmx2048m
+%endif
 %endif
 
 # handle cmake & ccache
