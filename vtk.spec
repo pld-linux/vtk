@@ -579,7 +579,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtksys.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkxdmf2.so.1
+%if %{with java}
 %exclude %{_libdir}/vtk/libvtk*Java.so.1
+%endif
 %exclude %{_libdir}/vtk/libvtk*Python2?D.so.1
 %exclude %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
 %exclude %{_libdir}/vtk/libvtk*TCL.so.1
@@ -633,7 +635,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtksys.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkxdmf2.so
+%if %{with java}
 %exclude %{_libdir}/vtk/libvtk*Java.so
+%endif
 %exclude %{_libdir}/vtk/libvtk*Python2?D.so
 %exclude %{_libdir}/vtk/libvtkWrappingPython2?Core.so
 %exclude %{_libdir}/vtk/libvtk*TCL.so
@@ -655,8 +659,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/vtk*.txx
 %exclude %{_includedir}/vtk/vtkEventQtSlotConnect.h
 %exclude %{_includedir}/vtk/vtkGUISupportQt*.h
+%if %{with java}
 %exclude %{_includedir}/vtk/vtkJavaUtil.h
 %exclude %{_includedir}/vtk/vtkWrappingJavaModule.h
+%endif
 %exclude %{_includedir}/vtk/vtkPython*.h
 %exclude %{_includedir}/vtk/vtkQImageToImageSource.h
 %exclude %{_includedir}/vtk/vtkQt*.h
