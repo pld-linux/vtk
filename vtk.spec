@@ -17,27 +17,28 @@
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
-Version:	7.1.0
-Release:	5
+Version:	8.1.1
+Release:	1
 License:	BSD
 Group:		Libraries
-Source0:	http://www.vtk.org/files/release/7.1/VTK-%{version}.tar.gz
-# Source0-md5:	a7e814c1db503d896af72458c2d0228f
-Source1:	http://www.vtk.org/files/release/7.1/VTKData-%{version}.tar.gz
-# Source1-md5:	551786cdcb59fada678ecf0475cfcf55
+Source0:	http://www.vtk.org/files/release/8.1/VTK-%{version}.tar.gz
+# Source0-md5:	cf078a71c298c76b13707c7c27704248
+Source1:	http://www.vtk.org/files/release/8.1/VTKData-%{version}.tar.gz
+# Source1-md5:	6de8c1e3884b805c47dca02e7b049301
 Patch0:		vtk-abi.patch
 URL:		http://www.vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
 BuildRequires:	OpenGL-devel
-BuildRequires:	QtCore-devel >= 4.5.0
-BuildRequires:	QtDesigner-devel >= 4.5.0
-BuildRequires:	QtGui-devel >= 4.5.0
-BuildRequires:	QtNetwork-devel >= 4.5.0
-BuildRequires:	QtOpenGL-devel >= 4.5.0
-BuildRequires:	QtSql-devel >= 4.5.0
-BuildRequires:	QtWebKit-devel >= 4.5.0
-BuildRequires:	QtXmlPatterns-devel >= 4.5.0
+BuildRequires:	Qt5Core-devel
+BuildRequires:	Qt5Designer-devel
+BuildRequires:	Qt5Gui-devel
+BuildRequires:	Qt5Network-devel
+BuildRequires:	Qt5OpenGL-devel
+BuildRequires:	Qt5Sql-devel
+BuildRequires:	Qt5WebKit-devel
+BuildRequires:	Qt5XmlPatterns-devel
+BuildRequires:	Qt5UiTools-devel
 BuildRequires:	R
 BuildRequires:	boost-devel >= 1.39
 BuildRequires:	cmake >= 2.8.8
@@ -63,6 +64,7 @@ BuildRequires:	libstdc++-devel
 BuildRequires:	libtheora-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libxml2-devel >= 2
+BuildRequires:	lz4-devel
 BuildRequires:	motif-devel
 BuildRequires:	mysql-devel
 BuildRequires:	netcdf-cxx-devel >= 4
@@ -73,11 +75,11 @@ BuildRequires:	postgresql-devel
 %{?with_system_proj:BuildRequires:	proj-devel >= 4.3, proj-devel < 4.4}
 BuildRequires:	python-devel >= 2
 BuildRequires:	python-sip-devel
-BuildRequires:	qt4-build >= 4.5.0
-BuildRequires:	qt4-qmake >= 4.5.0
+BuildRequires:	qt5-build >= 4.5.0
+BuildRequires:	qt5-qmake >= 4.5.0
 BuildRequires:	rpmbuild(macros) >= 1.605
 BuildRequires:	sip
-BuildRequires:	sip-PyQt4
+BuildRequires:	sip-PyQt5
 BuildRequires:	tcl-devel
 BuildRequires:	tk-devel
 BuildRequires:	unixODBC-devel
@@ -137,33 +139,33 @@ Ten pakiet dostarcza pliki nagłówkowe VTK do kompilowania programów
 C++ używających VTK do wizualizacji 3D.
 
 %package qt
-Summary:	Qt bindings and Qt Designer plugin for VTK
-Summary(pl.UTF-8):	Wiązania Qt oraz wtyczka Qt Designera do VTK
+Summary:	Qt5 bindings and Qt5 Designer plugin for VTK
+Summary(pl.UTF-8):	Wiązania Qt5 oraz wtyczka Qt5 Designera do VTK
 Group:		X11/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	QtCore >= 4.5.0
-Requires:	QtGui >= 4.5.0
-Requires:	QtNetwork >= 4.5.0
-Requires:	QtOpenGL >= 4.5.0
-Requires:	QtSql >= 4.5.0
-Requires:	QtWebKit >= 4.5.0
+Requires:	Qt5Core >= 4.5.0
+Requires:	Qt5Gui >= 4.5.0
+Requires:	Qt5Network >= 4.5.0
+Requires:	Qt5OpenGL >= 4.5.0
+Requires:	Qt5Sql >= 4.5.0
+Requires:	Qt5WebKit >= 4.5.0
 
 %description qt
-Qt bindings and Qt Designer plugin for VTK.
+Qt5 bindings and Qt5 Designer plugin for VTK.
 
 %description qt -l pl.UTF-8
-Wiązania Qt oraz wtyczka Qt Designera do VTK.
+Wiązania Qt5 oraz wtyczka Qt5 Designera do VTK.
 
 %package qt-devel
-Summary:	Header files for VTK Qt bindings
-Summary(pl.UTF-8):	Pliki nagłówkowe wiązań Qt do VTK
+Summary:	Header files for VTK Qt5 bindings
+Summary(pl.UTF-8):	Pliki nagłówkowe wiązań Qt5` do VTK
 Group:		X11/Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 Requires:	%{name}-qt = %{version}-%{release}
-Requires:	QtCore-devel >= 4.5.0
-Requires:	QtGui-devel >= 4.5.0
-Requires:	QtOpenGL-devel >= 4.5.0
-Requires:	QtSql-devel >= 4.5.0
+Requires:	Qt5Core-devel >= 4.5.0
+Requires:	Qt5Gui-devel >= 4.5.0
+Requires:	Qt5OpenGL-devel >= 4.5.0
+Requires:	Qt5Sql-devel >= 4.5.0
 
 %description qt-devel
 Header files for VTK Qt bindings.
@@ -317,7 +319,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
-  perl -pi -e 's,(\.\./)+VTKData,%{_datadir}/vtk-7.1,g'
+  perl -pi -e 's,(\.\./)+VTKData,%{_datadir}/vtk-8.1,g'
 
 # Save an unbuilt copy of the Example's sources for %doc
 mkdir vtk-examples
@@ -374,7 +376,7 @@ cd build
 	-DTCL_LIBRARY:PATH=%{_libdir}/libtcl.so \
 	-DTK_INCLUDE_PATH:PATH=%{_includedir} \
 	-DTK_LIBRARY:PATH=%{_libdir}/libtk.so \
-	-DVTK_DATA_ROOT:PATH=%{_datadir}/vtk-7.1 \
+	-DVTK_DATA_ROOT:PATH=%{_datadir}/vtk-8.1 \
 	-DVTK_CUSTOM_LIBRARY_SUFFIX="" \
 	-DVTK_INSTALL_ARCHIVE_DIR:PATH=%{_lib}/vtk \
 	-DVTK_INSTALL_INCLUDE_DIR:PATH=include/vtk \
@@ -382,7 +384,7 @@ cd build
 	-DVTK_INSTALL_PACKAGE_DIR:PATH=%{_lib}/cmake/vtk \
 	-DVTK_INSTALL_TCL_DIR:PATH=share/tcl%{tcl_version}/vtk \
 	-DVTK_INSTALL_PYTHON_MODULE_DIR:PATH=%{py_sitedir} \
-	-DVTK_INSTALL_QT_DIR=/%{_lib}/qt4/plugins/designer \
+	-DVTK_INSTALL_QT_DIR=/%{_lib}/qt5/plugins/designer \
 	-DVTK_FFMPEG_HAS_OLD_HEADER:BOOL=OFF \
 	%{?with_OSMesa:-DVTK_OPENGL_HAS_OSMESA:BOOL=ON} \
 	-DVTK_WRAP_PYTHON:BOOL=ON \
@@ -392,6 +394,7 @@ cd build
 	-DVTK_USE_RENDERING:BOOL=ON \
 	-DVTK_USE_SYSTEM_HDF5:BOOL=ON \
 	-DVTK_USE_SYSTEM_XDMF2:BOOL=OFF \
+	-DVTK_USE_SYSTEM_LIBHARU:BOOL=OFF \
 	%{!?with_system_proj:-DVTK_USE_SYSTEM_LIBPROJ4:BOOL=OFF} \
 	%{!?with_system_gl2ps:-DVTK_USE_SYSTEM_GL2PS:BOOL=OFF} \
 %if %{with java}
@@ -436,6 +439,7 @@ cd build
 # TODO:	-DModule_vtkRenderingParallelLIC:BOOL=ON (BR: MPI)
 
 %{__make}
+%{__make} DoxygenDoc
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -448,7 +452,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ld.so.conf.d,%{_examplesdir}/%{name}-%
 echo %{_libdir}/vtk > $RPM_BUILD_ROOT%{_sysconfdir}/ld.so.conf.d/vtk-%{_arch}.conf
 
 for f in $(cd build/ExternalData/Testing ; find Data -type l); do
-	install -Dp build/ExternalData/Testing/$f $RPM_BUILD_ROOT%{_datadir}/vtk-7.1/$f
+	install -Dp build/ExternalData/Testing/$f $RPM_BUILD_ROOT%{_datadir}/vtk-8.1/$f
 done
 
 # Install examples
@@ -507,7 +511,7 @@ install -p build/bin/VTKJavaExecutable $RPM_BUILD_ROOT%{_bindir}
 install -p build/bin/vtkpython $RPM_BUILD_ROOT%{_bindir}
 
 # unwanted doxygen files and misplaced verdict docs
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-7.1/{doxygen,verdict}
+%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-*/{doxygen,verdict}
 
 # only *.pyc are built by default, add *.pyo
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}/vtk
@@ -573,6 +577,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkgl2ps.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkglew.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtklibharu.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so.1
@@ -629,6 +634,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkgl2ps.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkglew.so
+%attr(755,root,root) %{_libdir}/vtk/libvtklibharu.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so
 %attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so
@@ -647,14 +653,15 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/DICOM*.h
 %{_includedir}/vtk/DatabaseSchemaWith2Tables.h
 %{_includedir}/vtk/alglib
-%{_includedir}/vtk/vtkmetaio
-%{_includedir}/vtk/vtkverdict
-%{_includedir}/vtk/vtksqlite
-%{_includedir}/vtk/vtksys
-%{_includedir}/vtk/vtkxdmf2
 %{_includedir}/vtk/vtkgl2ps
 %{_includedir}/vtk/vtkglew
 %{_includedir}/vtk/vtkkwiml
+%{_includedir}/vtk/vtklibharu
+%{_includedir}/vtk/vtkmetaio
+%{_includedir}/vtk/vtksqlite
+%{_includedir}/vtk/vtksys
+%{_includedir}/vtk/vtkverdict
+%{_includedir}/vtk/vtkxdmf2
 %{_includedir}/vtk/vtk*.h
 %{_includedir}/vtk/vtk*.txx
 %exclude %{_includedir}/vtk/vtkEventQtSlotConnect.h
@@ -678,7 +685,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkGUISupportQtSQL.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingQt.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsQt.so.1
-%attr(755,root,root) %{_libdir}/qt4/plugins/designer/libQVTKWidgetPlugin.so
+%attr(755,root,root) %{_libdir}/qt5/plugins/designer/libQVTKWidgetPlugin.so
 
 %files qt-devel
 %defattr(644,root,root,755)
@@ -739,7 +746,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkPythonInterpreter.so.1
 # RenderingMatplotlib requires PythonInterpreter
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingMatplotlib.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-7.1.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-8.1.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
 %dir %{py_sitedir}/vtk
 %{py_sitedir}/vtk/*.py[co]
@@ -836,5 +843,5 @@ rm -rf $RPM_BUILD_ROOT
 
 %files data
 %defattr(644,root,root,755)
-%dir %{_datadir}/vtk-7.1
-%{_datadir}/vtk-7.1/Data
+%dir %{_datadir}/vtk-8.1
+%{_datadir}/vtk-8.1/Data
