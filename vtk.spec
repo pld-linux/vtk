@@ -37,6 +37,7 @@ BuildRequires:	Qt5Network-devel
 BuildRequires:	Qt5OpenGL-devel
 BuildRequires:	Qt5Sql-devel
 BuildRequires:	Qt5WebKit-devel
+BuildRequires:	Qt5X11Extras-devel
 BuildRequires:	Qt5XmlPatterns-devel
 BuildRequires:	Qt5UiTools-devel
 BuildRequires:	R
