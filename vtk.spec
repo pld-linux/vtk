@@ -80,8 +80,8 @@ BuildRequires:	netcdf-cxx-devel >= 4
 BuildRequires:	perl-base
 BuildRequires:	postgresql-devel
 BuildRequires:	proj-devel >= 6.0
-BuildRequires:	python-devel >= 2
-BuildRequires:	python-sip-devel
+BuildRequires:	python3-devel
+BuildRequires:	python3-sip-devel
 BuildRequires:	qt5-build >= 4.5.0
 BuildRequires:	qt5-qmake >= 4.5.0
 BuildRequires:	rpmbuild(macros) >= 1.605
@@ -209,35 +209,37 @@ Header files for Java VTK binding.
 %description java-devel -l pl.UTF-8
 Pliki nagłówkowe wiązania Javy do VTK.
 
-%package python
-Summary:	Python bindings for VTK
-Summary(pl.UTF-8):	Wiązania Pythona do VTK
+%package python3
+Summary:	Python 3 bindings for VTK
+Summary(pl.UTF-8):	Wiązania Pythona 3 do VTK
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 # or separate qt parts again?
 Requires:	%{name}-qt = %{version}-%{release}
 Obsoletes:	vtk-python-qt < 6.0.0-1
 Obsoletes:	vtk-python-sip < 6.0.0-1
+Obsoletes:	vtk-python < 8.2.0-1
 
-%description python
-This package contains Python bindings for VTK.
+%description python3
+This package contains Python 3 bindings for VTK.
 
-%description python -l pl.UTF-8
-Ten pakiet zawiera wiązania Pythona do VTK.
+%description python3 -l pl.UTF-8
+Ten pakiet zawiera wiązania Pythona 3 do VTK.
 
-%package python-devel
-Summary:	Header files for Python VTK binding
-Summary(pl.UTF-8):	Pliki nagłówkowe wiązania Pythona do VTK
+%package python3-devel
+Summary:	Header files for Python 3 VTK binding
+Summary(pl.UTF-8):	Pliki nagłówkowe wiązania Pythona 3 do VTK
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
-Requires:	%{name}-python = %{version}-%{release}
-Requires:	python-devel
+Requires:	%{name}-python3 = %{version}-%{release}
+Requires:	python3-devel
+Obsoletes:	vtk-python-devel < 8.2.0-1
 
-%description python-devel
-Header files for Python VTK binding.
+%description python3-devel
+Header files for Python 3 VTK binding.
 
-%description python-devel -l pl.UTF-8
-Pliki nagłówkowe wiązania Pythona do VTK.
+%description python3-devel -l pl.UTF-8
+Pliki nagłówkowe wiązania Pythona 3 do VTK.
 
 %package tcl
 Summary:	Tcl bindings for VTK
@@ -381,8 +383,8 @@ cd build
 	-DBUILD_TESTING:BOOL=ON \
 	-DCMAKE_SKIP_RPATH:BOOL=ON \
 	-DOPENGL_INCLUDE_PATH:PATH=%{_includedir}/GL \
-	-DPYTHON_INCLUDE_PATH:PATH=%{py_incdir} \
-	-DPYTHON_LIBRARY:FILEPATH=%{_libdir}/libpython%{py_ver}.so \
+	-DPYTHON_INCLUDE_PATH:PATH=%{py3_incdir} \
+	-DPYTHON_LIBRARY:FILEPATH=%{_libdir}/libpython%{py3_ver}.so \
 	-DPYTHON_UTIL_LIBRARY:PATH=%{_libdir}/libutil.so \
 	-DTCL_INCLUDE_PATH:PATH=%{_includedir} \
 	-DTCL_LIBRARY:PATH=%{_libdir}/libtcl.so \
@@ -397,7 +399,6 @@ cd build
 	-DVTK_INSTALL_QT_DIR=/%{_lib}/qt5/plugins/designer \
 	-DVTK_FFMPEG_HAS_OLD_HEADER:BOOL=OFF \
 	%{?with_OSMesa:-DVTK_OPENGL_HAS_OSMESA:BOOL=ON} \
-	-DVTK_WRAP_PYTHON:BOOL=ON \
 	-DVTK_USE_SYSTEM_LIBRARIES:BOOL=ON \
 	-DVTK_USE_OGGTHEORA_ENCODER:BOOL=ON \
 	-DVTK_USE_SYSTEM_HDF5:BOOL=ON \
@@ -413,6 +414,7 @@ cd build
 	-DVTK_WRAP_JAVA:BOOL=OFF \
 %endif
 	-DVTK_WRAP_PYTHON:BOOL=ON \
+	-DVTK_PYTHON_VERSION=3 \
 	%{?with_sip:-DVTK_WRAP_PYTHON_SIP:BOOL=ON} \
 	-DVTK_Group_Imaging:BOOL=ON \
 	-DVTK_Group_Qt:BOOL=ON \
@@ -518,10 +520,6 @@ install -p build/bin/vtkpython $RPM_BUILD_ROOT%{_bindir}
 # unwanted doxygen files and misplaced verdict docs
 %{?with_doc:%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-*/{doxygen,verdict}}
 
-# only *.pyc are built by default, add *.pyo
-%py_ocomp $RPM_BUILD_ROOT%{py_sitedir}/vtk
-%py_postclean
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -534,8 +532,8 @@ rm -rf $RPM_BUILD_ROOT
 %post	java -p /sbin/ldconfig
 %postun	java -p /sbin/ldconfig
 
-%post	python -p /sbin/ldconfig
-%postun	python -p /sbin/ldconfig
+%post	python3 -p /sbin/ldconfig
+%postun	python3 -p /sbin/ldconfig
 
 %post	tcl -p /sbin/ldconfig
 %postun	tcl -p /sbin/ldconfig
@@ -587,8 +585,8 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with java}
 %exclude %{_libdir}/vtk/libvtk*Java.so.1
 %endif
-%exclude %{_libdir}/vtk/libvtk*Python2?D.so.1
-%exclude %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
+%exclude %{_libdir}/vtk/libvtk*Python3?D.so.1
+%exclude %{_libdir}/vtk/libvtkWrappingPython3?Core.so.1
 
 %files devel
 %defattr(644,root,root,755)
@@ -636,8 +634,8 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with java}
 %exclude %{_libdir}/vtk/libvtk*Java.so
 %endif
-%exclude %{_libdir}/vtk/libvtk*Python2?D.so
-%exclude %{_libdir}/vtk/libvtkWrappingPython2?Core.so
+%exclude %{_libdir}/vtk/libvtk*Python3?D.so
+%exclude %{_libdir}/vtk/libvtkWrappingPython3?Core.so
 %{_libdir}/vtk/libvtkWrappingTools.a
 %dir %{_includedir}/vtk
 %{_includedir}/vtk/VPIC
@@ -722,7 +720,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/vtkWrappingJavaModule.h
 %endif
 
-%files python
+%files python3
 %defattr(644,root,root,755)
 %doc Wrapping/Python/README*
 %attr(755,root,root) %{_bindir}/vtkWrapPython
@@ -734,32 +732,32 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingMatplotlib.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-8.1.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
-%dir %{py_sitedir}/vtk
-%{py_sitedir}/vtk/*.py[co]
-%dir %{py_sitedir}/vtk/gtk
-%{py_sitedir}/vtk/gtk/*.py[co]
-%dir %{py_sitedir}/vtk/numpy_interface
-%{py_sitedir}/vtk/numpy_interface/*.py[co]
-%dir %{py_sitedir}/vtk/qt
-%{py_sitedir}/vtk/qt/*.py[co]
-%dir %{py_sitedir}/vtk/qt4
-%{py_sitedir}/vtk/qt4/*.py[co]
-%dir %{py_sitedir}/vtk/test
-%{py_sitedir}/vtk/test/*.py[co]
-%dir %{py_sitedir}/vtk/tk
-%{py_sitedir}/vtk/tk/*.py[co]
-%dir %{py_sitedir}/vtk/util
-%{py_sitedir}/vtk/util/*.py[co]
-%dir %{py_sitedir}/vtk/wx
-%{py_sitedir}/vtk/wx/*.py[co]
+%dir %{py3_sitedir}/vtk
+%{py3_sitedir}/vtk/*.py[co]
+%dir %{py3_sitedir}/vtk/gtk
+%{py3_sitedir}/vtk/gtk/*.py[co]
+%dir %{py3_sitedir}/vtk/numpy_interface
+%{py3_sitedir}/vtk/numpy_interface/*.py[co]
+%dir %{py3_sitedir}/vtk/qt
+%{py3_sitedir}/vtk/qt/*.py[co]
+%dir %{py3_sitedir}/vtk/qt4
+%{py3_sitedir}/vtk/qt4/*.py[co]
+%dir %{py3_sitedir}/vtk/test
+%{py3_sitedir}/vtk/test/*.py[co]
+%dir %{py3_sitedir}/vtk/tk
+%{py3_sitedir}/vtk/tk/*.py[co]
+%dir %{py3_sitedir}/vtk/util
+%{py3_sitedir}/vtk/util/*.py[co]
+%dir %{py3_sitedir}/vtk/wx
+%{py3_sitedir}/vtk/wx/*.py[co]
 %attr(755,root,root) %{py_sitedir}/vtk/vtk*Python.so
 
-%files python-devel
+%files python3-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/vtk/libvtk*Python2?D.so
+%attr(755,root,root) %{_libdir}/vtk/libvtk*Python3?D.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkPythonInterpreter.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingMatplotlib.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython2?Core.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython3?Core.so
 %{_includedir}/vtk/PyVTK*.h
 %{_includedir}/vtk/vtkPython*.h
 
