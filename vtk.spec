@@ -10,22 +10,27 @@
 # Conditional build
 %bcond_without	java		# Java wrappers
 %bcond_without	ffmpeg		# FFMPEG .avi saving support
+%bcond_with	doc		# do not build and package doxygen documentation
 %bcond_with	OSMesa		# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
-%bcond_with	system_proj	# use system PROJ.4 (needs 4.3 with exposed internals, not ready for 4.4+)
 %bcond_with	system_gl2ps	# use system gl2ps (VTK currently is carrying local modifications to gl2ps)
 
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
-Version:	8.1.1
-Release:	7
+Version:	8.2.0
+Release:	0.1
 License:	BSD
 Group:		Libraries
-Source0:	http://www.vtk.org/files/release/8.1/VTK-%{version}.tar.gz
-# Source0-md5:	cf078a71c298c76b13707c7c27704248
-Source1:	http://www.vtk.org/files/release/8.1/VTKData-%{version}.tar.gz
-# Source1-md5:	6de8c1e3884b805c47dca02e7b049301
+Source0:	http://www.vtk.org/files/release/8.2/VTK-%{version}.tar.gz
+# Source0-md5:	8af3307da0fc2ef8cafe4a312b821111
+Source1:	http://www.vtk.org/files/release/8.2/VTKData-%{version}.tar.gz
+# Source1-md5:	a6eab7bc02cee1376ee69243dde373ce
 Patch0:		vtk-abi.patch
+Patch1:		gcc10.patch
+Patch2:		proj6_compat.patch
+Patch3:		qt-5.15.patch
+Patch4:		python-3.8.patch
+Patch5:		link.patch
 URL:		http://www.vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -43,7 +48,7 @@ BuildRequires:	Qt5UiTools-devel
 BuildRequires:	R
 BuildRequires:	boost-devel >= 1.39
 BuildRequires:	cmake >= 2.8.8
-BuildRequires:	doxygen
+%{?with_doc:BuildRequires:	doxygen}
 BuildRequires:	expat-devel
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
 BuildRequires:	fontconfig-devel
@@ -58,6 +63,7 @@ BuildRequires:	jdk >= 1.5
 BuildRequires:	jpackage-utils
 %endif
 BuildRequires:	jsoncpp-devel
+BuildRequires:	libharu-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel
@@ -73,7 +79,7 @@ BuildRequires:	netcdf-cxx-devel >= 4
 #BuildRequires:	openqube-devel
 BuildRequires:	perl-base
 BuildRequires:	postgresql-devel
-%{?with_system_proj:BuildRequires:	proj-devel >= 4.3, proj-devel < 4.4}
+BuildRequires:	proj-devel >= 6.0
 BuildRequires:	python-devel >= 2
 BuildRequires:	python-sip-devel
 BuildRequires:	qt5-build >= 4.5.0
@@ -317,6 +323,11 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %prep
 %setup -q -n VTK-%{version} -b 1
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
@@ -364,7 +375,7 @@ cd build
 %cmake .. \
 	$ccache \
 	-Wno-dev \
-	-DBUILD_DOCUMENTATION:BOOL=ON \
+	%{cmake_on_off doc DBUILD_DOCUMENTATION} \
 	-DBUILD_EXAMPLES:BOOL=ON \
 	-DBUILD_SHARED_LIBS:BOOL=ON \
 	-DBUILD_TESTING:BOOL=ON \
@@ -377,26 +388,21 @@ cd build
 	-DTCL_LIBRARY:PATH=%{_libdir}/libtcl.so \
 	-DTK_INCLUDE_PATH:PATH=%{_includedir} \
 	-DTK_LIBRARY:PATH=%{_libdir}/libtk.so \
-	-DVTK_DATA_ROOT:PATH=%{_datadir}/vtk-8.1 \
 	-DVTK_CUSTOM_LIBRARY_SUFFIX="" \
 	-DVTK_INSTALL_ARCHIVE_DIR:PATH=%{_lib}/vtk \
 	-DVTK_INSTALL_INCLUDE_DIR:PATH=include/vtk \
 	-DVTK_INSTALL_LIBRARY_DIR:PATH=%{_lib}/vtk \
 	-DVTK_INSTALL_PACKAGE_DIR:PATH=%{_lib}/cmake/vtk \
 	-DVTK_INSTALL_TCL_DIR:PATH=share/tcl%{tcl_version}/vtk \
-	-DVTK_INSTALL_PYTHON_MODULE_DIR:PATH=%{py_sitedir} \
 	-DVTK_INSTALL_QT_DIR=/%{_lib}/qt5/plugins/designer \
 	-DVTK_FFMPEG_HAS_OLD_HEADER:BOOL=OFF \
 	%{?with_OSMesa:-DVTK_OPENGL_HAS_OSMESA:BOOL=ON} \
 	-DVTK_WRAP_PYTHON:BOOL=ON \
-	-DVTK_PYTHON_SETUP_ARGS="--prefix=/usr --root=$RPM_BUILD_ROOT" \
 	-DVTK_USE_SYSTEM_LIBRARIES:BOOL=ON \
 	-DVTK_USE_OGGTHEORA_ENCODER:BOOL=ON \
-	-DVTK_USE_RENDERING:BOOL=ON \
 	-DVTK_USE_SYSTEM_HDF5:BOOL=ON \
 	-DVTK_USE_SYSTEM_XDMF2:BOOL=OFF \
 	-DVTK_USE_SYSTEM_LIBHARU:BOOL=OFF \
-	%{!?with_system_proj:-DVTK_USE_SYSTEM_LIBPROJ4:BOOL=OFF} \
 	%{!?with_system_gl2ps:-DVTK_USE_SYSTEM_GL2PS:BOOL=OFF} \
 %if %{with java}
 	-DVTK_WRAP_JAVA:BOOL=ON \
@@ -408,7 +414,6 @@ cd build
 %endif
 	-DVTK_WRAP_PYTHON:BOOL=ON \
 	%{?with_sip:-DVTK_WRAP_PYTHON_SIP:BOOL=ON} \
-	-DVTK_WRAP_TCL:BOOL=ON \
 	-DVTK_Group_Imaging:BOOL=ON \
 	-DVTK_Group_Qt:BOOL=ON \
 	-DVTK_Group_Rendering:BOOL=ON \
@@ -416,7 +421,6 @@ cd build
 	-DVTK_Group_Tk:BOOL=ON \
 	-DVTK_Group_Views:BOOL=ON \
 	-DModule_vtkFiltersReebGraph:BOOL=ON \
-	-DModule_vtkFiltersStatisticsGnuR:BOOL=ON \
 	%{?with_ffmpeg:-DModule_vtkIOFFMPEG:BOOL=ON} \
 	-DModule_vtkIOGDAL:BOOL=ON \
 	-DModule_vtkIOGeoJSON:BOOL=ON \
@@ -440,7 +444,7 @@ cd build
 # TODO:	-DModule_vtkRenderingParallelLIC:BOOL=ON (BR: MPI)
 
 %{__make}
-%{__make} DoxygenDoc
+%{?with_doc:%{__make} DoxygenDoc}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -512,7 +516,7 @@ install -p build/bin/VTKJavaExecutable $RPM_BUILD_ROOT%{_bindir}
 install -p build/bin/vtkpython $RPM_BUILD_ROOT%{_bindir}
 
 # unwanted doxygen files and misplaced verdict docs
-%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-*/{doxygen,verdict}
+%{?with_doc:%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk-*/{doxygen,verdict}}
 
 # only *.pyc are built by default, add *.pyo
 %py_ocomp $RPM_BUILD_ROOT%{py_sitedir}/vtk
@@ -538,7 +542,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.md vtkLogo.jpg vtkBanner.gif Wrapping/Tools/README*
+%doc README.md vtkBanner.gif vtkLogo.ico Wrapping/Tools/README*
 %config(noreplace) %verify(not md5 size mtime) %{_sysconfdir}/ld.so.conf.d/vtk-%{_arch}.conf
 %dir %{_libdir}/vtk
 %attr(755,root,root) %{_libdir}/vtk/libvtkChartsCore.so.1
@@ -574,14 +578,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsGeovis.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsInfovis.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkVPIC.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkalglib.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkgl2ps.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkglew.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtklibharu.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtksys.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkxdmf2.so.1
@@ -590,13 +589,10 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 %exclude %{_libdir}/vtk/libvtk*Python2?D.so.1
 %exclude %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
-%exclude %{_libdir}/vtk/libvtk*TCL.so.1
 
 %files devel
 %defattr(644,root,root,755)
 %doc Utilities/Upgrading/*
-%attr(755,root,root) %{_bindir}/vtkEncodeString
-%attr(755,root,root) %{_bindir}/vtkHashSource
 %attr(755,root,root) %{_bindir}/vtkWrapHierarchy
 %attr(755,root,root) %{_libdir}/vtk/libvtkChartsCore.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkCommon*.so
@@ -631,14 +627,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsGeovis.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsInfovis.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkVPIC.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkalglib.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkexoIIc.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkgl2ps.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkglew.so
 %attr(755,root,root) %{_libdir}/vtk/libvtklibharu.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkproj4.so
-%attr(755,root,root) %{_libdir}/vtk/libvtksqlite.so
 %attr(755,root,root) %{_libdir}/vtk/libvtksys.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkverdict.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkxdmf2.so
@@ -647,19 +638,15 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 %exclude %{_libdir}/vtk/libvtk*Python2?D.so
 %exclude %{_libdir}/vtk/libvtkWrappingPython2?Core.so
-%exclude %{_libdir}/vtk/libvtk*TCL.so
 %{_libdir}/vtk/libvtkWrappingTools.a
 %dir %{_includedir}/vtk
 %{_includedir}/vtk/VPIC
 %{_includedir}/vtk/DICOM*.h
 %{_includedir}/vtk/DatabaseSchemaWith2Tables.h
-%{_includedir}/vtk/alglib
 %{_includedir}/vtk/vtkgl2ps
-%{_includedir}/vtk/vtkglew
 %{_includedir}/vtk/vtkkwiml
 %{_includedir}/vtk/vtklibharu
 %{_includedir}/vtk/vtkmetaio
-%{_includedir}/vtk/vtksqlite
 %{_includedir}/vtk/vtksys
 %{_includedir}/vtk/vtkverdict
 %{_includedir}/vtk/vtkxdmf2
@@ -675,7 +662,6 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_includedir}/vtk/vtkQImageToImageSource.h
 %exclude %{_includedir}/vtk/vtkQt*.h
 %exclude %{_includedir}/vtk/vtkRenderingQtModule.h
-%exclude %{_includedir}/vtk/vtkTcl*.h
 %exclude %{_includedir}/vtk/vtkTk*.h
 %exclude %{_includedir}/vtk/vtkViewsQtModule.h
 %{_libdir}/cmake/vtk
@@ -724,7 +710,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkInteraction*Java.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkLocalExampleJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkParallelCoreJava.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkPythonInterpreterJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRendering*Java.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkTestingRenderingJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkViews*Java.so
@@ -785,11 +770,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkWrapTclInit
 %attr(755,root,root) %{_bindir}/vtk
 %{_datadir}/tcl%{tcl_version}/vtk
-%attr(755,root,root) %{_libdir}/vtk/libvtk*TCL.so.1
 
 %files tcl-devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/vtk/libvtk*TCL.so
 %{_includedir}/vtk/vtkTcl*.h
 %{_includedir}/vtk/vtkTk*.h
 
