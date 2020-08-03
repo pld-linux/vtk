@@ -18,18 +18,14 @@
  if (NOT VTK_INSTALL_NO_DEVELOPMENT)
    install(FILES
      ${headers}
---- VTK-8.2.0/ThirdParty/libharu/vtklibharu/CMakeLists.txt.orig	2020-08-02 10:14:54.000000000 +0200
-+++ VTK-8.2.0/ThirdParty/libharu/vtklibharu/CMakeLists.txt	2020-08-02 10:25:09.955242344 +0200
-@@ -298,3 +297,5 @@
- 
- INCLUDE( CPack )
- endif ()
-+
-+find_library(M_LIBRARY m)
 --- VTK-8.2.0/ThirdParty/libharu/vtklibharu/src/CMakeLists.txt~	2019-01-30 18:15:13.000000000 +0100
 +++ VTK-8.2.0/ThirdParty/libharu/vtklibharu/src/CMakeLists.txt	2020-08-02 10:25:38.091690113 +0200
-@@ -113,3 +113,4 @@
-       "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
-       "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/../include>")
- endif ()
-+target_link_libraries(vtklibharu PUBLIC ${M_LIBRARY})
+@@ -102,7 +102,7 @@
+ endif(LIBHPDF_SHARED)
+ else ()
+   vtk_add_library(vtklibharu ${LIBHPDF_SRCS})
+-  target_link_libraries(vtklibharu PRIVATE ${vtkzlib_LIBRARIES} ${vtkpng_LIBRARIES})
++  target_link_libraries(vtklibharu PRIVATE ${vtkzlib_LIBRARIES} ${vtkpng_LIBRARIES} m)
+   if (WIN32)
+     set_target_properties(vtklibharu
+       PROPERTIES
