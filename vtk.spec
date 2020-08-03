@@ -100,6 +100,8 @@ BuildRequires:	xorg-lib-libXft-devel
 BuildRequires:	xorg-lib-libXt-devel
 BuildRequires:	zlib-devel
 BuildConflicts:	libXNVCtrl-devel
+Obsoletes:	vtk-tcl < 8.2.0-1
+Obsoletes:	vtk-tcl-devel < 8.2.0-1
 %{?with_system_gl2ps:Requires:	gl2ps >= 1.3.8}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -109,7 +111,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 The Visualization ToolKit (VTK) is an object oriented software system
 for 3D computer graphics, image processing, and visualization. VTK
 includes a textbook, a C++ class library, and several interpreted
-interface layers including Tcl/Tk, Java, and Python. VTK supports a
+interface layers including Java, and Python. VTK supports a
 wide variety of visualization algorithms including scalar, vector,
 tensor, texture, and volumetric methods. It also supports advanced
 modeling techniques like implicit modeling, polygon reduction, mesh
@@ -121,7 +123,7 @@ This allows mixing 2D imaging / 3D graphics algorithms and data.
 Visualization TookKit (VTK) to obiektowo zorientowany system
 oprogramowania do trójwymiarowej grafiki komputerowej, przetwarzania
 obrazu i wizualizacji. VTK zawiera książkę, bibliotekę klas C++ oraz
-kilka interpretowanych warstw interfejsów, w tym dla Tcl/Tk, Javy i
+kilka interpretowanych warstw interfejsów, w tym dla Javy i
 Pythona. VTK obsługuje szeroki zakres algorytmów wizualizacji, w tym
 metody skalarne, wektorowe, tensorowe, teksturowe i wolumetryczne.
 Obsługuje także zaawansowane techniki modelowania, takie jak
@@ -241,38 +243,9 @@ Header files for Python 3 VTK binding.
 %description python3-devel -l pl.UTF-8
 Pliki nagłówkowe wiązania Pythona 3 do VTK.
 
-%package tcl
-Summary:	Tcl bindings for VTK
-Summary(pl.UTF-8):	Wiązania języka Tcl do VTK
-Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-# or separate qt parts?
-Requires:	%{name}-qt = %{version}-%{release}
-
-%description tcl
-This package contains Tcl bindings for VTK.
-
-%description tcl -l pl.UTF-8
-Ten pakiet zawiera wiązania języka Tcl do VTK.
-
-%package tcl-devel
-Summary:	Header files for Tcl VTK bindings
-Summary(pl.UTF-8):	Pliki nagłówkowe wiązania języka Tcl do VTK
-Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
-Requires:	%{name}-tcl = %{version}-%{release}
-Requires:	tcl-devel
-Requires:	tk-devel
-
-%description tcl-devel
-Header files for Tcl VTK bindings.
-
-%description tcl-devel -l pl.UTF-8
-Pliki nagłówkowe wiązania języka Tcl do VTK.
-
 %package examples
-Summary:	C++, Tcl and Python example programs/scripts for VTK
-Summary(pl.UTF-8):	Przykładowe programy/skrypty w C++, Tcl-u i Pythonie dla VTK
+Summary:	C++ and Python example programs/scripts for VTK
+Summary(pl.UTF-8):	Przykładowe programy/skrypty w C++ i Pythonie dla VTK
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-data = %{version}-%{release}
@@ -280,14 +253,14 @@ Requires:	%{name}-data = %{version}-%{release}
 %description examples
 This package contains all the examples from the VTK source. To compile
 the C++ examples you will need to install the vtk-devel package as
-well. The Python and Tcl examples can be run with the corresponding
-packages (vtk-python, vtk-tcl).
+well. The Python examples can be run with the corresponding
+packages (vtk-python3).
 
 %description examples -l pl.UTF-8
 Ten pakiet zawiera wszystkie przykłady ze źródeł VTK. Do skompilowania
 przykładów w C++ trzeba doinstalować pakiet vtk-devel. Przykłady w
-Pythonie i Tcl-u można uruchamiać przy użyciu odpowiednich pakietów
-(vtk-python, vtk-tcl).
+Pythonie można uruchamiać przy użyciu odpowiednich pakietów
+(vtk-python3).
 
 %package test-suite
 Summary:	Test programs for VTK
@@ -536,9 +509,6 @@ rm -rf $RPM_BUILD_ROOT
 %post	python3 -p /sbin/ldconfig
 %postun	python3 -p /sbin/ldconfig
 
-%post	tcl -p /sbin/ldconfig
-%postun	tcl -p /sbin/ldconfig
-
 %files
 %defattr(644,root,root,755)
 %doc README.md vtkBanner.gif vtkLogo.ico Wrapping/Tools/README*
@@ -727,31 +697,31 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkWrapPython
 %attr(755,root,root) %{_bindir}/vtkWrapPythonInit
 %attr(755,root,root) %{_bindir}/vtkpython
-%attr(755,root,root) %{_libdir}/vtk/libvtk*Python2?D.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtk*Python3?D.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkPythonInterpreter.so.1
 # RenderingMatplotlib requires PythonInterpreter
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingMatplotlib.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-8.1.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython2?Core.so.1
-%dir %{py3_sitedir}/vtk
-%{py3_sitedir}/vtk/*.py[co]
-%dir %{py3_sitedir}/vtk/gtk
-%{py3_sitedir}/vtk/gtk/*.py[co]
-%dir %{py3_sitedir}/vtk/numpy_interface
-%{py3_sitedir}/vtk/numpy_interface/*.py[co]
-%dir %{py3_sitedir}/vtk/qt
-%{py3_sitedir}/vtk/qt/*.py[co]
-%dir %{py3_sitedir}/vtk/qt4
-%{py3_sitedir}/vtk/qt4/*.py[co]
-%dir %{py3_sitedir}/vtk/test
-%{py3_sitedir}/vtk/test/*.py[co]
-%dir %{py3_sitedir}/vtk/tk
-%{py3_sitedir}/vtk/tk/*.py[co]
-%dir %{py3_sitedir}/vtk/util
-%{py3_sitedir}/vtk/util/*.py[co]
-%dir %{py3_sitedir}/vtk/wx
-%{py3_sitedir}/vtk/wx/*.py[co]
-%attr(755,root,root) %{py_sitedir}/vtk/vtk*Python.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-8.2.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython3?Core.so.1
+%dir %{py3_sitedir}/vtkmodules
+%{py3_sitedir}/vtkmodules/*.py
+%dir %{py3_sitedir}/vtkmodules/gtk
+%{py3_sitedir}/vtkmodules/gtk/*.py
+%dir %{py3_sitedir}/vtkmodules/numpy_interface
+%{py3_sitedir}/vtkmodules/numpy_interface/*.py
+%dir %{py3_sitedir}/vtkmodules/qt
+%{py3_sitedir}/vtkmodules/qt/*.py
+%dir %{py3_sitedir}/vtkmodules/qt4
+%{py3_sitedir}/vtkmodules/qt4/*.py
+%dir %{py3_sitedir}/vtkmodules/test
+%{py3_sitedir}/vtkmodules/test/*.py
+%dir %{py3_sitedir}/vtkmodules/tk
+%{py3_sitedir}/vtkmodules/tk/*.py
+%dir %{py3_sitedir}/vtkmodules/util
+%{py3_sitedir}/vtkmodules/util/*.py
+%dir %{py3_sitedir}/vtkmodules/wx
+%{py3_sitedir}/vtkmodules/wx/*.py
+#%attr(755,root,root) %{py_sitedir}/vtkmodules/vtk*Python.so
 
 %files python3-devel
 %defattr(644,root,root,755)
@@ -761,19 +731,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython3?Core.so
 %{_includedir}/vtk/PyVTK*.h
 %{_includedir}/vtk/vtkPython*.h
-
-%files tcl
-%defattr(644,root,root,755)
-%doc Wrapping/Tcl/README*
-%attr(755,root,root) %{_bindir}/vtkWrapTcl
-%attr(755,root,root) %{_bindir}/vtkWrapTclInit
-%attr(755,root,root) %{_bindir}/vtk
-%{_datadir}/tcl%{tcl_version}/vtk
-
-%files tcl-devel
-%defattr(644,root,root,755)
-%{_includedir}/vtk/vtkTcl*.h
-%{_includedir}/vtk/vtkTk*.h
 
 %files test-suite
 %defattr(644,root,root,755)
