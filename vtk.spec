@@ -397,6 +397,7 @@ cd build
 	-DVTK_INSTALL_PACKAGE_DIR:PATH=%{_lib}/cmake/vtk \
 	-DVTK_INSTALL_TCL_DIR:PATH=share/tcl%{tcl_version}/vtk \
 	-DVTK_INSTALL_QT_DIR=/%{_lib}/qt5/plugins/designer \
+	-DVTK_INSTALL_PYTHON_MODULES_DIR:PATH=%{py3_sitedir} \
 	-DVTK_FFMPEG_HAS_OLD_HEADER:BOOL=OFF \
 	%{?with_OSMesa:-DVTK_OPENGL_HAS_OSMESA:BOOL=ON} \
 	-DVTK_USE_SYSTEM_LIBRARIES:BOOL=ON \
