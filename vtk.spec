@@ -703,25 +703,36 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingMatplotlib.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-8.2.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython3?Core.so.1
+%dir %{py3_sitedir}/vtk.py
+%dir %{py3_sitedir}/__pycache__/*
 %dir %{py3_sitedir}/vtkmodules
 %{py3_sitedir}/vtkmodules/*.py
+%{py3_sitedir}/vtkmodules/__pycache__
 %dir %{py3_sitedir}/vtkmodules/gtk
 %{py3_sitedir}/vtkmodules/gtk/*.py
+%{py3_sitedir}/vtkmodules/gtk/__pycache__
 %dir %{py3_sitedir}/vtkmodules/numpy_interface
 %{py3_sitedir}/vtkmodules/numpy_interface/*.py
+%{py3_sitedir}/vtkmodules/numpy_interface/__pycache__
 %dir %{py3_sitedir}/vtkmodules/qt
 %{py3_sitedir}/vtkmodules/qt/*.py
+%{py3_sitedir}/vtkmodules/qt/__pycache__
 %dir %{py3_sitedir}/vtkmodules/qt4
 %{py3_sitedir}/vtkmodules/qt4/*.py
+%{py3_sitedir}/vtkmodules/qt4/__pycache__
 %dir %{py3_sitedir}/vtkmodules/test
 %{py3_sitedir}/vtkmodules/test/*.py
+%{py3_sitedir}/vtkmodules/test/__pycache__
 %dir %{py3_sitedir}/vtkmodules/tk
+%{py3_sitedir}/vtkmodules/tk/__pycache__
 %{py3_sitedir}/vtkmodules/tk/*.py
 %dir %{py3_sitedir}/vtkmodules/util
 %{py3_sitedir}/vtkmodules/util/*.py
+%{py3_sitedir}/vtkmodules/util/__pycache__
 %dir %{py3_sitedir}/vtkmodules/wx
 %{py3_sitedir}/vtkmodules/wx/*.py
-#%attr(755,root,root) %{py_sitedir}/vtkmodules/vtk*Python.so
+%{py3_sitedir}/vtkmodules/wx/__pycache__
+%attr(755,root,root) %{py3_sitedir}/vtkmodules/vtk*Python.so
 
 %files python3-devel
 %defattr(644,root,root,755)
