@@ -47,14 +47,17 @@ BuildRequires:	Qt5XmlPatterns-devel
 BuildRequires:	Qt5UiTools-devel
 BuildRequires:	R
 BuildRequires:	boost-devel >= 1.39
-BuildRequires:	cmake >= 2.8.8
+BuildRequires:	cmake >= 3.3
+BuildRequires:	double-conversion-devel
 %{?with_doc:BuildRequires:	doxygen}
+BuildRequires:	eigen3 >= 2.91.0
 BuildRequires:	expat-devel
 %{?with_ffmpeg:BuildRequires:	ffmpeg-devel}
 BuildRequires:	fontconfig-devel
 BuildRequires:	freetype-devel >= 2
 BuildRequires:	gdal-devel
 %{?with_system_gl2ps:BuildRequires:	gl2ps-devel >= 1.3.8}
+BuildRequires:	glew-devel
 BuildRequires:	gnuplot
 BuildRequires:	graphviz
 BuildRequires:	hdf5-devel
@@ -62,7 +65,7 @@ BuildRequires:	hdf5-devel
 BuildRequires:	jdk >= 1.5
 BuildRequires:	jpackage-utils
 %endif
-BuildRequires:	jsoncpp-devel
+BuildRequires:	jsoncpp-devel >= 0.7.0
 BuildRequires:	libharu-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libogg-devel
@@ -80,6 +83,7 @@ BuildRequires:	netcdf-cxx-devel >= 4
 BuildRequires:	perl-base
 BuildRequires:	postgresql-devel
 BuildRequires:	proj-devel >= 6.0
+BuildRequires:	pugixml-devel
 BuildRequires:	python3-devel
 BuildRequires:	python3-sip-devel
 BuildRequires:	qt5-build >= 4.5.0
@@ -87,6 +91,7 @@ BuildRequires:	qt5-qmake >= 4.5.0
 BuildRequires:	rpmbuild(macros) >= 1.605
 BuildRequires:	sip
 BuildRequires:	sip-PyQt5
+BuildRequires:	sqlite3-devel
 BuildRequires:	tcl-devel
 BuildRequires:	tk-devel
 BuildRequires:	unixODBC-devel
@@ -98,6 +103,7 @@ BuildRequires:	xorg-lib-libXScrnSaver-devel
 BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-lib-libXft-devel
 BuildRequires:	xorg-lib-libXt-devel
+BuildRequires:	xz-devel
 BuildRequires:	zlib-devel
 BuildConflicts:	libXNVCtrl-devel
 Obsoletes:	vtk-tcl < 8.2.0-1
