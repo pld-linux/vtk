@@ -559,6 +559,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsGeovis.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsInfovis.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkVPIC.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkexodusII.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkgl2ps.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtklibharu.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so.1
@@ -608,6 +609,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsGeovis.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsInfovis.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkVPIC.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkexodusII.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkgl2ps.so
 %attr(755,root,root) %{_libdir}/vtk/libvtklibharu.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkmetaio.so
@@ -624,6 +626,8 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/VPIC
 %{_includedir}/vtk/DICOM*.h
 %{_includedir}/vtk/DatabaseSchemaWith2Tables.h
+%{_includedir}/vtk/LSDyna*.h
+%{_includedir}/vtk/vtkexodusII
 %{_includedir}/vtk/vtkgl2ps
 %{_includedir}/vtk/vtkkwiml
 %{_includedir}/vtk/vtklibharu
@@ -710,6 +714,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkWrapPythonInit
 %attr(755,root,root) %{_bindir}/vtkpython
 %attr(755,root,root) %{_libdir}/vtk/libvtk*Python3?D.so.1
+%attr(755,root,root) %{_libdir}/vtk/libvtkPythonContext2D.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkPythonInterpreter.so.1
 # RenderingMatplotlib requires PythonInterpreter
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingMatplotlib.so.1
@@ -749,6 +754,7 @@ rm -rf $RPM_BUILD_ROOT
 %files python3-devel
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/vtk/libvtk*Python3?D.so
+%attr(755,root,root) %{_libdir}/vtk/libvtkPythonContext2D.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkPythonInterpreter.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingMatplotlib.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython3?Core.so
