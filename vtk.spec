@@ -321,6 +321,10 @@ cp -a Examples vtk-examples
 %{__rm} -r vtk-examples/Examples/GUI/Win32
 find vtk-examples -type f | xargs chmod -R a-x
 
+for x in doubleconversion eigen expat freetype %{?with_system_gl2ps:gl2ps }glew hdf5 jpeg jsoncpp libproj libxml2 lz4 lzma netcdf ogg png pugixml sqlite theora tiff zfp zlib; do
+%{__rm} -r ThirdParty/*/vtk$x
+done
+
 %build
 export CFLAGS="%{rpmcflags} -D_UNICODE -DHAVE_UINTPTR_T"
 export CXXFLAGS="%{rpmcxxflags} -D_UNICODE -DHAVE_UINTPTR_T"
