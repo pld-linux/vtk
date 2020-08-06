@@ -6,6 +6,7 @@
 # - NVCtrlLib for Rendering/OpenGL (on bcond)
 # - VTK_USE_SYSTEM_XDMF2=ON ? (but our xdmf-devel seems not compatible)
 # - python bcond?
+# - use system exodusii
 #
 # Conditional build
 %bcond_without	java		# Java wrappers
