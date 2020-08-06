@@ -31,6 +31,7 @@ Patch2:		proj6_compat.patch
 Patch3:		qt-5.15.patch
 Patch4:		python-3.8.patch
 Patch5:		link.patch
+Patch6:		system-pugixml.patch
 URL:		http://www.vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -309,6 +310,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
