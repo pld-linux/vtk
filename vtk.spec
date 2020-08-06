@@ -722,7 +722,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkRenderingPythonTkWidgets-8.2.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython3?Core.so.1
 %dir %{py3_sitedir}/vtk.py
-%dir %{py3_sitedir}/__pycache__/*
 %dir %{py3_sitedir}/vtkmodules
 %{py3_sitedir}/vtkmodules/*.py
 %{py3_sitedir}/vtkmodules/__pycache__
