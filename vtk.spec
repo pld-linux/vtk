@@ -648,7 +648,6 @@ rm -rf $RPM_BUILD_ROOT
 %exclude %{_includedir}/vtk/vtkQImageToImageSource.h
 %exclude %{_includedir}/vtk/vtkQt*.h
 %exclude %{_includedir}/vtk/vtkRenderingQtModule.h
-%exclude %{_includedir}/vtk/vtkTk*.h
 %exclude %{_includedir}/vtk/vtkViewsQtModule.h
 %{_libdir}/cmake/vtk
 
