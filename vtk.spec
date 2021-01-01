@@ -19,7 +19,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	8.2.0
-Release:	2
+Release:	3
 License:	BSD
 Group:		Libraries
 Source0:	http://www.vtk.org/files/release/8.2/VTK-%{version}.tar.gz
@@ -91,7 +91,7 @@ BuildRequires:	python3-devel
 BuildRequires:	python3-sip-devel
 BuildRequires:	qt5-build >= 4.5.0
 BuildRequires:	qt5-qmake >= 4.5.0
-BuildRequires:	rpmbuild(macros) >= 1.605
+BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sip
 BuildRequires:	sip-PyQt5
 BuildRequires:	sqlite3-devel
@@ -291,9 +291,7 @@ Ten pakiet zawiera wszystkie programy testowe ze źródeł VTK. Kod
 Summary:	Data files for VTK
 Summary(pl.UTF-8):	Pliki danych dla VTK
 Group:		Development/Libraries
-%if "%{_rpmversion}" >= "5"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description data
 This package contains all the data from the VTKData repository. These
