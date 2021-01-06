@@ -13,13 +13,13 @@
 %bcond_without	ffmpeg		# FFMPEG .avi saving support
 %bcond_with	doc		# do not build and package doxygen documentation
 %bcond_with	OSMesa		# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
-%bcond_with	system_gl2ps	# use system gl2ps (VTK currently is carrying local modifications to gl2ps)
+%bcond_with	system_gl2ps	# use system gl2ps (VTK currently is carrying local modifications to gl2ps, incl. gl2psTextOptColorBL function)
 
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	8.2.0
-Release:	3
+Release:	4
 License:	BSD
 Group:		Libraries
 #Source0Download: https://vtk.org/download/
@@ -60,7 +60,7 @@ BuildRequires:	expat-devel
 BuildRequires:	fontconfig-devel
 BuildRequires:	freetype-devel >= 2
 BuildRequires:	gdal-devel
-%{?with_system_gl2ps:BuildRequires:	gl2ps-devel >= 1.3.8}
+%{?with_system_gl2ps:BuildRequires:	gl2ps-devel >= 1.4.0}
 BuildRequires:	glew-devel
 BuildRequires:	gnuplot
 BuildRequires:	graphviz
@@ -112,7 +112,7 @@ BuildRequires:	zlib-devel
 BuildConflicts:	libXNVCtrl-devel
 Obsoletes:	vtk-tcl < 8.2.0-1
 Obsoletes:	vtk-tcl-devel < 8.2.0-1
-%{?with_system_gl2ps:Requires:	gl2ps >= 1.3.8}
+%{?with_system_gl2ps:Requires:	gl2ps >= 1.4.0}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		skip_post_check_so	lib.*Python.*\.so.*
@@ -316,7 +316,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
-	%{__perl} -pi -e 's,(\.\./)+VTKData,%{_datadir}/vtk-8.1,g'
+	%{__perl} -pi -e 's,(\.\./)+VTKData,%{_datadir}/vtk-8.2,g'
 
 # Save an unbuilt copy of the Example's sources for %doc
 mkdir vtk-examples
@@ -450,8 +450,12 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir}/ld.so.conf.d,%{_examplesdir}/%{name}-%
 echo %{_libdir}/vtk > $RPM_BUILD_ROOT%{_sysconfdir}/ld.so.conf.d/vtk-%{_arch}.conf
 
 for f in $(cd build/ExternalData/Testing ; find Data -type l); do
-	install -Dp build/ExternalData/Testing/$f $RPM_BUILD_ROOT%{_datadir}/vtk-8.1/$f
+	install -Dp build/ExternalData/Testing/$f $RPM_BUILD_ROOT%{_datadir}/vtk-8.2/$f
 done
+
+# proprietary font, even not used; invalid UTF-8 in signature returned by libmagic)
+# (commented out in Views/Infovis/Testing/Cxx/TestQtLabelStrategy.cxx)
+%{__rm} $RPM_BUILD_ROOT%{_datadir}/vtk-8.2/Data/Infovis/DaveDS_-_Sketchy.ttf
 
 # Install examples
 for f in \
@@ -1292,5 +1296,5 @@ rm -rf $RPM_BUILD_ROOT
 
 %files data
 %defattr(644,root,root,755)
-%dir %{_datadir}/vtk-8.1
-%{_datadir}/vtk-8.1/Data
+%dir %{_datadir}/vtk-8.2
+%{_datadir}/vtk-8.2/Data
