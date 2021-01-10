@@ -1,0 +1,110 @@
+--- VTK-8.2.0/Utilities/Doxygen/doc_version.pl.orig	2019-01-30 18:15:13.000000000 +0100
++++ VTK-8.2.0/Utilities/Doxygen/doc_version.pl	2021-01-08 17:01:33.913860627 +0100
+@@ -152,24 +152,24 @@
+   if exists $args{"logo"} && -f $args{"logo"};
+ 
+ print DEST_FILE
+-  "  \@par VTK:\n"
+-  "   VTK is an open-source software system for image processing, 3D \n"
+-  "   graphics, volume rendering and visualization. VTK includes many \n"
+-  "   advanced algorithms (e.g., surface reconstruction, implicit modelling, \n"
+-  "   decimation) and rendering techniques (e.g., hardware-accelerated \n"
+-  "   volume rendering, LOD control).\n"
+-  "   \@par \n"
+-  "   VTK is used by academicians for teaching and research; by government \n"
+-  "   research institutions such as Los Alamos National Lab in the US or \n"
+-  "   CINECA in Italy; and by many commercial firms who use VTK to build or \n"
+-  "   extend products. \n"
+-  "   \@par \n"
+-  "   The origin of VTK is with the textbook \"The Visualization Toolkit, an \n"
+-  "   Object-Oriented Approach to 3D Graphics\" originally published by \n"
+-  "   Prentice Hall and now published by Kitware, Inc. (Third Edition ISBN \n"
+-  "   1-930934-07-6). VTK has grown (since its initial release in 1994) to a \n"
+-  "   world-wide user base in the commercial, academic, and research \n"
+-  "   communities. \n"
++  "  \@par VTK:\n",
++  "   VTK is an open-source software system for image processing, 3D \n",
++  "   graphics, volume rendering and visualization. VTK includes many \n",
++  "   advanced algorithms (e.g., surface reconstruction, implicit modelling, \n",
++  "   decimation) and rendering techniques (e.g., hardware-accelerated \n",
++  "   volume rendering, LOD control).\n",
++  "   \@par \n",
++  "   VTK is used by academicians for teaching and research; by government \n",
++  "   research institutions such as Los Alamos National Lab in the US or \n",
++  "   CINECA in Italy; and by many commercial firms who use VTK to build or \n",
++  "   extend products. \n",
++  "   \@par \n",
++  "   The origin of VTK is with the textbook \"The Visualization Toolkit, an \n",
++  "   Object-Oriented Approach to 3D Graphics\" originally published by \n",
++  "   Prentice Hall and now published by Kitware, Inc. (Third Edition ISBN \n",
++  "   1-930934-07-6). VTK has grown (since its initial release in 1994) to a \n",
++  "   world-wide user base in the commercial, academic, and research \n",
++  "   communities. \n",
+   "  \@par Useful links:\n",
+   "  \@li VTK Home: http://www.vtk.org\n",
+   "  \@li VTK Source: https://gitlab.kitware.com/vtk/vtk\n",
+@@ -178,8 +178,8 @@
+   "  \@li VTK FAQ: http://www.vtk.org/Wiki/VTK_FAQ\n",
+   "  \@li VTK Wiki: http://www.vtk.org/Wiki/\n",
+   "  \@li VTK Dashboard: http://www.cdash.org/CDash/index.php?project=VTK\n",
+-  "  \@li Commercial <a href=\"https://www.kitware.com/products/support.html\">support</a> "
+-  "  and <a href=\"http://www.kitware.com/products/protraining.php\">training<\a> "
++  "  \@li Commercial <a href=\"https://www.kitware.com/products/support.html\">support</a> ",
++  "  and <a href=\"http://www.kitware.com/products/protraining.php\">training<\a> ",
+   "  are available from Kitware\n",
+   " ",
+   "*/\n\n";
+--- VTK-8.2.0/Utilities/Doxygen/doxyfile.in.orig	2019-01-30 18:15:13.000000000 +0100
++++ VTK-8.2.0/Utilities/Doxygen/doxyfile.in	2021-01-09 21:30:25.895589327 +0100
+@@ -102,6 +102,7 @@
+ COLS_IN_ALPHA_INDEX  = 3
+ IGNORE_PREFIX        = vtk
+ 
++EXTRA_PACKAGES       = amstext
+ ENABLE_PREPROCESSING = YES
+ MACRO_EXPANSION      = YES
+ SEARCH_INCLUDES      = YES
+--- VTK-8.2.0/Filters/General/vtkCurvatures.h.orig	2019-01-30 18:15:13.000000000 +0100
++++ VTK-8.2.0/Filters/General/vtkCurvatures.h	2021-01-10 16:44:11.212483671 +0100
+@@ -21,7 +21,7 @@
+  *
+  * Gauss Curvature
+  * discrete Gauss curvature (K) computation,
+- * \f$K(\text{vertex v}) = 2*\pi - \sum_{\text{facet neighbs f of v}} (\text{angle_f at v})\f$.
++ * \f$K(\text{vertex v}) = 2*\pi - \sum_{\text{facet neighbs f of v}} (\text{angle\_f at v})\f$.
+  * The contribution of every facet is for the moment weighted by \f$Area(facet)/3\f$.
+  * The units of Gaussian Curvature are \f$[1/m^2]\f$.
+  *
+@@ -34,13 +34,13 @@
+  * the computation creates the orientation.
+  * The units of Mean Curvature are [1/m].
+  *
+- * Maximum (\f$k_\max\f$) and Minimum (\f$k_\min\f$) Principal Curvatures
+- * \f$k_\max = H + \sqrt{H^2 - K}\f$,
+- * \f$k_\min = H - \sqrt{H^2 - K}\f$
++ * Maximum (\f$k_{max}\f$) and Minimum (\f$k_{min}\f$) Principal Curvatures
++ * \f$k_{max} = H + \sqrt{H^2 - K}\f$,
++ * \f$k_{min} = H - \sqrt{H^2 - K}\f$
+  * Excepting spherical and planar surfaces which have equal principal
+  * curvatures, the curvature at a point on a surface varies with the direction
+  * one "sets off" from the point. For all directions, the curvature will pass
+- * through two extrema: a minimum (\f$k_\min\f$) and a maximum (\f$k_\max\f$)
++ * through two extrema: a minimum (\f$k_{min}\f$) and a maximum (\f$k_{max}\f$)
+  * which occur at mutually orthogonal directions to each other.
+  *
+  * NB. The sign of the Gauss curvature is a geometric invariant, it should be
+@@ -130,12 +130,12 @@
+   void GetMeanCurvature(vtkPolyData *output);
+ 
+   /**
+-   * Maximum principal curvature \f$k_max = H + sqrt(H^2 -K)\f$
++   * Maximum principal curvature \f$k_{max} = H + sqrt(H^2 -K)\f$
+    */
+   void GetMaximumCurvature(vtkPolyData *input, vtkPolyData *output);
+ 
+   /**
+-   * Minimum principal curvature \f$k_min = H - sqrt(H^2 -K)\f$
++   * Minimum principal curvature \f$k_{min} = H - sqrt(H^2 -K)\f$
+    */
+   void GetMinimumCurvature(vtkPolyData *input, vtkPolyData *output);
+ 

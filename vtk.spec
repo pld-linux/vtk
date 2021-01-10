@@ -11,7 +11,7 @@
 # Conditional build
 %bcond_without	java		# Java wrappers
 %bcond_without	ffmpeg		# FFMPEG .avi saving support
-%bcond_with	doc		# do not build and package doxygen documentation
+%bcond_without	doc		# doxygen documentation
 %bcond_with	OSMesa		# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
 %bcond_with	system_gl2ps	# use system gl2ps (VTK currently is carrying local modifications to gl2ps, incl. gl2psTextOptColorBL function)
 
@@ -35,6 +35,7 @@ Patch4:		python-3.8.patch
 Patch5:		link.patch
 Patch6:		system-pugixml.patch
 Patch7:		freetype.patch
+Patch8:		%{name}-doc.patch
 URL:		https://vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -313,6 +314,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
@@ -364,11 +366,12 @@ cd build
 %cmake .. \
 	$ccache \
 	-Wno-dev \
-	%{cmake_on_off doc DBUILD_DOCUMENTATION} \
+	%{cmake_on_off doc BUILD_DOCUMENTATION} \
 	-DBUILD_EXAMPLES:BOOL=ON \
 	-DBUILD_SHARED_LIBS:BOOL=ON \
 	-DBUILD_TESTING:BOOL=ON \
 	-DCMAKE_SKIP_RPATH:BOOL=ON \
+	-DDOXYGEN_GENERATE_HTMLHELP=OFF \
 	-DOPENGL_INCLUDE_PATH:PATH=%{_includedir}/GL \
 	-DPYTHON_INCLUDE_PATH:PATH=%{py3_incdir} \
 	-DPYTHON_LIBRARY:FILEPATH=%{_libdir}/libpython%{py3_ver}.so \
@@ -434,7 +437,10 @@ cd build
 # TODO:	-DModule_vtkRenderingParallelLIC:BOOL=ON (BR: MPI)
 
 %{__make}
-%{?with_doc:%{__make} DoxygenDoc}
+
+%if %{with doc}
+%{__make} DoxygenDoc
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
