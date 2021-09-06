@@ -19,7 +19,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	8.2.0
-Release:	7
+Release:	8
 License:	BSD
 Group:		Libraries
 #Source0Download: https://vtk.org/download/
@@ -375,7 +375,6 @@ cd build
 	-DOPENGL_INCLUDE_PATH:PATH=%{_includedir}/GL \
 	-DPYTHON_INCLUDE_PATH:PATH=%{py3_incdir} \
 	-DPYTHON_LIBRARY:FILEPATH=%{_libdir}/libpython%{py3_ver}.so \
-	-DPYTHON_UTIL_LIBRARY:PATH=%{_libdir}/libutil.so \
 	-DTCL_INCLUDE_PATH:PATH=%{_includedir} \
 	-DTCL_LIBRARY:PATH=%{_libdir}/libtcl.so \
 	-DTK_INCLUDE_PATH:PATH=%{_includedir} \
@@ -796,6 +795,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/DICOM*.h
 %{_includedir}/vtk/DatabaseSchemaWith2Tables.h
 %{_includedir}/vtk/LSDyna*.h
+%{_includedir}/vtk/raycaster*.h
 %{_includedir}/vtk/vtkexodusII
 %{_includedir}/vtk/vtkgl2ps
 %{_includedir}/vtk/vtkkwiml
@@ -1098,6 +1098,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkViewsInfovisPython3?D.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkWrappingPython3?Core.so.1
 %{py3_sitedir}/vtk.py
+%{py3_sitedir}/__pycache__/*
 %dir %{py3_sitedir}/vtkmodules
 %{py3_sitedir}/vtkmodules/*.py
 %{py3_sitedir}/vtkmodules/__pycache__
