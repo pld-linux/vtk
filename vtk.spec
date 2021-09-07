@@ -19,7 +19,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	8.2.0
-Release:	8
+Release:	9
 License:	BSD
 Group:		Libraries
 #Source0Download: https://vtk.org/download/
@@ -795,7 +795,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/DICOM*.h
 %{_includedir}/vtk/DatabaseSchemaWith2Tables.h
 %{_includedir}/vtk/LSDyna*.h
-%{_includedir}/vtk/raycaster*.h
 %{_includedir}/vtk/vtkexodusII
 %{_includedir}/vtk/vtkgl2ps
 %{_includedir}/vtk/vtkkwiml
