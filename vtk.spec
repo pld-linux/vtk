@@ -92,6 +92,7 @@ BuildRequires:	pugixml-devel
 BuildRequires:	python3-devel
 BuildRequires:	qt5-build >= 4.5.0
 BuildRequires:	qt5-qmake >= 4.5.0
+BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	sqlite3-devel
 BuildRequires:	tcl-devel
