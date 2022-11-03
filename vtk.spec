@@ -90,12 +90,9 @@ BuildRequires:	postgresql-devel
 BuildRequires:	proj-devel >= 6.0
 BuildRequires:	pugixml-devel
 BuildRequires:	python3-devel
-BuildRequires:	python3-sip-devel
 BuildRequires:	qt5-build >= 4.5.0
 BuildRequires:	qt5-qmake >= 4.5.0
 BuildRequires:	rpmbuild(macros) >= 1.752
-BuildRequires:	sip
-BuildRequires:	sip-PyQt5
 BuildRequires:	sqlite3-devel
 BuildRequires:	tcl-devel
 BuildRequires:	tk-devel
@@ -406,7 +403,6 @@ cd build
 %endif
 	-DVTK_WRAP_PYTHON:BOOL=ON \
 	-DVTK_PYTHON_VERSION=3 \
-	%{?with_sip:-DVTK_WRAP_PYTHON_SIP:BOOL=ON} \
 	-DVTK_Group_Imaging:BOOL=ON \
 	-DVTK_Group_Qt:BOOL=ON \
 	-DVTK_Group_Rendering:BOOL=ON \
