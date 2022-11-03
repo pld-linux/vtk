@@ -584,7 +584,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExport.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportOpenGL2.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportPDF.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkIOFFMPEG.so.1
+%{?with_ffmpeg:%attr(755,root,root) %{_libdir}/vtk/libvtkIOFFMPEG.so.1}
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGDAL.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGeoJSON.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGeometry.so.1
@@ -711,7 +711,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExport.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportOpenGL2.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportPDF.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkIOFFMPEG.so
+%{?with_ffmpeg:%attr(755,root,root) %{_libdir}/vtk/libvtkIOFFMPEG.so}
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGDAL.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGeoJSON.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGeometry.so
@@ -893,7 +893,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportOpenGL2Java.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportPDFJava.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkIOFFMPEGJava.so
+%{?with_ffmpeg:%attr(755,root,root) %{_libdir}/vtk/libvtkIOFFMPEGJava.so}
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGDALJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGeoJSONJava.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGeometryJava.so
@@ -1022,7 +1022,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportPython3*D.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportOpenGL2Python3*D.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportPDFPython3*D.so.1
-%attr(755,root,root) %{_libdir}/vtk/libvtkIOFFMPEGPython3*D.so.1
+%{?with_ffmpeg:%attr(755,root,root) %{_libdir}/vtk/libvtkIOFFMPEGPython3*D.so.1}
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGDALPython3*D.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGeoJSONPython3*D.so.1
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGeometryPython3*D.so.1
@@ -1173,7 +1173,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportPython3*D.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportOpenGL2Python3*D.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOExportPDFPython3*D.so
-%attr(755,root,root) %{_libdir}/vtk/libvtkIOFFMPEGPython3*D.so
+%{?with_ffmpeg:%attr(755,root,root) %{_libdir}/vtk/libvtkIOFFMPEGPython3*D.so}
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGDALPython3*D.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGeoJSONPython3*D.so
 %attr(755,root,root) %{_libdir}/vtk/libvtkIOGeometryPython3*D.so
