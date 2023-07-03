@@ -15,6 +15,8 @@
 %bcond_with	OSMesa		# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
 %bcond_with	system_gl2ps	# use system gl2ps (VTK currently is carrying local modifications to gl2ps, incl. gl2psTextOptColorBL function)
 
+%{?use_default_jdk}
+
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
@@ -67,7 +69,7 @@ BuildRequires:	gnuplot
 BuildRequires:	graphviz
 BuildRequires:	hdf5-devel
 %if %{with java}
-BuildRequires:	jdk >= 1.5
+%{?use_jdk:%buildrequires_jdk}%{!?use_jdk:BuildRequires:	jdk >= 1.5}
 BuildRequires:	jpackage-utils
 %endif
 BuildRequires:	jsoncpp-devel >= 0.7.0
@@ -93,7 +95,7 @@ BuildRequires:	python3-devel
 BuildRequires:	qt5-build >= 4.5.0
 BuildRequires:	qt5-qmake >= 4.5.0
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 1.752
+BuildRequires:	rpmbuild(macros) >= 2.021
 BuildRequires:	sqlite3-devel
 BuildRequires:	tcl-devel
 BuildRequires:	tk-devel
