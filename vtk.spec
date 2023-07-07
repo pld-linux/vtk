@@ -69,7 +69,7 @@ BuildRequires:	gnuplot
 BuildRequires:	graphviz
 BuildRequires:	hdf5-devel
 %if %{with java}
-%{?use_jdk:%buildrequires_jdk}%{!?use_jdk:BuildRequires:	jdk >= 1.5}
+%buildrequires_jdk
 BuildRequires:	jpackage-utils
 %endif
 BuildRequires:	jsoncpp-devel >= 0.7.0
