@@ -15,13 +15,14 @@
 %bcond_with	OSMesa		# build with OSMesa (https://bugzilla.redhat.com/show_bug.cgi?id=744434)
 %bcond_with	system_gl2ps	# use system gl2ps (VTK currently is carrying local modifications to gl2ps, incl. gl2psTextOptColorBL function)
 
+%define default_jdk_version 11
 %{?use_default_jdk}
 
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	8.2.0
-Release:	18
+Release:	19
 License:	BSD
 Group:		Libraries
 #Source0Download: https://vtk.org/download/
