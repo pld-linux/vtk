@@ -1,0 +1,11 @@
+--- VTK-9.2.6/IO/FFMPEG/CMakeLists.txt~	2023-02-15 05:03:53.000000000 +0100
++++ VTK-9.2.6/IO/FFMPEG/CMakeLists.txt	2023-10-15 13:24:47.450115460 +0200
+@@ -24,7 +24,7 @@
+ endif ()
+ 
+ set(ffmpeg_libraries)
+-if (NOT FFMPEG_VERSION VERSION_LESS "5.0")
++if (NOT FFMPEG_VERSION VERSION_LESS "6.0")
+   if (NOT FFMPEG_swresample_FOUND)
+     message(FATAL_ERROR
+       "FFMPEG 5.0 requires the `swresample` library.")

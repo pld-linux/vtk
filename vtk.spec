@@ -35,6 +35,7 @@ Source1:	https://www.vtk.org/files/release/9.2/VTKData-%{version}.tar.gz
 # Source1-md5:	159bcc3d94aa8e40fba6f28f2db34ac7
 Patch0:		stdcpp.patch
 Patch1:		proj6-bad-test.patch
+Patch2:		ffmpeg6.patch
 URL:		https://vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -309,6 +310,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %setup -q -n VTK-%{version} -b 1
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
@@ -395,6 +397,12 @@ cd build
 	-DVTK_MODULE_USE_EXTERNAL_VTK_cli11:BOOL=OFF \
 	%{!?with_system_fmt:-DVTK_MODULE_USE_EXTERNAL_VTK_fmt:BOOL=OFF} \
 	%{!?with_system_gl2ps:-DVTK_MODULE_USE_EXTERNAL_VTK_gl2ps:BOOL=OFF} \
+%if %{with ffmpeg}
+	-DVTK_MODULE_ENABLE_VTK_IOFFMPEG:STRING=YES \
+	-DVTK_MODULE_ENABLE_VTK_RenderingFFMPEGOpenGL2:STRING=YES \
+%else
+	-DVTK_MODULE_ENABLE_VTK_IOFFMPEG:STRING=NO \
+%endif
 %if %{with java}
 	-DVTK_WRAP_JAVA:BOOL=ON \
 	-DJAVA_INCLUDE_PATH:PATH=$JAVA_HOME/include \
@@ -429,11 +437,6 @@ done
 for f in build/bin/*Tests build/bin/Test*; do
 	install $f $RPM_BUILD_ROOT%{_bindir}
 done
-
-#install -p build/bin/vtkpython $RPM_BUILD_ROOT%{_bindir}
-
-# unwanted doxygen files
-%{?with_doc:%{__rm} -r $RPM_BUILD_ROOT%{_docdir}/vtk*/doxygen}
 
 %py3_comp $RPM_BUILD_ROOT%{py3_sitedir}
 
@@ -544,6 +547,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOExport.so.1
 %attr(755,root,root) %{_libdir}/libvtkIOExportPDF.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOExportPDF.so.1
+%if %{with ffmpeg}
+%attr(755,root,root) %{_libdir}/libvtkIOFFMPEG.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvtkIOFFMPEG.so.1
+%endif
 %attr(755,root,root) %{_libdir}/libvtkIOGeometry.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOGeometry.so.1
 %attr(755,root,root) %{_libdir}/libvtkIOImage.so.*.*.*
@@ -626,6 +633,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingCore.so.1
 %attr(755,root,root) %{_libdir}/libvtkRenderingFreeType.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingFreeType.so.1
+%if %{with ffmpeg}
+%attr(755,root,root) %{_libdir}/libvtkRenderingFFMPEGOpenGL2.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvtkRenderingFFMPEGOpenGL2.so.1
+%endif
 %attr(755,root,root) %{_libdir}/libvtkRenderingGL2PSOpenGL2.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingGL2PSOpenGL2.so.1
 %attr(755,root,root) %{_libdir}/libvtkRenderingImage.so.*.*.*
@@ -719,6 +730,7 @@ rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(644,root,root,755)
 %doc Utilities/Upgrading/*
+%{?with_doc:%doc %{_docdir}/vtk}
 %attr(755,root,root) %{_bindir}/vtkProbeOpenGLVersion
 %attr(755,root,root) %{_bindir}/vtkWrapHierarchy
 %attr(755,root,root) %{_libdir}/libvtkChartsCore.so
@@ -786,6 +798,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libvtkIOExportGL2PS.so
 %attr(755,root,root) %{_libdir}/libvtkIOExportPDF.so
 %attr(755,root,root) %{_libdir}/libvtkIOExport.so
+%{?with_ffmpeg:%attr(755,root,root) %{_libdir}/libvtkIOFFMPEG.so}
 %attr(755,root,root) %{_libdir}/libvtkIOGeometry.so
 %attr(755,root,root) %{_libdir}/libvtkIOHDF.so
 %attr(755,root,root) %{_libdir}/libvtkIOImage.so
@@ -817,6 +830,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libvtkRenderingContextOpenGL2.so
 %attr(755,root,root) %{_libdir}/libvtkRenderingCore.so
 %attr(755,root,root) %{_libdir}/libvtkRenderingFreeType.so
+%{?with_ffmpeg:%attr(755,root,root) %{_libdir}/libvtkRenderingFFMPEGOpenGL2.so}
 %attr(755,root,root) %{_libdir}/libvtkRenderingGL2PSOpenGL2.so
 %attr(755,root,root) %{_libdir}/libvtkRenderingHyperTreeGrid.so
 %attr(755,root,root) %{_libdir}/libvtkRenderingImage.so
