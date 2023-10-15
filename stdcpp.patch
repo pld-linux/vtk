@@ -1,0 +1,10 @@
+--- VTK-9.2.6/IO/Image/vtkSEPReader.h~	2023-02-15 05:03:53.000000000 +0100
++++ VTK-9.2.6/IO/Image/vtkSEPReader.h	2023-10-14 16:39:06.282084245 +0200
+@@ -26,6 +26,7 @@
+ #include "vtkNew.h" // for ivars
+ 
+ #include <array>  // for std::array
++#include <cstdint> // for std::uint8_t
+ #include <string> // for std::string
+ 
+ namespace details
