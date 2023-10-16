@@ -25,7 +25,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	9.2.6
-Release:	1
+Release:	2
 License:	BSD
 Group:		Libraries
 #Source0Download: https://vtk.org/download/
@@ -890,6 +890,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/vtkloguru
 %{_includedir}/vtk/vtknlohmannjson
 %{_includedir}/vtk/vtkutf8
+%dir %{_libdir}/%{name}
 %{_libdir}/%{name}/hierarchy
 
 %if %{with java}
@@ -947,6 +948,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libvtkJava.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkJava.so.1
 # java modules
+%dir %{_libdir}/java/vtk-*
 %attr(755,root,root) %{_libdir}/java/vtk-*/libvtk*Java.so
 %{_libdir}/java/vtk.jar
 
