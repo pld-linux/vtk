@@ -84,7 +84,7 @@ BuildRequires:	libxml2-devel >= 2
 BuildRequires:	lz4-devel
 BuildRequires:	motif-devel
 BuildRequires:	mysql-devel
-BuildRequires:	netcdf-cxx-devel >= 4
+BuildRequires:	netcdf-cxx4-devel >= 4
 # some code using it exists (Domains/Chemistry), but is not included in cmakefiles
 #BuildRequires:	openqube-devel
 BuildRequires:	perl-base
