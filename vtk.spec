@@ -24,32 +24,30 @@
 Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
-Version:	9.2.6
-Release:	2
+Version:	9.3.1
+Release:	1
 License:	BSD
 Group:		Libraries
 #Source0Download: https://vtk.org/download/
-Source0:	https://www.vtk.org/files/release/9.2/VTK-%{version}.tar.gz
-# Source0-md5:	d855cbabdf423f2839e1419ecc5f6700
-Source1:	https://www.vtk.org/files/release/9.2/VTKData-%{version}.tar.gz
-# Source1-md5:	159bcc3d94aa8e40fba6f28f2db34ac7
-Patch0:		stdcpp.patch
-Patch1:		proj6-bad-test.patch
-Patch2:		ffmpeg6.patch
+Source0:	https://www.vtk.org/files/release/9.3/VTK-%{version}.tar.gz
+# Source0-md5:	1b237485ca2eaaf676e2031a71e82d0d
+Source1:	https://www.vtk.org/files/release/9.3/VTKData-%{version}.tar.gz
+# Source1-md5:	29b3a39da48e43f0cd0ad7f0a84b9e9a
+Patch0:		ffmpeg6.patch
 URL:		https://vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
 BuildRequires:	OpenGL-devel
-BuildRequires:	Qt5Core-devel
-BuildRequires:	Qt5Designer-devel
-BuildRequires:	Qt5Gui-devel
-BuildRequires:	Qt5Network-devel
-BuildRequires:	Qt5OpenGL-devel
-BuildRequires:	Qt5Sql-devel
-BuildRequires:	Qt5UiTools-devel
-BuildRequires:	Qt5WebKit-devel
-BuildRequires:	Qt5X11Extras-devel
-BuildRequires:	Qt5XmlPatterns-devel
+BuildRequires:	Qt6Core-devel
+BuildRequires:	Qt6Designer-devel
+BuildRequires:	Qt6Gui-devel
+BuildRequires:	Qt6Network-devel
+BuildRequires:	Qt6OpenGL-devel
+BuildRequires:	Qt6Quick-devel
+BuildRequires:	Qt6Sql-devel
+BuildRequires:	Qt6UiTools-devel
+BuildRequires:	Qt6WebEngine-devel
+BuildRequires:	Qt6Xml-devel
 BuildRequires:	R
 BuildRequires:	boost-devel >= 1.39
 BuildRequires:	cmake >= 3.3
@@ -89,12 +87,11 @@ BuildRequires:	netcdf-cxx4-devel >= 4
 #BuildRequires:	openqube-devel
 BuildRequires:	perl-base
 BuildRequires:	postgresql-devel
-BuildRequires:	proj-devel >= 6.0
+BuildRequires:	proj-devel >= 9.0
 BuildRequires:	pugixml-devel
 BuildRequires:	python3-devel
-BuildRequires:	python3-PyQt5
-BuildRequires:	qt5-build >= 4.5.0
-BuildRequires:	qt5-qmake >= 4.5.0
+BuildRequires:	python3-PyQt6
+BuildRequires:	qt6-build
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 2.021
 BuildRequires:	sqlite3-devel
@@ -161,33 +158,33 @@ Ten pakiet dostarcza pliki nagłówkowe VTK do kompilowania programów
 C++ używających VTK do wizualizacji 3D.
 
 %package qt
-Summary:	Qt5 bindings and Qt5 Designer plugin for VTK
-Summary(pl.UTF-8):	Wiązania Qt5 oraz wtyczka Qt5 Designera do VTK
+Summary:	Qt6 bindings and Qt6 Designer plugin for VTK
+Summary(pl.UTF-8):	Wiązania Qt6 oraz wtyczka Qt6 Designera do VTK
 Group:		X11/Libraries
 Requires:	%{name} = %{version}-%{release}
-Requires:	Qt5Core >= 4.5.0
-Requires:	Qt5Gui >= 4.5.0
-Requires:	Qt5Network >= 4.5.0
-Requires:	Qt5OpenGL >= 4.5.0
-Requires:	Qt5Sql >= 4.5.0
-Requires:	Qt5WebKit >= 4.5.0
+Requires:	Qt6Core
+Requires:	Qt6Gui
+Requires:	Qt6Network
+Requires:	Qt6OpenGL
+Requires:	Qt6Sql
+Requires:	Qt6WebEngine
 
 %description qt
-Qt5 bindings and Qt5 Designer plugin for VTK.
+Qt6 bindings and Qt6 Designer plugin for VTK.
 
 %description qt -l pl.UTF-8
-Wiązania Qt5 oraz wtyczka Qt5 Designera do VTK.
+Wiązania Qt6 oraz wtyczka Qt6 Designera do VTK.
 
 %package qt-devel
-Summary:	Header files for VTK Qt5 bindings
-Summary(pl.UTF-8):	Pliki nagłówkowe wiązań Qt5` do VTK
+Summary:	Header files for VTK Qt6 bindings
+Summary(pl.UTF-8):	Pliki nagłówkowe wiązań Qt6 do VTK
 Group:		X11/Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 Requires:	%{name}-qt = %{version}-%{release}
-Requires:	Qt5Core-devel >= 4.5.0
-Requires:	Qt5Gui-devel >= 4.5.0
-Requires:	Qt5OpenGL-devel >= 4.5.0
-Requires:	Qt5Sql-devel >= 4.5.0
+Requires:	Qt6Core-devel
+Requires:	Qt6Gui-devel
+Requires:	Qt6OpenGL-devel
+Requires:	Qt6Sql-devel
 
 %description qt-devel
 Header files for VTK Qt bindings.
@@ -308,13 +305,11 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 
 %prep
 %setup -q -n VTK-%{version} -b 1
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%patch -P 0 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
-	%{__perl} -pi -e 's,(\.\./)+VTKData,%{_datadir}/vtk-9.2,g'
+	%{__perl} -pi -e 's,(\.\./)+VTKData,%{_datadir}/vtk-9.3,g'
 
 # Save an unbuilt copy of the Example's sources for %doc
 mkdir vtk-examples
@@ -389,6 +384,7 @@ cd build
 	-DVTK_USE_EXTERNAL:BOOL=ON \
 	-DVTK_MODULE_USE_EXTERNAL_VTK_utf8:BOOL=OFF \
 	-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF \
+	-DVTK_MODULE_USE_EXTERNAL_VTK_fast_float:BOOL=OFF \
 	-DVTK_MODULE_USE_EXTERNAL_VTK_nlohmannjson:BOOL=OFF \
 	-DVTK_MODULE_USE_EXTERNAL_VTK_pegtl:BOOL=OFF \
 	-DVTK_MODULE_USE_EXTERNAL_VTK_cgns:BOOL=OFF \
@@ -430,7 +426,7 @@ LD_LIBRARY_PATH="$(pwd)/build/%{_lib}:$LD_LIBRARY_PATH" \
 	DESTDIR=$RPM_BUILD_ROOT
 
 for f in $(cd build/ExternalData/Testing ; find Data -type l); do
-	install -Dp build/ExternalData/Testing/$f $RPM_BUILD_ROOT%{_datadir}/vtk-9.2/$f
+	install -Dp build/ExternalData/Testing/$f $RPM_BUILD_ROOT%{_datadir}/vtk-9.3/$f
 done
 
 # Install test binaries
@@ -459,272 +455,286 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README.md vtkBanner.gif vtkLogo.ico Wrapping/Tools/README*
 %doc %{_datadir}/licenses
-%attr(755,root,root) %{_libdir}/libvtkChartsCore.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkChartsCore.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkChartsCore.so.1
-%attr(755,root,root) %{_libdir}/libvtkCommonColor.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkCommonColor.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkCommonColor.so.1
-%attr(755,root,root) %{_libdir}/libvtkCommonComputationalGeometry.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkCommonComputationalGeometry.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkCommonComputationalGeometry.so.1
-%attr(755,root,root) %{_libdir}/libvtkCommonCore.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkCommonCore.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkCommonCore.so.1
-%attr(755,root,root) %{_libdir}/libvtkCommonDataModel.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkCommonDataModel.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkCommonDataModel.so.1
-%attr(755,root,root) %{_libdir}/libvtkCommonExecutionModel.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkCommonExecutionModel.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkCommonExecutionModel.so.1
-%attr(755,root,root) %{_libdir}/libvtkCommonMath.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkCommonMath.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkCommonMath.so.1
-%attr(755,root,root) %{_libdir}/libvtkCommonMisc.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkCommonMisc.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkCommonMisc.so.1
-%attr(755,root,root) %{_libdir}/libvtkCommonSystem.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkCommonSystem.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkCommonSystem.so.1
-%attr(755,root,root) %{_libdir}/libvtkCommonTransforms.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkCommonTransforms.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkCommonTransforms.so.1
-%attr(755,root,root) %{_libdir}/libvtkDICOMParser.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkDICOMParser.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkDICOMParser.so.1
-%attr(755,root,root) %{_libdir}/libvtkDomainsChemistryOpenGL2.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkDomainsChemistryOpenGL2.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkDomainsChemistryOpenGL2.so.1
-%attr(755,root,root) %{_libdir}/libvtkDomainsChemistry.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkDomainsChemistry.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkDomainsChemistry.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersAMR.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersAMR.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersAMR.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersCore.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersCellGrid.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvtkFiltersCellGrid.so.1
+%attr(755,root,root) %{_libdir}/libvtkFiltersCore.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersCore.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersExtraction.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersExtraction.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersExtraction.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersFlowPaths.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersFlowPaths.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersFlowPaths.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersGeneral.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersGeneral.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersGeneral.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersGeneric.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersGeneric.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersGeneric.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersGeometry.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersGeometry.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersGeometry.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersHybrid.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersGeometryPreview.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvtkFiltersGeometryPreview.so.1
+%attr(755,root,root) %{_libdir}/libvtkFiltersHybrid.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersHybrid.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersHyperTree.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersHyperTree.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersHyperTree.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersImaging.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersImaging.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersImaging.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersModeling.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersModeling.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersModeling.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersParallel.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersParallel.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersParallel.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersParallelImaging.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersParallelImaging.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersParallelImaging.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersPoints.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersPoints.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersPoints.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersProgrammable.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersProgrammable.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersProgrammable.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersSMP.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersReduction.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvtkFiltersReduction.so.1
+%attr(755,root,root) %{_libdir}/libvtkFiltersSMP.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersSMP.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersSelection.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersSelection.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersSelection.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersSources.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersSources.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersSources.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersStatistics.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersStatistics.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersStatistics.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersTexture.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersTensor.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvtkFiltersTensor.so.1
+%attr(755,root,root) %{_libdir}/libvtkFiltersTexture.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersTexture.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersTopology.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersTopology.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersTopology.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersVerdict.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersVerdict.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersVerdict.so.1
-%attr(755,root,root) %{_libdir}/libvtkGeovisCore.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkGeovisCore.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkGeovisCore.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOAMR.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOAMR.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOAMR.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOAsynchronous.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOAsynchronous.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOAsynchronous.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOCityGML.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOCellGrid.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvtkIOCellGrid.so.1
+%attr(755,root,root) %{_libdir}/libvtkIOCityGML.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOCityGML.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOCore.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOCore.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOCore.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOEnSight.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOEnSight.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOEnSight.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOExodus.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOExodus.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOExodus.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOExport.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOExport.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOExport.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOExportPDF.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOExportPDF.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOExportPDF.so.1
 %if %{with ffmpeg}
-%attr(755,root,root) %{_libdir}/libvtkIOFFMPEG.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOFFMPEG.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOFFMPEG.so.1
 %endif
-%attr(755,root,root) %{_libdir}/libvtkIOGeometry.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOFLUENTCFF.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvtkIOFLUENTCFF.so.1
+%attr(755,root,root) %{_libdir}/libvtkIOGeometry.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOGeometry.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOImage.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOImage.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOImage.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOImport.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOImport.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOImport.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOInfovis.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOInfovis.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOInfovis.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOLSDyna.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOLSDyna.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOLSDyna.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOLegacy.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOLegacy.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOLegacy.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOMINC.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOMINC.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOMINC.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOMovie.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOMovie.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOMovie.so.1
-%attr(755,root,root) %{_libdir}/libvtkIONetCDF.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIONetCDF.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIONetCDF.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOPLY.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOPLY.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOPLY.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOParallel.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOParallel.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOParallel.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOParallelExodus.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOParallelExodus.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOParallelExodus.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOParallelXML.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOParallelXML.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOParallelXML.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOSQL.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOSQL.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOSQL.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOSegY.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOSegY.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOSegY.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOTecplotTable.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOTecplotTable.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOTecplotTable.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOVeraOut.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOVeraOut.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOVeraOut.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOVideo.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOVideo.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOVideo.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOXML.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOXML.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOXML.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOXMLParser.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOXMLParser.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOXMLParser.so.1
-%attr(755,root,root) %{_libdir}/libvtkImagingColor.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkImagingColor.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkImagingColor.so.1
-%attr(755,root,root) %{_libdir}/libvtkImagingCore.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkImagingCore.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkImagingCore.so.1
-%attr(755,root,root) %{_libdir}/libvtkImagingFourier.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkImagingFourier.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkImagingFourier.so.1
-%attr(755,root,root) %{_libdir}/libvtkImagingGeneral.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkImagingGeneral.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkImagingGeneral.so.1
-%attr(755,root,root) %{_libdir}/libvtkImagingHybrid.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkImagingHybrid.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkImagingHybrid.so.1
-%attr(755,root,root) %{_libdir}/libvtkImagingMath.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkImagingMath.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkImagingMath.so.1
-%attr(755,root,root) %{_libdir}/libvtkImagingMorphological.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkImagingMorphological.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkImagingMorphological.so.1
-%attr(755,root,root) %{_libdir}/libvtkImagingSources.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkImagingSources.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkImagingSources.so.1
-%attr(755,root,root) %{_libdir}/libvtkImagingStatistics.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkImagingStatistics.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkImagingStatistics.so.1
-%attr(755,root,root) %{_libdir}/libvtkImagingStencil.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkImagingStencil.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkImagingStencil.so.1
-%attr(755,root,root) %{_libdir}/libvtkInfovisCore.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkInfovisCore.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkInfovisCore.so.1
-%attr(755,root,root) %{_libdir}/libvtkInfovisLayout.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkInfovisLayout.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkInfovisLayout.so.1
-%attr(755,root,root) %{_libdir}/libvtkInteractionImage.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkInteractionImage.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkInteractionImage.so.1
-%attr(755,root,root) %{_libdir}/libvtkInteractionStyle.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkInteractionStyle.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkInteractionStyle.so.1
-%attr(755,root,root) %{_libdir}/libvtkInteractionWidgets.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkInteractionWidgets.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkInteractionWidgets.so.1
-%attr(755,root,root) %{_libdir}/libvtkParallelCore.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkParallelCore.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkParallelCore.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingAnnotation.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingAnnotation.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingAnnotation.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingContext2D.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingCellGrid.so.*.*
+%attr(755,root,root) %ghost %{_libdir}/libvtkRenderingCellGrid.so.1
+%attr(755,root,root) %{_libdir}/libvtkRenderingContext2D.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingContext2D.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingContextOpenGL2.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingContextOpenGL2.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingContextOpenGL2.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingCore.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingCore.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingCore.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingFreeType.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingFreeType.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingFreeType.so.1
 %if %{with ffmpeg}
-%attr(755,root,root) %{_libdir}/libvtkRenderingFFMPEGOpenGL2.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingFFMPEGOpenGL2.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingFFMPEGOpenGL2.so.1
 %endif
-%attr(755,root,root) %{_libdir}/libvtkRenderingGL2PSOpenGL2.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingGL2PSOpenGL2.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingGL2PSOpenGL2.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingImage.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingImage.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingImage.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingLabel.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingLabel.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingLabel.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingLOD.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingLOD.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingLOD.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingOpenGL2.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingOpenGL2.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingOpenGL2.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingParallel.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingParallel.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingParallel.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingVolumeOpenGL2.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingVolumeOpenGL2.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingVolumeOpenGL2.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingVolume.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingVolume.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingVolume.so.1
-%attr(755,root,root) %{_libdir}/libvtkTestingGenericBridge.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkTestingGenericBridge.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkTestingGenericBridge.so.1
-%attr(755,root,root) %{_libdir}/libvtkTestingIOSQL.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkTestingIOSQL.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkTestingIOSQL.so.1
-%attr(755,root,root) %{_libdir}/libvtkTestingRendering.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkTestingRendering.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkTestingRendering.so.1
-%attr(755,root,root) %{_libdir}/libvtkViewsContext2D.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkViewsContext2D.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkViewsContext2D.so.1
-%attr(755,root,root) %{_libdir}/libvtkViewsCore.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkViewsCore.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkViewsCore.so.1
-%attr(755,root,root) %{_libdir}/libvtkViewsInfovis.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkViewsInfovis.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkViewsInfovis.so.1
-%attr(755,root,root) %{_libdir}/libvtkexodusII.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkexodusII.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkexodusII.so.1
-%attr(755,root,root) %{_libdir}/libvtkgl2ps.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkgl2ps.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkgl2ps.so.1
-%attr(755,root,root) %{_libdir}/libvtkmetaio.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkmetaio.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkmetaio.so.1
-%attr(755,root,root) %{_libdir}/libvtksys.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtksys.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtksys.so.1
-%attr(755,root,root) %{_libdir}/libvtkverdict.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkverdict.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkverdict.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersParallelDIY2.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersParallelDIY2.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersParallelDIY2.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOCGNSReader.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOCGNSReader.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOCGNSReader.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOCONVERGECFD.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOCONVERGECFD.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOCONVERGECFD.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOCesium3DTiles.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOCesium3DTiles.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOCesium3DTiles.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOChemistry.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOChemistry.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOChemistry.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOExportGL2PS.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOExportGL2PS.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOExportGL2PS.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOHDF.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOHDF.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOHDF.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOIOSS.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOIOSS.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOIOSS.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOMotionFX.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOMotionFX.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOMotionFX.so.1
-%attr(755,root,root) %{_libdir}/libvtkIOOggTheora.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkIOOggTheora.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkIOOggTheora.so.1
-%attr(755,root,root) %{_libdir}/libvtkParallelDIY.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkParallelDIY.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkParallelDIY.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingHyperTreeGrid.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingHyperTreeGrid.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingHyperTreeGrid.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingLICOpenGL2.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingLICOpenGL2.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingLICOpenGL2.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingSceneGraph.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingSceneGraph.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingSceneGraph.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingUI.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingUI.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingUI.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingVtkJS.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingVtkJS.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingVtkJS.so.1
-%attr(755,root,root) %{_libdir}/libvtkTestingDataModel.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkTestingDataModel.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkTestingDataModel.so.1
-%attr(755,root,root) %{_libdir}/libvtkWrappingTools.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkWrappingTools.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkWrappingTools.so.1
-%attr(755,root,root) %{_libdir}/libvtkcgns.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkcgns.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkcgns.so.1
-%attr(755,root,root) %{_libdir}/libvtkfmt.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkfmt.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkfmt.so.1
-%attr(755,root,root) %{_libdir}/libvtkioss.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkioss.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkioss.so.1
-%attr(755,root,root) %{_libdir}/libvtkkissfft.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkkissfft.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkkissfft.so.1
-%attr(755,root,root) %{_libdir}/libvtkloguru.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkloguru.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkloguru.so.1
 
-%{_libdir}/libvtkWebCore.so.*.*.*
+%{_libdir}/libvtkWebCore.so.*.*
 %ghost %{_libdir}/libvtkWebCore.so.1
-%{_libdir}/libvtkWebGLExporter.so.*.*.*
+%{_libdir}/libvtkWebGLExporter.so.*.*
 %ghost %{_libdir}/libvtkWebGLExporter.so.1
 
 %files devel
@@ -747,12 +757,14 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libvtkDomainsChemistryOpenGL2.so
 %attr(755,root,root) %{_libdir}/libvtkDomainsChemistry.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersAMR.so
+%attr(755,root,root) %{_libdir}/libvtkFiltersCellGrid.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersCore.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersExtraction.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersFlowPaths.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersGeneral.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersGeneric.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersGeometry.so
+%attr(755,root,root) %{_libdir}/libvtkFiltersGeometryPreview.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersHybrid.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersHyperTree.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersImaging.so
@@ -762,10 +774,12 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libvtkFiltersParallel.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersPoints.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersProgrammable.so
+%attr(755,root,root) %{_libdir}/libvtkFiltersReduction.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersSelection.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersSMP.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersSources.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersStatistics.so
+%attr(755,root,root) %{_libdir}/libvtkFiltersTensor.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersTexture.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersTopology.so
 %attr(755,root,root) %{_libdir}/libvtkFiltersVerdict.so
@@ -787,6 +801,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libvtkInteractionWidgets.so
 %attr(755,root,root) %{_libdir}/libvtkIOAMR.so
 %attr(755,root,root) %{_libdir}/libvtkIOAsynchronous.so
+%attr(755,root,root) %{_libdir}/libvtkIOCellGrid.so
 %attr(755,root,root) %{_libdir}/libvtkIOCesium3DTiles.so
 %attr(755,root,root) %{_libdir}/libvtkIOCGNSReader.so
 %attr(755,root,root) %{_libdir}/libvtkIOChemistry.so
@@ -799,6 +814,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libvtkIOExportPDF.so
 %attr(755,root,root) %{_libdir}/libvtkIOExport.so
 %{?with_ffmpeg:%attr(755,root,root) %{_libdir}/libvtkIOFFMPEG.so}
+%attr(755,root,root) %{_libdir}/libvtkIOFLUENTCFF.so
 %attr(755,root,root) %{_libdir}/libvtkIOGeometry.so
 %attr(755,root,root) %{_libdir}/libvtkIOHDF.so
 %attr(755,root,root) %{_libdir}/libvtkIOImage.so
@@ -826,6 +842,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libvtkParallelCore.so
 %attr(755,root,root) %{_libdir}/libvtkParallelDIY.so
 %attr(755,root,root) %{_libdir}/libvtkRenderingAnnotation.so
+%attr(755,root,root) %{_libdir}/libvtkRenderingCellGrid.so
 %attr(755,root,root) %{_libdir}/libvtkRenderingContext2D.so
 %attr(755,root,root) %{_libdir}/libvtkRenderingContextOpenGL2.so
 %attr(755,root,root) %{_libdir}/libvtkRenderingCore.so
@@ -885,6 +902,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/vtkcli11
 %{_includedir}/vtk/vtkdiy2
 %{_includedir}/vtk/vtkexprtk
+%{_includedir}/vtk/vtkfast_float
 %{_includedir}/vtk/vtkfmt
 %{_includedir}/vtk/vtkkissfft
 %{_includedir}/vtk/vtkloguru
@@ -901,20 +919,20 @@ rm -rf $RPM_BUILD_ROOT
 
 %files qt
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libvtkGUISupportQt.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkGUISupportQt.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkGUISupportQt.so.1
-%attr(755,root,root) %{_libdir}/libvtkGUISupportQtQuick.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkGUISupportQtQuick.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkGUISupportQtQuick.so.1
-%attr(755,root,root) %{_libdir}/libvtkGUISupportQtSQL.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkGUISupportQtSQL.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkGUISupportQtSQL.so.1
-%attr(755,root,root) %{_libdir}/libvtkRenderingQt.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkRenderingQt.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkRenderingQt.so.1
-%attr(755,root,root) %{_libdir}/libvtkViewsQt.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkViewsQt.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkViewsQt.so.1
-%dir %{_libdir}/qml/VTK.9.2
-%{_libdir}/qml/VTK.9.2/plugins.qmltypes
-%attr(755,root,root) %{_libdir}/qml/VTK.9.2/libqmlvtkplugin.so
-%{_libdir}/qml/VTK.9.2/qmldir
+%dir %{_libdir}/qml/VTK.9.3
+%{_libdir}/qml/VTK.9.3/plugins.qmltypes
+%attr(755,root,root) %{_libdir}/qml/VTK.9.3/libqmlvtkplugin.so
+%{_libdir}/qml/VTK.9.3/qmldir
 
 %files qt-devel
 %defattr(644,root,root,755)
@@ -926,6 +944,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/vtk/QFilterTreeProxyModel.h
 %{_includedir}/vtk/QQuickVTKInteractiveWidget.h
 %{_includedir}/vtk/QQuickVTKInteractorAdapter.h
+%{_includedir}/vtk/QQuickVTKItem.h
 %{_includedir}/vtk/QQuickVTKRenderItem.h
 %{_includedir}/vtk/QQuickVTKRenderWindow.h
 %{_includedir}/vtk/QVTKApplication.h
@@ -945,7 +964,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkParseJava
 %attr(755,root,root) %{_bindir}/vtkWrapJava
 # common library
-%attr(755,root,root) %{_libdir}/libvtkJava.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkJava.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkJava.so.1
 # java modules
 %dir %{_libdir}/java/vtk-*
@@ -964,15 +983,15 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/vtkWrapPython
 %attr(755,root,root) %{_bindir}/vtkWrapPythonInit
 %attr(755,root,root) %{_bindir}/vtkpython
-%attr(755,root,root) %{_libdir}/libvtkCommonPython.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkCommonPython.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkCommonPython.so.1
-%attr(755,root,root) %{_libdir}/libvtkFiltersPython.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkFiltersPython.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkFiltersPython.so.1
-%attr(755,root,root) %{_libdir}/libvtkPythonContext2D.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkPythonContext2D.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkPythonContext2D.so.1
-%attr(755,root,root) %{_libdir}/libvtkPythonInterpreter.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkPythonInterpreter.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkPythonInterpreter.so.1
-%attr(755,root,root) %{_libdir}/libvtkWrappingPythonCore3*.so.*.*.*
+%attr(755,root,root) %{_libdir}/libvtkWrappingPythonCore3*.so.*.*
 %attr(755,root,root) %ghost %{_libdir}/libvtkWrappingPythonCore3*.so.1
 %{py3_sitedir}/__pycache__/*
 %{py3_sitedir}/vtk.py
@@ -1014,6 +1033,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/libvtkWrappingPythonCore3*.so
 %{_includedir}/vtk/PyVTK*.h
 %{_includedir}/vtk/vtkPython*.h
+%{_includedir}/vtk/vtkpythonmodules
 
 %files test-suite
 %defattr(644,root,root,755)
@@ -1026,5 +1046,5 @@ rm -rf $RPM_BUILD_ROOT
 
 %files data
 %defattr(644,root,root,755)
-%dir %{_datadir}/vtk-9.2
-%{_datadir}/vtk-9.2/Data
+%dir %{_datadir}/vtk-9.3
+%{_datadir}/vtk-9.3/Data
