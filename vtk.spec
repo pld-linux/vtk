@@ -45,7 +45,9 @@ BuildRequires:	Qt6OpenGL-devel
 BuildRequires:	Qt6Quick-devel
 BuildRequires:	Qt6Sql-devel
 BuildRequires:	Qt6UiTools-devel
+%ifarch %{x8664}
 BuildRequires:	Qt6WebEngine-devel
+%endif
 BuildRequires:	Qt6Xml-devel
 BuildRequires:	R
 BuildRequires:	boost-devel >= 1.39
