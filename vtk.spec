@@ -67,7 +67,7 @@ BuildRequires:	hdf5-devel
 %if %{with java}
 %buildrequires_jdk
 BuildRequires:	jpackage-utils
-BuildRequires:	jre-X11
+BuildRequires:	%{use_jdk}-jre-base-X11
 %endif
 BuildRequires:	jsoncpp-devel >= 0.7.0
 %{?with_system_fmt:BuildRequires:	libfmt-devel >= 9.1.0}
