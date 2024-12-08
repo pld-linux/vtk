@@ -16,7 +16,6 @@
 %bcond_with	system_gl2ps	# use system gl2ps (VTK currently is carrying local modifications to gl2ps, incl. gl2psTextOptColorBL function)
 %bcond_with	system_fmt	# use system fmt (VTK currently is carrying local modifications to fmt)
 
-%define default_jdk_version 11
 %{?use_default_jdk}
 
 %define		system_modules	doubleconversion eigen expat %{?with_system_fmt:fmt} freetype %{?with_system_gl2ps:gl2ps} glew hdf5 jpeg jsoncpp libharu libproj libxml2 lz4 lzma mpi4py netcdf ogg png pugixml sqlite theora tiff zfp zlib
