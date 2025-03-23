@@ -148,6 +148,7 @@ Summary(pl.UTF-8):	Pliki nagłówkowe VTK dla C++
 Group:		Development
 Requires:	%{name} = %{version}-%{release}
 Requires:	double-conversion-devel
+Requires:	glew-devel
 Requires:	libstdc++-devel
 
 %description devel
