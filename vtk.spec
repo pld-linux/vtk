@@ -24,7 +24,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	9.3.1
-Release:	7
+Release:	8
 License:	BSD
 Group:		Libraries
 #Source0Download: https://vtk.org/download/
@@ -329,7 +329,7 @@ done
 %build
 export CFLAGS="%{rpmcflags} -D_UNICODE -DHAVE_UINTPTR_T"
 export CXXFLAGS="%{rpmcxxflags} -D_UNICODE -DHAVE_UINTPTR_T"
-export CPPFLAGS="%{rpmcppflags} -DACCEPT_USE_OF_DEPRECATED_PROJ_API_H"
+export CPPFLAGS="%{rpmcppflags}"
 %if %{with java}
 export JAVA_HOME=%{java_home}
 %ifarch x32
