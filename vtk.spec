@@ -33,6 +33,7 @@ Source0:	https://www.vtk.org/files/release/9.3/VTK-%{version}.tar.gz
 Source1:	https://www.vtk.org/files/release/9.3/VTKData-%{version}.tar.gz
 # Source1-md5:	29b3a39da48e43f0cd0ad7f0a84b9e9a
 Patch0:		ffmpeg6.patch
+Patch1:		netcdf.patch
 URL:		https://vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -42,6 +43,7 @@ BuildRequires:	Qt6Designer-devel
 BuildRequires:	Qt6Gui-devel
 BuildRequires:	Qt6Network-devel
 BuildRequires:	Qt6OpenGL-devel
+BuildRequires:	Qt6Qml-devel
 BuildRequires:	Qt6Quick-devel
 BuildRequires:	Qt6Sql-devel
 BuildRequires:	Qt6UiTools-devel
@@ -310,6 +312,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %prep
 %setup -q -n VTK-%{version} -b 1
 %patch -P 0 -p1
+%patch -P 1 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
