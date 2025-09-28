@@ -24,7 +24,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	9.3.1
-Release:	13
+Release:	14
 License:	BSD
 Group:		Libraries
 #Source0Download: https://vtk.org/download/
@@ -43,7 +43,7 @@ BuildRequires:	Qt6Designer-devel
 BuildRequires:	Qt6Gui-devel
 BuildRequires:	Qt6Network-devel
 BuildRequires:	Qt6OpenGL-devel
-BuildRequires:	Qt6Qml-devel
+BuildRequires:	Qt6Qml-devel >= 6.9.2-5
 BuildRequires:	Qt6Quick-devel
 BuildRequires:	Qt6Sql-devel
 BuildRequires:	Qt6UiTools-devel
