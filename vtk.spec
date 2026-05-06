@@ -70,8 +70,8 @@ BuildRequires:	graphviz
 BuildRequires:	hdf5-devel
 %if %{with java}
 %buildrequires_jdk
+%{?buildrequires_jre_x11}
 BuildRequires:	jpackage-utils
-BuildRequires:	%{use_jdk}-jre-base-X11
 %endif
 BuildRequires:	jsoncpp-devel >= 0.7.0
 %{?with_system_fmt:BuildRequires:	libfmt-devel >= 9.1.0}
@@ -97,7 +97,7 @@ BuildRequires:	python3-devel
 BuildRequires:	python3-PyQt6
 BuildRequires:	qt6-build
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 2.021
+BuildRequires:	rpmbuild(macros) >= 2.062
 BuildRequires:	sqlite3-devel
 BuildRequires:	tcl-devel
 BuildRequires:	tk-devel
