@@ -24,7 +24,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	9.3.1
-Release:	19
+Release:	20
 License:	BSD
 Group:		Libraries
 #Source0Download: https://vtk.org/download/
@@ -150,9 +150,38 @@ Summary:	VTK header files for building C++ code
 Summary(pl.UTF-8):	Pliki nagłówkowe VTK dla C++
 Group:		Development
 Requires:	%{name} = %{version}-%{release}
+# vtk-config.cmake runs find_package() on these for the modules named (via VTK's third-party wrappers)
+# RenderingOpenGL2, GUISupportQt
+Requires:	OpenGL-devel
+# IOCore
 Requires:	double-conversion-devel
+# FiltersStatistics
+Requires:	eigen3 >= 2.91.0
+# IOXMLParser
+Requires:	expat-devel
+# RenderingFreeType
+Requires:	freetype-devel >= 2
+# RenderingOpenGL2 (via glew)
 Requires:	glew-devel
+# IOAMR, IOCGNSReader, hdf5 module
+Requires:	hdf5-devel
+# IOImage
+Requires:	libjpeg-devel
+# IOImage
+Requires:	libpng-devel
 Requires:	libstdc++-devel
+# IOImage
+Requires:	libtiff-devel
+# IOCore
+Requires:	lz4-devel
+# CommonDataModel, IOImage
+Requires:	pugixml-devel
+# RenderingOpenGL2, RenderingUI
+Requires:	xorg-lib-libX11-devel
+# IOCore (lzma)
+Requires:	xz-devel
+# IOCore, IOImage, IOGeometry
+Requires:	zlib-devel
 
 %description devel
 This provides the VTK header files required to compile C++ programs
