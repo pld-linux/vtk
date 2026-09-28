@@ -24,7 +24,7 @@ Summary:	Toolkit for 3D computer graphics, image processing, and visualization
 Summary(pl.UTF-8):	Zestaw narzędzi do trójwymiarowej grafiki, przetwarzania obrazu i wizualizacji
 Name:		vtk
 Version:	9.3.1
-Release:	20
+Release:	21
 License:	BSD
 Group:		Libraries
 #Source0Download: https://vtk.org/download/
@@ -35,6 +35,7 @@ Source1:	https://www.vtk.org/files/release/9.3/VTKData-%{version}.tar.gz
 Patch0:		ffmpeg6.patch
 Patch1:		netcdf.patch
 Patch2:		build.patch
+Patch3:		python3.13.patch
 URL:		https://vtk.org/
 %{?with_OSMesa:BuildRequires: Mesa-libOSMesa-devel}
 BuildRequires:	OpenGL-GLX-devel
@@ -344,6 +345,7 @@ potrzebne do uruchamiania różnych przykładów z pakietu vtk-examples.
 %patch -P 0 -p1
 %patch -P 1 -p1
 %patch -P 2 -p1
+%patch -P 3 -p1
 
 # Replace relative path ../../../VTKData with destination filesystem path
 grep -Erl '(\.\./)+VTKData' Examples | xargs \
